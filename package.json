@@ -1,1 +1,40 @@
-{"homepage":"./","name":"my-portfolio","version":"0.1.0","private":true,"dependencies":{"@splidejs/react-splide":"^0.7.12","@testing-library/jest-dom":"^5.16.5","@testing-library/react":"^13.4.0","@testing-library/user-event":"^13.5.0","emailjs-com":"^3.2.0","gh-pages":"^5.0.0","react":"^18.2.0","react-dom":"^18.2.0","react-helmet-async":"^2.0.5","react-scripts":"5.0.1","react-scroll":"^1.8.9","sass":"^1.58.1","scss-reset":"^1.2.2","web-vitals":"^2.1.4"},"scripts":{"predeploy":"npm run build","deploy":"gh-pages -b main -d build","start":"craco start","build":"craco build && cp build/index.html build/404.html","test":"craco test","eject":"craco eject"},"eslintConfig":{"extends":["react-app","react-app/jest"]},"browserslist":{"production":[">0.2%","not dead","not op_mini all"],"development":["last 1 chrome version","last 1 firefox version","last 1 safari version"]},"devDependencies":{"@craco/craco":"^7.0.0"}}
+{
+  "name": "vue-project",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "vue": "^3.5.18",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/node": "^22.16.5",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/tsconfig": "^0.7.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-vue": "~10.3.0",
+    "jiti": "^2.4.2",
+    "npm-run-all2": "^8.0.4",
+    "prettier": "3.6.2",
+    "sass-embedded": "^1.90.0",
+    "typescript": "~5.8.0",
+    "vite": "^7.1.1",
+    "vite-plugin-vue-devtools": "^8.0.0",
+    "vue-tsc": "^3.0.4"
+  }
+}

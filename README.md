@@ -1,36 +1,39 @@
-# 👩‍💻 Welcome to my portfolio site created with React!
+# vue-project
 
-The portfolio site has been designed with a focus on both functionality and aesthetics, incorporating various techniques to create an engaging and visually appealing website. 
+This template should help get you started developing with Vue 3 in Vite.
 
-On the homepage, you'll find a brief introduction about me and my skills. You can also navigate to my projects page where you can see some of my recent work. Each project card includes a brief description and a link to the live site or code repository.
+## Recommended IDE Setup
 
-## 🛠️ Used metods and tools
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-### ⛳️ creative simple functional component and class component
+## Type Support for `.vue` Imports in TS
 
-I used React's functional components and the useState hook to build this site. React's functional components make it easy to create reusable code and keep our code organized. useState hook allowed me to manage state within functional components, which is great for building interactive user interfaces.
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
-### 🗂️ using props to pass data from from a parent component to a child components 
+## Customize configuration
 
-To transfer data between components, props are used, which simplifies the data flow and makes the code more readable.
+See [Vite Configuration Reference](https://vite.dev/config/).
 
-### 🚀 using useState, useEffect
+## Project Setup
 
-The site also employs React's useState, useEffect, and useMemo hooks, which are essential tools for state management, component lifecycle management, and performance optimization, respectively. By leveraging these hooks, the site can respond to user interactions quickly and efficiently.
+```sh
+npm install
+```
 
-### 🚴‍♀️ creation of simple forms for interaction with the user 
+### Compile and Hot-Reload for Development
 
-The portfolio site also features simple forms that enable user interaction and provide a seamless user experience. By leveraging React's form handling capabilities, the site can process user input quickly and efficiently, resulting in a smooth and satisfying user experience.
+```sh
+npm run dev
+```
 
-### 📱 adaptation to different screen sizes
+### Type-Check, Compile and Minify for Production
 
-The use of responsive design ensures that the site remains functional and visually appealing on devices of various sizes. This makes the site accessible to a broader range of users and ensures that they can enjoy the site's full functionality regardless of the device they are using. 
+```sh
+npm run build
+```
 
-### 🔥 site deployed to the github-pages environment by the pages build and deployment workflow
+### Lint with [ESLint](https://eslint.org/)
 
-This ensures that the site is available to users worldwide and can be accessed from any device with an internet connection.
-
-### 🪢 using canvas to create animations
-
-Using canvas to create animations is a powerful technique that can add an engaging and interactive element to a website. Methods of React was utilized to update the canvas in response to user input or changes in the application's data.
-
+```sh
+npm run lint
+```
