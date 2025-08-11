@@ -1,7 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { FrontPage } from './pages';
+</script>
 
 <template>
-  <h1>You did it!</h1>
+  <div class="container">
+    <FrontPage />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  max-width: 1550px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+</style>
