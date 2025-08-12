@@ -41,14 +41,18 @@ export function useCanvas(themeClassRef?: Ref<string>) {
 
   const updateProperties = () => {
     const rootStyles = getComputedStyle(document.body);
+    const isLight = document.body.classList.contains("light");
+
     properties.value = {
       bg: rootStyles.getPropertyValue("--color-bg").trim(),
-      colors: [
-        rootStyles.getPropertyValue("--color-text").trim(),
-        rootStyles.getPropertyValue("--color-primary").trim(),
-        "#DED9DB",
-        "#FFFEFF",
-      ],
+      colors: isLight
+        ? [
+          rootStyles.getPropertyValue("--color-text").trim(),
+          rootStyles.getPropertyValue("--color-primary").trim(),
+          "#DED9DB",
+          "#FFFEFF",
+        ]
+        : ["#fff", "#fff", "#fff", "#fff"],
       radius: 1,
       maxCircle: 80,
       maxV: 0.5,
@@ -92,10 +96,15 @@ export function useCanvas(themeClassRef?: Ref<string>) {
           const y2 = circles[j].y;
 
           const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+          const isLight = document.body.classList.contains("light");
+
           if (length < properties.value.lineLength) {
             const opacity = 1 - length / properties.value.lineLength;
             ctx.lineWidth = 3;
-            ctx.strokeStyle = `rgba(77, 0, 0, ${opacity})`;
+            ctx.strokeStyle = isLight
+              ? `rgba(255, 254, 255, ${opacity})`
+              : `rgba(139, 71, 98, ${opacity})`;
+
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
