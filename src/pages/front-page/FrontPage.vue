@@ -4,16 +4,18 @@
   </div>
   <Header />
   <Hero />
+  <About />
 </template>
 
 <script lang="js">
 import { Header, Canvas } from '@/components';
-import { Hero } from '@/sections';
+import { Hero, About } from '@/sections';
 
 export default {
   components: {
     Canvas,
     Header,
+    About,
     Hero
   },
 };

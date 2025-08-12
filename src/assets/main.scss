@@ -15,3 +15,91 @@ body.dark {
   --color-btn-hover-bg: #c86f8d;
   --color-btn-hover-text: #1d1d1d;
 }
+
+.mainContainer {
+  padding-left: 7.6%;
+  padding-right: 7.6%;
+}
+
+span {
+  color: var(--color-primary);
+}
+
+.strong {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--color-btn-border);
+}
+
+.contactButtonBlock {
+  position: fixed;
+  top: 35%;
+  left: 0px;
+  z-index: 3000;
+}
+
+.text {
+  color: var(--color-text);
+  opacity: 0.7;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.text1 {
+  color: (var(--color-primary));
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  padding-bottom: 2%;
+}
+
+.title2 {
+  padding-top: 2%;
+  padding-bottom: 2%;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 30px;
+}
+
+.title3 {
+  margin: 2% auto;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.section {
+  width: 95%;
+  padding-top: 5%;
+  padding-left: 10%;
+  padding-bottom: 2.5%;
+}
+
+.textLists {
+  padding-top: 2%;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.textList {
+  color: grey;
+  padding: 5px;
+  margin-left: 3%;
+
+  &::before {
+    content: "";
+    border: 8px #800000 solid !important;
+    border-radius: 50px;
+    margin-top: 10px;
+    margin-left: -40px;
+    position: absolute;
+  }
+}
+
+.contact {
+  min-height: 100vh;
+}

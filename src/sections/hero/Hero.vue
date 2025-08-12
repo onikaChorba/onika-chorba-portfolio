@@ -20,12 +20,11 @@
 
 <script setup lang="js">
 import { useI18n } from 'vue-i18n';
-import { useScrollTo } from 'vue-scrollto';
 
 const { t } = useI18n();
 
 const scrollToAbout = () => {
-  useScrollTo('#About', 500, { offset: -70, easing: 'ease' })
+  document.getElementById('About')?.scrollIntoView({ behavior: 'smooth' })
 }
 
 </script>
