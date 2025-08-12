@@ -9,7 +9,7 @@
       <ul class="header-navs">
         <li v-for="(el, index) in headerNav" :key="index">
           <RouterLink class="header-nav" active-class="header-nav-active" :to="el.to">
-            {{ el.text }}
+            {{ t(el.text) }}
           </RouterLink>
         </li>
       </ul>
@@ -41,10 +41,9 @@ const { locale } = useI18n();
 const currentLocale = ref(locale.value);
 
 const headerNav = ref([
-  { text: t('header.home'), to: "/" },
-  { text: t('header.about'), to: "/about" },
-  { text: t('header.projects'), to: "/projects" },
-  { text: t('header.contact'), to: "/contact" },
+  { text: 'header.home', to: "/" },
+  { text: 'header.about', to: "/about" },
+  { text: 'header.projects', to: "/projects" },
 ]);
 
 const isDark = ref(false);
