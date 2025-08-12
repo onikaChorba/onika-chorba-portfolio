@@ -27,6 +27,7 @@ const { t } = useI18n();
 const scrollToAbout = () => {
   useScrollTo('#About', 500, { offset: -70, easing: 'ease' })
 }
+
 </script>
 
 <style lang="scss" scoped>
