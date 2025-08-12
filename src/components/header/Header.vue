@@ -1,26 +1,33 @@
 <template>
   <header class="header">
     <div class="header__logo logo">
-      <!-- <img :src="myImg" alt="photo1" class="logo__img" /> -->
       <p class="logo__text">
         <span class="logo__text2">Onika</span> Chorba
       </p>
     </div>
     <nav class="header__nav">
-      <ul class="headerNavs">
+      <ul class="header-navs">
         <li v-for="(el, index) in headerNav" :key="index">
-          <RouterLink class="headerNav" active-class="headerNavActive" :to="el.to">
+          <RouterLink class="header-nav" active-class="header-nav-active" :to="el.to">
             {{ el.text }}
           </RouterLink>
         </li>
       </ul>
     </nav>
+    <button class="btn">
+      Contact
+    </button>
+    <button class="btn-switch" @click="toggleTheme">
+      <img :src="isDark ? sunIcon : moonIcon" />
+    </button>
   </header>
 </template>
 
 <script setup lang="js">
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import moonIcon from '../../assets/icons/moon.svg'
+import sunIcon from '../../assets/icons/sun.svg'
 
 const headerNav = ref([
   { text: "Home", to: "/" },
@@ -28,122 +35,107 @@ const headerNav = ref([
   { text: "Projects", to: "/projects" },
   { text: "Contact", to: "/contact" },
 ]);
+
+const isDark = ref(false);
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.body.classList.add('dark');
+    document.body.classList.remove('light');
+  } else {
+    document.body.classList.add('light');
+    document.body.classList.remove('dark');
+  }
+}
+
+document.body.classList.add('light');
 </script>
 
 <style scoped lang="scss">
 .header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgb(34, 3, 5);
-  padding: 1%;
-
-  z-index: 9000;
-
-  /* замість @include screen-tb - медіа запит для планшетів і вище */
-  @media (min-width: 768px) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  height: 64px;
+  background: transparent;
+  padding: 0 20px;
+  font-family: 'Montserat';
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-text);
+  position: relative;
 
   &__logo {
-    width: 100%;
-
-    @media (min-width: 768px) {
-      width: 30%;
-    }
-  }
-
-  &__nav {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-
-    @media (min-width: 768px) {
-      width: 70%;
-    }
+    font-size: 22px;
+    font-family: "Oleo Script", system-ui;
   }
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  animation: logoAnimation 1s ease-in-out;
-  text-transform: uppercase;
-
-  @media (min-width: 768px) {
-    justify-content: center;
-  }
-
-  &__img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
-
   &__text {
-    margin-left: 20px;
-    /* замість @include font-size(700, 22px, 30px) */
-    font-weight: 700;
-    font-size: 22px;
-    line-height: 30px;
-    color: white;
+    color: var(--color-text);
   }
 
   &__text2 {
-    color: grey;
-    transition-duration: 1s;
-
-    &:hover {
-      cursor: pointer;
-      color: #800000;
-      letter-spacing: 5px;
-    }
+    color: var(--color-primary);
   }
 }
 
-@keyframes logoAnimation {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.header-navs {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 32px;
 }
 
-.headerNavs {
-  animation: logoAnimation 1s ease-in-out;
-  width: 100%;
-  text-align: right;
-
-  @media (min-width: 768px) {
-    width: 100%;
-    margin-right: 3%;
-  }
-}
-
-.headerNav {
-  text-align: right;
+.header-nav {
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  transition: color 0.3s, border 0.3s;
   cursor: pointer;
-  margin-left: 3%;
-  /* замість @include font-size(700, 20px, 24px) */
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
-  transition-duration: 1s;
+}
+
+.header-nav:hover {
+  color: var(--color-primary);
+}
+
+.header-nav-active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.btn {
+  border: 1.5px solid var(--color-btn-border);
+  color: var(--color-btn-border);
+  background: transparent;
+  border-radius: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-family: "Montserat";
+  font-weight: 400;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    color: #800000;
+    background-color: var(--color-btn-hover-bg);
+    color: var(--color-btn-hover-text);
   }
 }
 
-.headerNavActive {
-  color: #800000;
+.btn-switch {
+  border: none;
+  background: none;
+  width: 30px;
+  height: 30px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

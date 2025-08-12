@@ -1,0 +1,17 @@
+body.light {
+  --color-text: #1d1d1d;
+  --color-primary: #8b4762;
+  --color-bg: #ded9db;
+  --color-btn-border: #8b4762;
+  --color-btn-hover-bg: #8b4762;
+  --color-btn-hover-text: #fff;
+}
+
+body.dark {
+  --color-text: #ded9db;
+  --color-primary: #c86f8d;
+  --color-bg: #1d1d1d;
+  --color-btn-border: #c86f8d;
+  --color-btn-hover-bg: #c86f8d;
+  --color-btn-hover-text: #1d1d1d;
+}
