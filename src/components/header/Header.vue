@@ -14,26 +14,37 @@
         </li>
       </ul>
     </nav>
-    <button class="btn">
-      Contact
-    </button>
-    <button class="btn-switch" @click="toggleTheme">
-      <img :src="isDark ? sunIcon : moonIcon" />
-    </button>
+    <div class="btn-wrapper">
+      <button class="btn">
+        {{ t('header.contactBtn') }}
+      </button>
+      <button class="btn-switch-theme" @click="toggleTheme">
+        <img :src="isDark ? sunIcon : moonIcon" />
+      </button>
+      <button @click="switchLanguage" class="btn-switch-lang">
+        {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
+      </button>
+    </div>
   </header>
 </template>
 
 <script setup lang="js">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
-import moonIcon from '../../assets/icons/moon.svg'
-import sunIcon from '../../assets/icons/sun.svg'
+
+import moonIcon from '../../assets/icons/moon.svg';
+import sunIcon from '../../assets/icons/sun.svg';
+
+const { t } = useI18n();
+const { locale } = useI18n();
+const currentLocale = ref(locale.value);
 
 const headerNav = ref([
-  { text: "Home", to: "/" },
-  { text: "About Me", to: "/about" },
-  { text: "Projects", to: "/projects" },
-  { text: "Contact", to: "/contact" },
+  { text: t('header.home'), to: "/" },
+  { text: t('header.about'), to: "/about" },
+  { text: t('header.projects'), to: "/projects" },
+  { text: t('header.contact'), to: "/contact" },
 ]);
 
 const isDark = ref(false);
@@ -47,6 +58,11 @@ const toggleTheme = () => {
     document.body.classList.add('light');
     document.body.classList.remove('dark');
   }
+}
+
+const switchLanguage = () => {
+  currentLocale.value = currentLocale.value === 'uk' ? 'en' : 'uk';
+  locale.value = currentLocale.value
 }
 
 document.body.classList.add('light');
@@ -127,9 +143,21 @@ document.body.classList.add('light');
   }
 }
 
-.btn-switch {
+.btn-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.btn-switch-theme,
+.btn-switch-lang {
+  cursor: pointer;
   border: none;
   background: none;
+}
+
+
+.btn-switch-theme {
   width: 30px;
   height: 30px;
 
@@ -137,5 +165,10 @@ document.body.classList.add('light');
     width: 100%;
     height: 100%;
   }
+}
+
+.btn-switch-lang {
+  color: var(--color-text);
+  font-weight: 600;
 }
 </style>
