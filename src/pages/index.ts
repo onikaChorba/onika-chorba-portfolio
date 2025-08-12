@@ -1,3 +1,4 @@
 import { FrontPage } from "./front-page";
+import { AdminPage } from "./admin-page";
 
-export { FrontPage }
+export { FrontPage, AdminPage }
