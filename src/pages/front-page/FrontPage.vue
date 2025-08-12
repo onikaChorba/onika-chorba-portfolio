@@ -1,16 +1,16 @@
 <template>
   <Header />
-  <div>
-    FrontPage
-  </div>
+  <Hero />
 </template>
 
 <script lang="js">
-import Header from '@/components/header/Header.vue';
+import { Header } from '@/components';
+import { Hero } from '@/sections';
 
 export default {
   components: {
     Header,
+    Hero
   },
 };
 </script>
