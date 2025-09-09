@@ -32,12 +32,12 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
+import { loadLocaleMessages } from '../../locales'
 
 import moonIcon from '../../assets/icons/moon.svg';
 import sunIcon from '../../assets/icons/sun.svg';
 
-const { t } = useI18n();
-const { locale } = useI18n();
+const { t, locale, messages } = useI18n();
 const currentLocale = ref(locale.value);
 
 const headerNav = ref([
@@ -59,9 +59,11 @@ const toggleTheme = () => {
   }
 }
 
-const switchLanguage = () => {
-  currentLocale.value = currentLocale.value === 'uk' ? 'en' : 'uk';
-  locale.value = currentLocale.value
+const switchLanguage = async () => {
+  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk'
+  await loadLocaleMessages(newLocale)
+  locale.value = newLocale
+  currentLocale.value = newLocale
 }
 
 document.body.classList.add('light');
