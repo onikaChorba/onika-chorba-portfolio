@@ -47,6 +47,14 @@ span {
   line-height: 28px;
 }
 
+.small {
+  color: var(--color-text);
+  opacity: 1;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+}
+
 .text1 {
   color: (var(--color-primary));
   font-weight: 400;

@@ -1,13 +1,13 @@
-import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router';
-// @ts-ignore
-import { setupI18n } from "./locales";
 import './assets/reset.css';
 import './assets/main.scss';
+import router from './router';
+import { createApp } from 'vue';
+// @ts-ignore
+import { setupI18n } from "./locales";
 
 async function bootstrap() {
-  const i18n = await setupI18n("uk");
+  const i18n = await setupI18n("en");
 
   const app = createApp(App);
   app.use(router);

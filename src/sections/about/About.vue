@@ -1,8 +1,24 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { icons } from '../../icons';
+import { ref, onMounted } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
 
-const { t } = useI18n()
+
+const { locale, t } = useI18n<{ locale: string; t: any }>();
+
+const experience = ref<any[]>([]);
+
+onMounted(async () => {
+  const refDoc = doc(db, "experience", "main");
+  const snap = await getDoc(refDoc);
+  if (snap.exists()) {
+    experience.value = snap.data().experience;
+  } else {
+    console.warn("❌ Немає досвіду у Firestore");
+  }
+});
 
 </script>
 
@@ -13,17 +29,16 @@ const { t } = useI18n()
     <p class="text about__text">{{ t('about.text2') }}</p>
 
     <h2 class="about__title title3">{{ t('about.journeyTitle') }}</h2>
-    <p class="strong">{{ t('about.exp1Title') }}</p>
-    <p class="text">{{ t('about.exp1Date') }}</p>
-    <br />
-    <p class="text about__text">{{ t('about.exp1Text') }}</p>
-    <br /><br /><br />
-    <p class="strong">{{ t('about.exp2Title') }}</p>
-    <p class="text">{{ t('about.exp2Date') }}</p>
-    <br />
-    <p class="text about__text">{{ t('about.exp2Text') }}</p>
 
+    <div v-for="(item, i) in experience" :key="i" class="experience-item">
+      <h3 class="strong">{{ item.position?.[locale] }}</h3>
+      <span class="text">{{ item.company?.[locale] }}</span>
+      <small class="small">{{ item.period?.[locale] }}</small>
+      <br /> <br />
+      <p class="text">{{ item.description?.[locale] }}</p>
+    </div>
     <h2 class="about__title title2">{{ t('about.skillsTitle') }}</h2>
+
     <div class="about__icon">
       <img
         src="https://github-readme-stats.vercel.app/api/top-langs/?username=onikaChorba&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact"
@@ -36,6 +51,7 @@ const { t } = useI18n()
     <h2 class="about__title title2">
       {{ t('about.statsTitle') }} <span>GitHub</span>
     </h2>
+
     <a href="https://git.io/streak-stats">
       <img
         src="http://github-readme-streak-stats.herokuapp.com?user=onikaChorba&theme=dark&hide_border=true&border_radius=4.8"
@@ -58,6 +74,10 @@ const { t } = useI18n()
     align-items: center;
     justify-content: space-between;
   }
+}
+
+.experience-item {
+  margin-bottom: 15px;
 }
 
 .iconsSkills {
