@@ -32,12 +32,11 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
-
-import moonIcon from '../../assets/icons/moon.svg';
 import sunIcon from '../../assets/icons/sun.svg';
+import { loadLocaleMessages } from '../../locales';
+import moonIcon from '../../assets/icons/moon.svg';
 
-const { t } = useI18n();
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);
 
 const headerNav = ref([
@@ -59,28 +58,31 @@ const toggleTheme = () => {
   }
 }
 
-const switchLanguage = () => {
-  currentLocale.value = currentLocale.value === 'uk' ? 'en' : 'uk';
-  locale.value = currentLocale.value
+const switchLanguage = async () => {
+  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk'
+  await loadLocaleMessages(newLocale)
+  locale.value = newLocale
+  currentLocale.value = newLocale
 }
 
-document.body.classList.add('light');
+document.body.classList.add('dark');
 </script>
 
 <style scoped lang="scss">
 .header {
+  position: fixed;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 32px;
   height: 64px;
-  background: transparent;
+  background: var(--color-bg);
   padding: 0 20px;
   font-family: 'Montserat';
   font-weight: 400;
   font-size: 16px;
   color: var(--color-text);
-  position: relative;
 
   &__logo {
     font-size: 22px;
