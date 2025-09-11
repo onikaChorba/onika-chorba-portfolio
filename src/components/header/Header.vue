@@ -5,17 +5,20 @@
         <span class="logo__text2">Onika</span> Chorba
       </p>
     </div>
+
     <nav class="header__nav">
       <ul class="header-navs">
         <li v-for="(el, index) in headerNav" :key="index">
-          <RouterLink class="header-nav" active-class="header-nav-active" :to="el.to">
+          <a :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
+            @click.prevent="scrollToSection(el.to)">
             {{ t(el.text) }}
-          </RouterLink>
+          </a>
         </li>
       </ul>
     </nav>
+
     <div class="btn-wrapper">
-      <button class="btn">
+      <button class="btn" @click.prevent="scrollToSection('#contact')">
         {{ t('header.contactBtn') }}
       </button>
       <button class="btn-switch-theme" @click="toggleTheme">
@@ -28,24 +31,24 @@
   </header>
 </template>
 
-<script setup lang="js">
-import { ref } from 'vue';
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
-import { loadLocaleMessages } from '../../locales';
 import moonIcon from '../../assets/icons/moon.svg';
+import { loadLocaleMessages } from '../../locales';
 
 const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);
 
 const headerNav = ref([
-  { text: 'header.home', to: "/" },
-  { text: 'header.about', to: "/about" },
-  { text: 'header.projects', to: "/projects" },
+  { text: 'header.home', to: "#home" },
+  { text: 'header.about', to: "#about" },
+  { text: 'header.projects', to: "#projects" },
 ]);
 
 const isDark = ref(false);
+const activeSection = ref('#home');
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;
@@ -56,14 +59,45 @@ const toggleTheme = () => {
     document.body.classList.add('light');
     document.body.classList.remove('dark');
   }
-}
+};
 
 const switchLanguage = async () => {
-  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk'
-  await loadLocaleMessages(newLocale)
-  locale.value = newLocale
-  currentLocale.value = newLocale
-}
+  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
+  await loadLocaleMessages(newLocale);
+  locale.value = newLocale;
+  currentLocale.value = newLocale;
+};
+
+// Плавний скрол до секції
+const scrollToSection = (id) => {
+  const section = document.querySelector(id);
+  if (section) {
+    const offset = 64; // висота header
+    const top = section.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+};
+
+// Підсвітка активної секції при скролі
+const onScroll = () => {
+  for (const nav of headerNav.value) {
+    const section = document.querySelector(nav.to);
+    if (section) {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 64 && rect.bottom > 64) {
+        activeSection.value = nav.to;
+      }
+    }
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll);
+});
 
 document.body.classList.add('dark');
 </script>
@@ -83,6 +117,7 @@ document.body.classList.add('dark');
   font-weight: 400;
   font-size: 16px;
   color: var(--color-text);
+  z-index: 1000;
 
   &__logo {
     font-size: 22px;
@@ -113,12 +148,12 @@ document.body.classList.add('dark');
   text-decoration: none;
   padding: 6px 16px;
   border-radius: 6px;
-  transition: color 0.3s, border 0.3s;
+  transition: color 0.3s;
   cursor: pointer;
-}
 
-.header-nav:hover {
-  color: var(--color-primary);
+  &:hover {
+    color: var(--color-primary);
+  }
 }
 
 .header-nav-active {
@@ -156,7 +191,6 @@ document.body.classList.add('dark');
   border: none;
   background: none;
 }
-
 
 .btn-switch-theme {
   width: 30px;

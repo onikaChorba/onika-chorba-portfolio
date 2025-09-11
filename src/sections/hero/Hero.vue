@@ -1,5 +1,5 @@
 <template>
-  <div className="hero">
+  <div className="hero" id="home">
     <img className="hero__img" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg" />
     <div class="title">
       <h1 className="hero__title1">

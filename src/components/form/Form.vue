@@ -1,28 +1,29 @@
 <template>
   <form ref="form" class="form" id="form">
     <div class="name">
-      <label class="text1" for="name" id="name">
+      <label class="text1" for="name">
         <p class="form__label">Name</p>
       </label>
-      <input type="text" id="name" name="user_name" class="form__input" placeholder="Enter Your Name" />
+      <input type="text" id="name" name="user_name" class="form__input" placeholder="Enter Your Name" required />
     </div>
 
     <div class="email">
       <label class="text1" for="email">
         <p class="form__label">Email</p>
       </label>
-      <input type="email" id="email" name="user_email" class="form__input" placeholder="Enter Your Email" />
+      <input type="email" id="email" name="user_email" class="form__input" placeholder="Enter Your Email" required />
     </div>
 
     <div class="message">
       <label class="text1" for="message">
         <p class="form__label">Message</p>
       </label>
-      <textarea class="form__input textarea text1" id="message" name="message" placeholder="Enter Your Message" />
+      <textarea class="form__input textarea text1" id="message" name="message" placeholder="Enter Your Message"
+        required></textarea>
     </div>
 
     <div class="buttonForm">
-      <button type="submit" class="buttonForm__button">
+      <button type="submit" class="buttonForm__button" @click="sendEmail">
         <span class="buttonForm__text text">Submit</span>
       </button>
     </div>
@@ -32,8 +33,44 @@
 <script setup>
 import { ref } from "vue";
 
-const sendEmail = (e) => {
+const form = ref(null);
 
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+
+const sendEmail = async (e) => {
+  e.preventDefault();
+
+  if (!form.value) return;
+
+  const formData = new FormData(form.value);
+  const name = formData.get("user_name");
+  const email = formData.get("user_email");
+  const message = formData.get("message");
+
+  const text = `New message from contact form:\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: text,
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Telegram API error");
+
+    alert("Message sent successfully!");
+    form.value.reset();
+  } catch (error) {
+    console.error(error);
+    alert("Failed to send message.");
+  }
 };
 </script>
 

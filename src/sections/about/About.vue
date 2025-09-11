@@ -22,7 +22,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="about" id="About">
+  <section class="about" id="about">
     <h2 class="about__title title2">{{ t('about.title') }}</h2>
     <p class="text about__text">{{ t('about.text1') }}</p>
     <p class="text about__text">{{ t('about.text2') }}</p>
