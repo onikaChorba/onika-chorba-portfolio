@@ -1,4 +1,5 @@
 import { Header } from "./header";
 import Canvas from "./canvas/Canvas.vue";
+import Form from "./form/Form.vue";
 
-export { Header, Canvas }
+export { Form, Header, Canvas }

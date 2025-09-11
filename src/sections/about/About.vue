@@ -5,7 +5,6 @@ import { ref, onMounted } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
 
-
 const { locale, t } = useI18n<{ locale: string; t: any }>();
 
 const experience = ref<any[]>([]);
