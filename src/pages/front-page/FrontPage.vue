@@ -4,12 +4,13 @@
   </div>
   <Hero />
   <About />
+  <Projects />
   <Contact />
 </template>
 
 <script lang="js">
 import { Canvas } from '@/components';
-import { Hero, About, Contact } from '@/sections';
+import { Hero, About, Contact, Projects } from '@/sections';
 
 export default {
   components: {
@@ -17,6 +18,7 @@ export default {
     About,
     Canvas,
     Contact,
+    Projects
   },
 };
 </script>
