@@ -2,29 +2,31 @@
   <form ref="form" class="form" id="form">
     <div class="name">
       <label class="text1" for="name">
-        <p class="form__label">Name</p>
+        <p class="form__label">{{ t('contact.name') }}</p>
       </label>
-      <input type="text" id="name" name="user_name" class="form__input" placeholder="Enter Your Name" required />
+      <input type="text" id="name" name="user_name" class="form__input" :placeholder="t('contact.enterYourName')"
+        required />
     </div>
 
     <div class="email">
       <label class="text1" for="email">
-        <p class="form__label">Email</p>
+        <p class="form__label">{{ t('contact.email') }}</p>
       </label>
-      <input type="email" id="email" name="user_email" class="form__input" placeholder="Enter Your Email" required />
+      <input type="email" id="email" name="user_email" class="form__input" :placeholder="t('contact.enterYourEmail')"
+        required />
     </div>
 
     <div class="message">
       <label class="text1" for="message">
-        <p class="form__label">Message</p>
+        <p class="form__label">{{ t('contact.message') }}</p>
       </label>
-      <textarea class="form__input textarea text1" id="message" name="message" placeholder="Enter Your Message"
-        required></textarea>
+      <textarea class="form__input textarea text1" id="message" name="message"
+        :placeholder="t('contact.enterYourMessage')" required></textarea>
     </div>
 
     <div class="buttonForm">
       <button type="submit" class="buttonForm__button" @click="sendEmail">
-        <span class="buttonForm__text text">Submit</span>
+        <span class="buttonForm__text text">{{ t('contact.submit') }}</span>
       </button>
     </div>
   </form>
@@ -32,6 +34,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const form = ref(null);
 
