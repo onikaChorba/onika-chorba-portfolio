@@ -5,7 +5,6 @@ import { ref, onMounted } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
 
-
 const { locale, t } = useI18n<{ locale: string; t: any }>();
 
 const experience = ref<any[]>([]);
@@ -23,7 +22,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="about" id="About">
+  <section class="about" id="about">
     <h2 class="about__title title2">{{ t('about.title') }}</h2>
     <p class="text about__text">{{ t('about.text1') }}</p>
     <p class="text about__text">{{ t('about.text2') }}</p>
