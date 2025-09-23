@@ -1,45 +1,24 @@
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <button class="modal-close" @click="$emit('close')">×</button>
-
-      <img v-if="project.imgs?.length" :src="project.imgs[0]" :alt="project.name" />
-
+    <div class="modal"> <button class="modal-close" @click="$emit('close')">×</button> <img v-if="project.imgs?.length"
+        :src="project.imgs[0]" :alt="project.name" />
       <h2>{{ project.name }}</h2>
       <p>{{ project.text }}</p>
-
-      <div class="tags">
-        <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span>
-      </div>
-
+      <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
-        <li v-for="(tool, indx) in project.tools" :key="indx">
-          <img :src="icons.find(i => i.alt === 'check')?.src" :alt="tool" class="tool-icon" />
-          {{ tool }}
-        </li>
+        <li v-for="(tool, indx) in project.tools" :key="indx"> <img :src="icons.find(i => i.alt === 'check')?.src"
+            :alt="tool" class="tool-icon" /> {{ tool }} </li>
       </ul>
-
-      <div class="links">
-        <a v-if="project.links?.browser" :href="project.links.browser" target="_blank" class="btn browser">
-          <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
-          Live Demo
-        </a>
-
-        <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank" class="btn github">
-          <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
-          View on GitHub
-        </a>
-      </div>
+      <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
+          class="btn browser"> <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
+          Live Demo </a> <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank"
+          class="btn github"> <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
+          View on GitHub </a> </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { icons } from '../../icons';
-import { Project } from '../../types';
-defineProps<{ project: Project }>();
-</script>
-
+<script setup
+  lang="ts">  import { icons } from '../../icons'; import { Project } from '../../types'; defineProps<{ project: Project }>(); </script>
 <style scoped lang="scss">
 .modal-overlay {
   position: fixed;
