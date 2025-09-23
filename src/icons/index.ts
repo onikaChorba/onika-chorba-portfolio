@@ -3,6 +3,7 @@ import css from '@/assets/icons/css.png'
 import js from '@/assets/icons/js.png'
 import scss from '@/assets/icons/scsslogo.png'
 import gitHub from '@/assets/icons/github.png'
+import gitHubLink from '@/assets/icons/github-link.svg'
 import wb from '@/assets/icons/wb.png'
 import ts from '@/assets/icons/ts.png'
 import react from '@/assets/icons/react.png'
@@ -15,6 +16,8 @@ import styledComponents from '@/assets/icons/Styled Components.png'
 import mui from '@/assets/icons/mui.png'
 import wing from '@/assets/icons/wing.png'
 import gitLab from '@/assets/icons/gitlab.png'
+import browser from '@/assets/icons/browser.svg'
+import check from '@/assets/icons/check.svg'
 
 export const icons = [
   { src: ts, alt: 'ts' },
@@ -31,7 +34,10 @@ export const icons = [
   { src: wing, alt: 'wing' },
   { src: api, alt: 'api' },
   { src: gitHub, alt: 'gitHub' },
+  { src: gitHubLink, alt: 'gitHubLink' },
   { src: gitLab, alt: 'gitLab' },
   { src: wb, alt: 'webpack' },
   { src: figma, alt: 'figma' },
+  { src: browser, alt: 'browser' },
+  { src: check, alt: 'check' },
 ]

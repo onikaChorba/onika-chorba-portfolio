@@ -1,6 +1,13 @@
 import { Header } from "./header";
 import Form from "./form/Form.vue";
+import Modal from "./modal/Modal.vue";
 import Canvas from "./canvas/Canvas.vue";
 import Project from "./project/Project.vue";
 
-export { Form, Header, Canvas, Project }
+export {
+  Form,
+  Modal,
+  Header,
+  Canvas,
+  Project
+}

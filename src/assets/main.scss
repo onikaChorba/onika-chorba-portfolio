@@ -9,6 +9,10 @@ body.light {
   --color-btn-border: #8b4762;
   --color-btn-hover-bg: #8b4762;
   --color-btn-hover-text: #fff;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --overlay-color: rgba(255, 255, 255, 0.55);
+  --content-bg: rgba(255, 255, 255, 0.8);
+  --tag-bg: #f3f3f3;
 }
 
 body.dark {
@@ -18,6 +22,10 @@ body.dark {
   --color-btn-border: #c86f8d;
   --color-btn-hover-bg: #c86f8d;
   --color-btn-hover-text: #1d1d1d;
+  --box-shadow: 0 2px 5px rgba(200, 111, 141, 0.5);
+  --overlay-color: rgba(0, 0, 0, 0.4);
+  --content-bg: rgba(0, 0, 0, 0.6);
+  --tag-bg: rgba(255, 255, 255, 0.1);
 }
 
 .mainContainer {
