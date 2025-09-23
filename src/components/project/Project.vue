@@ -1,9 +1,9 @@
 <template>
-  <div class="project-card">
-    <a :href="project.links?.browser" target="_blank" class="project-img">
+  <div class="project-card" @click="openModal">
+    <div class="project-img">
       <img :src="project.imgs && project.imgs.length ? project.imgs[0] : 'https://via.placeholder.com/600x400'"
         :alt="project.name || 'Project image'" />
-    </a>
+    </div>
     <div class="project-content">
       <h3 class="project-title">{{ project.name }}</h3>
       <p class="project-text">{{ project.text }}</p>
@@ -12,18 +12,21 @@
       </div>
     </div>
   </div>
+  <Modal v-if="isModalOpen" :project="project" @close="isModalOpen = false" />
 </template>
 
 <script setup lang="ts">
-interface Project {
-  name: string;
-  text: string;
-  tags: string[];
-  imgs?: string;
-  links?: { browser?: string };
-}
+import { Modal } from '../index';
+import { ref } from 'vue';
+import { Project } from '../../types';
 
 defineProps<{ project: Project }>();
+
+const isModalOpen = ref(false);
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
 </script>
 
 <style scoped lang="scss">
