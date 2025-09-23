@@ -9,35 +9,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { ref, onMounted } from "vue";
 import { Project } from "../../components";
+import { db } from "../../firebase/firebase.config";
+import { collection, getDocs } from "firebase/firestore";
 
-const projects = ref([
-  {
-    name: "Test Project 1",
-    textShort: "This is a description for project 1.",
-    textButton: "View Project",
-    imgMain: "https://via.placeholder.com/300x200",
-    link: "#",
-  },
-  {
-    name: "Test Project 2",
-    textShort: "This is a description for project 2.",
-    textButton: "View Project",
-    imgMain: "https://via.placeholder.com/300x200",
-    link: "#",
-  },
-  {
-    name: "Test Project 3",
-    textShort: "This is a description for project 3.",
-    textButton: "View Project",
-    imgMain: "https://via.placeholder.com/300x200",
-    link: "#",
-  },
-]);
-
+const projects = ref<any[]>([]);
 const { t } = useI18n();
+
+onMounted(async () => {
+  const querySnapshot = await getDocs(collection(db, "projects"));
+  projects.value = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+});
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.projectsBlock {
+  margin: 40px 0px;
+}
+</style>
