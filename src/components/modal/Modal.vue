@@ -6,8 +6,10 @@
       <p>{{ project.text }}</p>
       <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
-        <li v-for="(tool, indx) in project.tools" :key="indx"> <img :src="icons.find(i => i.alt === 'check')?.src"
-            :alt="tool" class="tool-icon" /> {{ tool }} </li>
+        <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index">
+          <img :src="icons.find(i => i.alt === 'check')?.src" :alt="tool" class="tool-icon" />
+          {{ tool }}
+        </li>
       </ul>
       <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
           class="btn browser"> <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
@@ -17,8 +19,23 @@
     </div>
   </div>
 </template>
-<script setup
-  lang="ts">  import { icons } from '../../icons'; import { Project } from '../../types'; defineProps<{ project: Project }>(); </script>
+
+<script setup lang="ts">
+import { icons } from '../../icons';
+import { Project } from '../../types';
+import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+defineProps<{ project: Project }>();
+
+const { locale } = useI18n();
+
+const currentTools = computed(() => {
+  // @ts-ignore
+  return project.tools?.[locale.value] || [];
+});
+</script>
+
 <style scoped lang="scss">
 .modal-overlay {
   position: fixed;

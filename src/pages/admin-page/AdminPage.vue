@@ -4,12 +4,13 @@
       <input v-model="form.name" placeholder="Name" required />
       <textarea v-model="form.text" placeholder="Text"></textarea>
       <input v-model="tagsInput" placeholder="Tags (comma separated)" />
-      <input v-model="imgsInput" placeholder="Image URLs (comma separated)" />
 
-      <input v-model="form.links.browser" placeholder="Browser Link" />
-      <input v-model="form.links.gitHub" placeholder="GitHub Link" />
+      <textarea v-model="imgsInput" placeholder="Image URLs (one per line)"></textarea>
 
-      <input v-model="toolsInput" placeholder="Tools (comma separated)" />
+      <textarea v-model="linksInput" placeholder="Links: browser, GitHub (one per line)"></textarea>
+
+      <textarea v-model="toolsEnInput" placeholder="Tools (English, one per line)"></textarea>
+      <textarea v-model="toolsUkInput" placeholder="Tools (Ukrainian, one per line)"></textarea>
 
       <div class="form-buttons">
         <button type="submit">{{ editingId ? "Update" : "Add" }} Project</button>
@@ -23,7 +24,7 @@
         <p>{{ project.text }}</p>
 
         <div class="tags">
-          <span v-for="tag in project.tags" :key="tag">#{{ tag }}</span>
+          <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
         </div>
 
         <div class="imgs" v-if="project.imgs?.length">
@@ -53,17 +54,24 @@ import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase
 const projects = ref<Project[]>([]);
 const projectsCol = collection(db, "projects");
 
+const toolsEnInput = ref("");
+const toolsUkInput = ref("");
+
 const form = reactive<Project>({
   name: "",
   text: "",
   tags: [],
   imgs: [],
   links: { browser: "", gitHub: "" },
-  tools: [],
+  tools: {
+    en: [],
+    uk: [],
+  },
 });
 
 const tagsInput = ref("");
 const imgsInput = ref("");
+const linksInput = ref("");
 const toolsInput = ref("");
 const editingId = ref<string | null>(null);
 
@@ -72,11 +80,17 @@ async function loadProjects() {
   projects.value = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Project));
 }
 
-
 async function saveProject() {
-  form.tags = tagsInput.value.split(",").map((t) => t.trim()).filter(Boolean);
-  form.tools = toolsInput.value.split(",").map((t) => t.trim()).filter(Boolean);
-  form.imgs = imgsInput.value.split(",").map((i) => i.trim()).filter(Boolean);
+  form.tags = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
+  form.tools = {
+    en: toolsEnInput.value.split("\n").map(t => t.trim()).filter(Boolean),
+    uk: toolsUkInput.value.split("\n").map(t => t.trim()).filter(Boolean),
+  };
+  form.imgs = imgsInput.value.split("\n").map(i => i.trim()).filter(Boolean);
+
+  const linksArr = linksInput.value.split("\n").map(l => l.trim()).filter(Boolean);
+  form.links.browser = linksArr[0] || "";
+  form.links.gitHub = linksArr[1] || "";
 
   if (editingId.value) {
     const refDoc = doc(db, "projects", editingId.value);
@@ -101,8 +115,10 @@ function editProject(project: Project) {
     gitHub: project.links?.gitHub || "",
   };
   tagsInput.value = project.tags.join(", ");
-  toolsInput.value = project.tools?.join(", ") || "";
-  imgsInput.value = project.imgs?.join(", ") || "";
+  toolsEnInput.value = project.tools?.en?.join("\n") || "";
+  toolsUkInput.value = project.tools?.uk?.join("\n") || "";
+  imgsInput.value = project.imgs?.join("\n") || "";
+  linksInput.value = [form.links.browser, form.links.gitHub].join("\n");
 }
 
 function cancelEdit() {
@@ -121,10 +137,14 @@ function resetForm() {
   form.tags = [];
   form.imgs = [];
   form.links = { browser: "", gitHub: "" };
-  form.tools = [];
+  form.tools = {
+    en: [],
+    uk: [],
+  };
   tagsInput.value = "";
   toolsInput.value = "";
   imgsInput.value = "";
+  linksInput.value = "";
   editingId.value = null;
 }
 
@@ -210,13 +230,14 @@ h1 {
   color: var(--color-btn-hover-text);
 }
 
-/* Список */
 .projects {
-  display: grid;
+  display: flex;
   gap: 1.5rem;
 }
 
 .projects li {
+  width: 50%;
+  list-style: none;
   background: var(--content-bg);
   padding: 1.5rem;
   border-radius: 16px;

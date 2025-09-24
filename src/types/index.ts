@@ -5,6 +5,6 @@ export interface Project {
   tags: string[];
   imgs?: string[];
   links: { browser?: string; gitHub?: string };
-  tools?: string[];
+  tools?: { en: string[]; uk: string[] };
   createdAt?: string;
 }
