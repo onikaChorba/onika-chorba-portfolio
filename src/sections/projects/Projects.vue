@@ -29,6 +29,9 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .projectsBlock {
-  margin: 40px 0px;
+  display: flex;
+  flex-wrap: wrap; // дозволяє блокам переходити на новий рядок
+  gap: 20px; // відстань між блоками
+  margin: 40px 0;
 }
 </style>

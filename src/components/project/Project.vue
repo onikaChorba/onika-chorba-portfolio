@@ -33,6 +33,7 @@ const openModal = () => {
 .project-card {
   position: relative;
   max-width: 33%;
+  width: 100%;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--box-shadow);
