@@ -145,26 +145,26 @@ const sendEmail = async (e) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: 0.3s;
 
   &__button {
+    cursor: pointer;
     width: 30%;
     border: none;
     background: var(--color-primary);
     border-radius: 10px;
     padding: 0.5rem 1rem;
+
+    &:hover {
+      background: var(--color-btn-hover-bg);
+      color: var(--color-btn-hover-text);
+      cursor: pointer;
+    }
   }
 
   &__text {
     font-weight: 600;
-    color: var(--color-text);
+    color: white;
     margin: 0 auto;
-  }
-
-  &:hover {
-    background: var(--color-btn-hover-bg);
-    color: var(--color-btn-hover-text);
-    cursor: pointer;
   }
 }
 

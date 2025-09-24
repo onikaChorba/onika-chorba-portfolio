@@ -32,9 +32,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import sunIcon from '../../assets/icons/sun.svg';
+import { ref, onMounted, onUnmounted } from 'vue';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 
@@ -42,17 +42,15 @@ const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);
 
 const headerNav = ref([
-  { text: 'header.home', to: "#home" },
-  { text: 'header.about', to: "#about" },
-  { text: 'header.projects', to: "#projects" },
+  { text: 'header.home', to: '#home' },
+  { text: 'header.about', to: '#about' },
+  { text: 'header.projects', to: '#projects' },
 ]);
 
 const isDark = ref(false);
-const activeSection = ref('#home');
 
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  if (isDark.value) {
+const applyTheme = (dark) => {
+  if (dark) {
     document.body.classList.add('dark');
     document.body.classList.remove('light');
   } else {
@@ -61,6 +59,22 @@ const toggleTheme = () => {
   }
 };
 
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  applyTheme(isDark.value);
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+};
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    isDark.value = savedTheme === 'dark';
+  } else {
+    isDark.value = true;
+  }
+  applyTheme(isDark.value);
+});
+
 const switchLanguage = async () => {
   const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
   await loadLocaleMessages(newLocale);
@@ -68,17 +82,17 @@ const switchLanguage = async () => {
   currentLocale.value = newLocale;
 };
 
-// Плавний скрол до секції
+const activeSection = ref('#home');
+
 const scrollToSection = (id) => {
   const section = document.querySelector(id);
   if (section) {
-    const offset = 64; // висота header
+    const offset = 64;
     const top = section.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
   }
 };
 
-// Підсвітка активної секції при скролі
 const onScroll = () => {
   for (const nav of headerNav.value) {
     const section = document.querySelector(nav.to);
@@ -98,8 +112,6 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll);
 });
-
-document.body.classList.add('dark');
 </script>
 
 <style scoped lang="scss">
@@ -174,8 +186,9 @@ document.body.classList.add('dark');
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
+    border: 1.5px solid var(--color-btn-hover-bg);
     background-color: var(--color-btn-hover-bg);
-    color: var(--color-btn-hover-text);
+    color: white;
   }
 }
 
