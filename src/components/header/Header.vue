@@ -13,7 +13,12 @@
     <nav class="header__nav" :class="{ open: isMenuOpen }">
       <ul class="header-navs">
         <li v-for="(el, index) in headerNav" :key="index">
-          <a :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
+          <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
+            :class="{ 'header-nav-active': route.path === el.to }">
+            {{ t(el.text) }}
+          </router-link>
+
+          <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
             @click.prevent="scrollToSection(el.to)">
             {{ t(el.text) }}
           </a>
@@ -68,7 +73,10 @@ const isMobile = ref(window.innerWidth <= 768);
 
 const headerNav = computed(() =>
   props.isAdmin && route.path.startsWith("/admin")
-    ? [{ text: 'header.projects', to: '#projects' }]
+    ? [
+      { text: 'header.mainInfo', to: '/admin' },
+      { text: 'header.adminProjects', to: '/admin/projects' },
+    ]
     : [
       { text: 'header.home', to: '#home' },
       { text: 'header.about', to: '#about' },
