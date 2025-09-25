@@ -23,17 +23,12 @@
 <script setup lang="ts">
 import { icons } from '../../icons';
 import { Project } from '../../types';
-import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{ project: Project }>();
 
 const { locale } = useI18n();
 
-const currentTools = computed(() => {
-  // @ts-ignore
-  return project.tools?.[locale.value] || [];
-});
 </script>
 
 <style scoped lang="scss">

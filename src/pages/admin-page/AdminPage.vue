@@ -2,7 +2,8 @@
   <div class="admin">
     <form @submit.prevent="saveProject" class="form">
       <input v-model="form.name" placeholder="Name" required />
-      <textarea v-model="form.text" placeholder="Text"></textarea>
+      <textarea v-model="textEnInput" placeholder="Text (English)"></textarea>
+      <textarea v-model="textUkInput" placeholder="Text (Ukrainian)"></textarea>
       <input v-model="tagsInput" placeholder="Tags (comma separated)" />
 
       <textarea v-model="imgsInput" placeholder="Image URLs (one per line)"></textarea>
@@ -20,22 +21,30 @@
 
     <ul class="projects">
       <li v-for="project in projects" :key="project.id">
-        <h3>{{ project.name }}</h3>
-        <p>{{ project.text }}</p>
+        <div class="project-wrapper">
+          <div class="project">
+            <h3>{{ project.name }}</h3>
+            <p>{{ project.text.uk }}</p>
 
-        <div class="tags">
-          <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+            <div class="tags">
+              <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+            </div>
+
+            <div class="imgs" v-if="project.imgs?.length">
+              <img v-for="(img, index) in project.imgs" :key="index" :src="img" />
+            </div>
+
+            <div class="links">
+              <a v-if="project.links?.browser" :href="project.links.browser" target="_blank">🌍</a>
+              <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank">💻</a>
+            </div>
+          </div>
+          <div>
+            <ul class="tools">
+              <li v-for="(tool, index) in project.tools?.en" :key="index">{{ tool }}</li>
+            </ul>
+          </div>
         </div>
-
-        <div class="imgs" v-if="project.imgs?.length">
-          <img v-for="(img, index) in project.imgs" :key="index" :src="img" />
-        </div>
-
-        <div class="links">
-          <a v-if="project.links?.browser" :href="project.links.browser" target="_blank">🌍</a>
-          <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank">💻</a>
-        </div>
-
         <div class="actions">
           <button @click="editProject(project)">Edit</button>
           <button @click="deleteProject(project.id)">Delete</button>
@@ -56,10 +65,15 @@ const projectsCol = collection(db, "projects");
 
 const toolsEnInput = ref("");
 const toolsUkInput = ref("");
+const textEnInput = ref("");
+const textUkInput = ref("");
 
 const form = reactive<Project>({
   name: "",
-  text: "",
+  text: {
+    en: "",
+    uk: "",
+  },
   tags: [],
   imgs: [],
   links: { browser: "", gitHub: "" },
@@ -86,6 +100,12 @@ async function saveProject() {
     en: toolsEnInput.value.split("\n").map(t => t.trim()).filter(Boolean),
     uk: toolsUkInput.value.split("\n").map(t => t.trim()).filter(Boolean),
   };
+
+  form.text = {
+    en: textEnInput.value.trim(),
+    uk: textUkInput.value.trim(),
+  };
+
   form.imgs = imgsInput.value.split("\n").map(i => i.trim()).filter(Boolean);
 
   const linksArr = linksInput.value.split("\n").map(l => l.trim()).filter(Boolean);
@@ -109,7 +129,10 @@ async function saveProject() {
 function editProject(project: Project) {
   editingId.value = project.id || null;
   form.name = project.name;
-  form.text = project.text;
+  form.text = {
+    en: project.text.en,
+    uk: project.text.uk,
+  };
   form.links = {
     browser: project.links?.browser || "",
     gitHub: project.links?.gitHub || "",
@@ -133,7 +156,10 @@ async function deleteProject(id?: string) {
 
 function resetForm() {
   form.name = "";
-  form.text = "";
+  form.text = {
+    en: "",
+    uk: "",
+  };
   form.tags = [];
   form.imgs = [];
   form.links = { browser: "", gitHub: "" };
@@ -141,6 +167,10 @@ function resetForm() {
     en: [],
     uk: [],
   };
+  textEnInput.value = "";
+  textUkInput.value = "";
+  toolsEnInput.value = "";
+  toolsUkInput.value = "";
   tagsInput.value = "";
   toolsInput.value = "";
   imgsInput.value = "";
@@ -154,7 +184,7 @@ onMounted(loadProjects);
 <style scoped>
 .admin {
   padding: 2rem;
-  max-width: 900px;
+  max-width: 1550px;
   margin: 0 auto;
 }
 
@@ -235,6 +265,11 @@ h1 {
   gap: 1.5rem;
 }
 
+.project-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
 .projects li {
   width: 50%;
   list-style: none;
@@ -243,6 +278,20 @@ h1 {
   border-radius: 16px;
   box-shadow: var(--box-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tools li {
+  width: 100%;
+  list-style: circle;
+  background: none;
+  padding: 10px;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.tools li:hover {
+  box-shadow: none;
+  transform: none;
 }
 
 .projects li:hover {

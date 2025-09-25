@@ -6,7 +6,7 @@
     </div>
     <div class="project-content">
       <h3 class="project-title">{{ project.name }}</h3>
-      <p class="project-text">{{ project.text }}</p>
+      <p class="project-text">{{ locale === 'uk' ? project.text.uk : project.text.en }}</p>
       <div class="project-tags">
         <span v-for="(tag, idx) in project.tags" :key="idx" class="tag">{{ tag }}</span>
       </div>
@@ -19,9 +19,10 @@
 import { Modal } from '../index';
 import { ref } from 'vue';
 import { Project } from '../../types';
-
+import { useI18n } from 'vue-i18n';
 defineProps<{ project: Project }>();
 
+const { locale } = useI18n();
 const isModalOpen = ref(false);
 const openModal = () => {
   isModalOpen.value = true;
