@@ -1,12 +1,13 @@
 <template>
-  <Header v-if="!route.path.startsWith('/admin') && !isAuthenticated" />
-  <Header v-else-if="isAuthenticated" />
+  <Header v-if="!route.path.startsWith('/admin') && !isAuthenticated"
+    :isAdmin="isAuthenticated && route.path.startsWith('/admin')" />
+  <Header v-else-if="isAuthenticated" :isAdmin="isAuthenticated && route.path.startsWith('/admin')" />
   <div class="container">
     <div class="bg-login" v-if="showLoginForm && !isAuthenticated">
       <Canvas />
     </div>
 
-    <div v-if="showLoginForm && !isAuthenticated" class="login-form">
+    <div v-if="showLoginForm && !isAuthenticated && route.path.startsWith('/admin')" class="login-form">
       <h2>Вхід в адмінку</h2>
       <form @submit.prevent="login">
         <input v-model="username" type="text" placeholder="Логін" ref="usernameInput"
@@ -44,11 +45,11 @@ const login = () => {
   if (username.value === "admin" && password.value === "1234") {
     isAuthenticated.value = true;
     showLoginForm.value = false;
-    localStorage.setItem('isAutenticated', 'true')
+    localStorage.setItem('isAuthenticated', 'true')
   } else {
     alert("Невірний логін або пароль");
     isAuthenticated.value = false;
-    localStorage.removeItem('isAutenticated')
+    localStorage.removeItem('isAuthenticated')
   }
 };
 
@@ -65,7 +66,7 @@ watch(() => route.path, (newPath) => {
 });
 
 onMounted(() => {
-  if (localStorage.getItem('isAutenticated') === 'true') {
+  if (localStorage.getItem('isAuthenticated') === 'true') {
     isAuthenticated.value = true;
     showLoginForm.value = false;
   } else {
@@ -107,6 +108,12 @@ onMounted(() => {
   transform: translate(-50%, -50%);
   backdrop-filter: blur(10px);
   color: var(--color-text);
+}
+
+.login-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .login-form h2 {

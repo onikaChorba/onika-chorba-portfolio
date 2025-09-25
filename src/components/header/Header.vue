@@ -18,9 +18,13 @@
     </nav>
 
     <div class="btn-wrapper">
-      <button class="btn" @click.prevent="scrollToSection('#contact')">
+      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
         {{ t('header.contactBtn') }}
       </button>
+      <button class="btn" @click.prevent="logout" v-else>
+        Exit
+      </button>
+
       <button class="btn-switch-theme" @click="toggleTheme">
         <img :src="isDark ? sunIcon : moonIcon" />
       </button>
@@ -31,25 +35,33 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import { ref, onMounted, onUnmounted } from 'vue';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 
+const props = defineProps<{ isAdmin: boolean }>();
 const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);
 
-const headerNav = ref([
-  { text: 'header.home', to: '#home' },
-  { text: 'header.about', to: '#about' },
-  { text: 'header.projects', to: '#projects' },
-]);
+const route = useRoute();
 
+const headerNav = computed(() =>
+  props.isAdmin && route.path.startsWith("/admin")
+    ? [{ text: 'header.projects', to: '#projects' }]
+    : [
+      { text: 'header.home', to: '#home' },
+      { text: 'header.about', to: '#about' },
+      { text: 'header.projects', to: '#projects' },
+    ]
+);
 const isDark = ref(false);
 
-const applyTheme = (dark) => {
+const applyTheme = (dark: boolean) => {
   if (dark) {
     document.body.classList.add('dark');
     document.body.classList.remove('light');
@@ -84,7 +96,7 @@ const switchLanguage = async () => {
 
 const activeSection = ref('#home');
 
-const scrollToSection = (id) => {
+const scrollToSection = (id: string) => {
   const section = document.querySelector(id);
   if (section) {
     const offset = 64;
@@ -103,6 +115,11 @@ const onScroll = () => {
       }
     }
   }
+};
+
+const logout = () => {
+  localStorage.removeItem('isAuthenticated');
+  window.location.href = '/admin';
 };
 
 onMounted(() => {
