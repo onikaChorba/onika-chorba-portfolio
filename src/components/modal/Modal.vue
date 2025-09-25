@@ -1,9 +1,11 @@
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal"> <button class="modal-close" @click="$emit('close')">×</button> <img v-if="project.imgs?.length"
-        :src="project.imgs[0]" :alt="project.name" />
+    <div class="modal"> <button class="modal-close" @click="$emit('close')">×</button>
+      <div class="img-wrapper">
+        <img v-if="project.imgs?.length" :src="project.imgs[project.imgs.length - 1]" :alt="project.name" />
+      </div>
       <h2>{{ project.name }}</h2>
-      <p>{{ project.text }}</p>
+      <p>{{ project.text?.[locale as 'en' | 'uk'] }}</p>
       <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
         <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index">
@@ -87,10 +89,38 @@ const { locale } = useI18n();
   }
 }
 
-.modal img {
+.img-wrapper {
   width: 100%;
+  aspect-ratio: 3 / 3;
+  overflow-y: auto;
   border-radius: 12px;
   margin: 12px 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-bg);
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 8px;
+    border: 2px solid var(--color-bg);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-btn-hover-bg);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
 }
 
 .modal-close {
@@ -130,7 +160,7 @@ const { locale } = useI18n();
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.85rem;
-    color: var(--color-text);
+    color: white;
   }
 }
 

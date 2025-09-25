@@ -138,6 +138,8 @@ function editProject(project: Project) {
     gitHub: project.links?.gitHub || "",
   };
   tagsInput.value = project.tags.join(", ");
+  textEnInput.value = project.text.en;
+  textUkInput.value = project.text.uk;
   toolsEnInput.value = project.tools?.en?.join("\n") || "";
   toolsUkInput.value = project.tools?.uk?.join("\n") || "";
   imgsInput.value = project.imgs?.join("\n") || "";
@@ -268,6 +270,7 @@ h1 {
 .project-wrapper {
   display: flex;
   justify-content: space-between;
+  color: var(--color-text);
 }
 
 .projects li {
@@ -287,6 +290,7 @@ h1 {
   padding: 10px;
   border-radius: 0px;
   box-shadow: none;
+  color: var(--color-text);
 }
 
 .tools li:hover {
@@ -343,6 +347,7 @@ h1 {
 .links a {
   font-size: 1.3rem;
   transition: transform 0.2s ease;
+  text-decoration: none;
 }
 
 .links a:hover {
