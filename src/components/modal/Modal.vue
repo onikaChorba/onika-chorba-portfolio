@@ -9,8 +9,9 @@
       <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
         <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index">
-          <img :src="icons.find(i => i.alt === 'check')?.src" :alt="tool" class="tool-icon" />
-          {{ tool }}
+          <strong><img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />{{
+            tool.split(':')[0] }}:</strong>
+          <p>{{ tool.split(':').slice(1).join(':').trim() }}</p>
         </li>
       </ul>
       <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
@@ -23,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { icons } from '../../icons';
 import { Project } from '../../types';
-import { useI18n } from 'vue-i18n';
+
 
 defineProps<{ project: Project }>();
 
@@ -147,6 +149,26 @@ const { locale } = useI18n();
       margin-right: 8px;
     }
   }
+}
+
+.tools li {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.tools li strong {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.3rem;
+  color: var(--color-primary);
+}
+
+.tools li p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .tags {

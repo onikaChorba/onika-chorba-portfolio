@@ -33,7 +33,7 @@ const openModal = () => {
 <style scoped lang="scss">
 .project-card {
   position: relative;
-  max-width: 33%;
+  max-width: 32%;
   width: 100%;
   border-radius: 16px;
   overflow: hidden;

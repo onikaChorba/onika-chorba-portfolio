@@ -13,18 +13,19 @@ import { useI18n } from "vue-i18n";
 import { ref, onMounted } from "vue";
 import { Project } from "../../components";
 import { db } from "../../firebase/firebase.config";
-import { collection, getDocs } from "firebase/firestore";
-
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 const projects = ref<any[]>([]);
 const { t } = useI18n();
 
 onMounted(async () => {
-  const querySnapshot = await getDocs(collection(db, "projects"));
+  const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+  const querySnapshot = await getDocs(q);
   projects.value = querySnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
 });
+
 </script>
 
 <style scoped lang="scss">

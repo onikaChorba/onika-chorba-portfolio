@@ -225,6 +225,10 @@ h1 {
   box-shadow: 0 0 0 3px var(--overlay-color);
 }
 
+.form textarea {
+  min-height: 100px;
+}
+
 .form-buttons {
   display: flex;
   gap: 1rem;
@@ -283,6 +287,10 @@ h1 {
   border-radius: 16px;
   box-shadow: var(--box-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project {
+  min-width: 200px;
 }
 
 .tools {
