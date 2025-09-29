@@ -262,19 +262,21 @@ h1 {
   color: var(--color-btn-hover-text);
 }
 
-.projects {
-  display: flex;
-  gap: 1.5rem;
-}
-
 .project-wrapper {
   display: flex;
   justify-content: space-between;
   color: var(--color-text);
 }
 
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
 .projects li {
-  width: 50%;
+  flex: 1 1 calc(50% - 1.5rem);
+  max-width: calc(50% - 1.5rem);
   list-style: none;
   background: var(--content-bg);
   padding: 1.5rem;
@@ -283,14 +285,40 @@ h1 {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tools li {
+.tools {
   width: 100%;
-  list-style: circle;
-  background: none;
-  padding: 10px;
-  border-radius: 0px;
-  box-shadow: none;
-  color: var(--color-text);
+  max-height: 200px;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-bg);
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 8px;
+    border: 2px solid var(--color-bg);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-btn-hover-bg);
+  }
+}
+
+.tools li {
+  flex: 1 1 100%;
+  max-width: 100%;
+  width: 100%;
+  list-style: none;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  margin-bottom: 1rem;
 }
 
 .tools li:hover {
