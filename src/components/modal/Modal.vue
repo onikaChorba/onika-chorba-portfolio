@@ -103,10 +103,13 @@ const { locale } = useI18n();
 
 .img-wrapper {
   width: 100%;
-  aspect-ratio: 3 / 3;
-  overflow-y: auto;
+  max-height: 400px;
+  overflow: auto;
   border-radius: 12px;
   margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &::-webkit-scrollbar {
     width: 8px;
