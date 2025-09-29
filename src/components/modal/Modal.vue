@@ -8,14 +8,24 @@
       <p>{{ project.text?.[locale as 'en' | 'uk'] }}</p>
       <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
-        <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index">
-          <strong><img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />{{
-            tool.split(':')[0] }}:</strong>
-          <p>{{ tool.split(':').slice(1).join(':').trim() }}</p>
+        <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index"
+          :class="tool.includes(':') ? 'column' : 'flex'">
+          <template v-if="tool.includes(':')">
+            <strong>
+              <img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />
+              {{ tool.split(':')[0] }}:
+            </strong>
+            <p>{{ tool.split(':').slice(1).join(':').trim() }}</p>
+          </template>
+          <template v-else>
+            <img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />
+            <p>{{ tool }}</p>
+          </template>
         </li>
       </ul>
       <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
-          class="btn browser"> <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
+          class="btn browser">
+          <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
           Live Demo </a> <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank"
           class="btn github"> <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
           View on GitHub </a> </div>
@@ -153,7 +163,6 @@ const { locale } = useI18n();
 
 .tools li {
   display: flex;
-  flex-direction: column;
   margin-bottom: 1rem;
 }
 
@@ -169,6 +178,25 @@ const { locale } = useI18n();
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.5;
+  color: var(--color-text);
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  flex-direction: inherit;
+  gap: 0.5rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tool-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .tags {
