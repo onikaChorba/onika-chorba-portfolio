@@ -18,6 +18,8 @@ import wing from '@/assets/icons/wing.png'
 import gitLab from '@/assets/icons/gitlab.png'
 import browser from '@/assets/icons/browser.svg'
 import check from '@/assets/icons/check.svg'
+import linkedIn from '@/assets/icons/linkedin.svg'
+import gmail from '@/assets/icons/gmail.svg'
 
 export const icons = [
   { src: ts, alt: 'ts' },
@@ -40,4 +42,6 @@ export const icons = [
   { src: figma, alt: 'figma' },
   { src: browser, alt: 'browser' },
   { src: check, alt: 'check' },
+  { src: linkedIn, alt: 'linkedin' },
+  { src: gmail, alt: 'gmail' },
 ]
