@@ -49,11 +49,16 @@ const { locale } = useI18n();
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.15) 100%);
 }
 
 .modal {
@@ -154,7 +159,6 @@ const { locale } = useI18n();
 
   li {
     display: flex;
-    align-items: center;
     font-size: 0.95rem;
 
     .tool-icon {
@@ -171,7 +175,7 @@ const { locale } = useI18n();
 
 .tools li strong {
   display: flex;
-  align-items: center;
+  align-items: left;
   width: 100%;
   margin-bottom: 0.3rem;
   color: var(--color-primary);
@@ -182,6 +186,7 @@ const { locale } = useI18n();
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--color-text);
+
 }
 
 .flex {
