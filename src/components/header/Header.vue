@@ -1,6 +1,6 @@
 <template>
-  <header class="header">
-    <div class="header__logo logo">
+  <header class="header" :class="{ hidden: isHidden }">
+    <div class="header__logo logo" @click="scrollToSection('#home')">
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
 
@@ -70,6 +70,8 @@ const route = useRoute();
 const isDark = ref(false);
 const isMenuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
+const isHidden = ref(false);
+let lastScroll = 0;
 
 const headerNav = computed(() =>
   props.isAdmin && route.path.startsWith("/admin")
@@ -90,6 +92,7 @@ const applyTheme = (dark: boolean) => {
   document.body.classList.toggle('dark', dark);
   document.body.classList.toggle('light', !dark);
 };
+
 const toggleTheme = () => {
   isDark.value = !isDark.value;
   applyTheme(isDark.value);
@@ -104,6 +107,12 @@ onMounted(() => {
   window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth <= 768;
     if (!isMobile.value) isMenuOpen.value = false;
+  });
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    isHidden.value = currentScroll > lastScroll && currentScroll > 100;
+    lastScroll = currentScroll;
   });
 });
 
@@ -140,13 +149,21 @@ const logout = () => {
   justify-content: space-between;
   height: 64px;
   padding: 0 20px;
-  background: var(--color-bg);
+  box-shadow: var(--box-shadow);
   z-index: 1000;
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s ease, background 0.4s ease;
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
 
   &__logo {
     color: var(--color-text);
-    font-size: 22px;
+    font-size: 24px;
     font-family: "Oleo Script", system-ui;
+    cursor: pointer;
+    animation: fadeSlideIn 0.6s ease forwards;
   }
 }
 
@@ -156,24 +173,44 @@ const logout = () => {
   gap: 32px;
   padding: 0;
   margin: 0;
+  animation: fadeSlideIn 0.8s ease forwards;
 }
 
 .header-nav {
   padding: 6px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   color: var(--color-text);
-  transition: 0.3s;
+  transition: 0.3s, transform 0.3s;
 
   &:hover {
     color: var(--color-primary);
+    transform: scale(1.1);
+    box-shadow: var(--box-shadow);
+    background: rgba(0, 0, 0, 0.05);
   }
 }
 
 .header-nav-active {
   color: var(--color-primary);
   font-weight: 600;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
 }
 
 .btn-wrapper,
@@ -185,19 +222,19 @@ const logout = () => {
 }
 
 .btn {
-  border: 1.5px solid var(--color-btn-border);
-  color: var(--color-btn-border);
-  background: transparent;
-  border-radius: 6px;
-  padding: 6px 16px;
-  cursor: pointer;
-  font-size: 16px;
+  border: none;
+  padding: 10px 20px;
   font-family: 'Montserat';
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-btn-hover-bg));
+  color: white;
+  transition: transform 0.3s, box-shadow 0.3s;
 
   &:hover {
-    background: var(--color-btn-hover-bg);
-    color: white;
-    border-color: var(--color-btn-hover-bg);
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -207,6 +244,7 @@ const logout = () => {
   border: none;
   cursor: pointer;
   color: var(--color-text);
+  font-weight: 700;
 }
 
 .btn-switch-theme img {
@@ -289,6 +327,18 @@ const logout = () => {
     flex-direction: column;
     gap: 10px;
     padding: 10px;
+  }
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
