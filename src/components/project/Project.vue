@@ -33,8 +33,9 @@ const openModal = () => {
 <style scoped lang="scss">
 .project-card {
   position: relative;
-  max-width: 32%;
+  max-width: 30%;
   width: 100%;
+  margin: 1%;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--box-shadow);
@@ -129,6 +130,15 @@ const openModal = () => {
   &:hover .project-content {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+  }
+
+  @media (max-width: 1200px) {
+    max-width: 46%;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 10px 0;
   }
 }
 </style>
