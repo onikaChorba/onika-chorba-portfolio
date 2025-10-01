@@ -6,7 +6,7 @@
     </div>
     <div class="project-content">
       <h3 class="project-title">{{ project.name }}</h3>
-      <p class="project-text">{{ project.text }}</p>
+      <p class="project-text">{{ locale === 'uk' ? project.text.uk : project.text.en }}</p>
       <div class="project-tags">
         <span v-for="(tag, idx) in project.tags" :key="idx" class="tag">{{ tag }}</span>
       </div>
@@ -19,9 +19,10 @@
 import { Modal } from '../index';
 import { ref } from 'vue';
 import { Project } from '../../types';
-
+import { useI18n } from 'vue-i18n';
 defineProps<{ project: Project }>();
 
+const { locale } = useI18n();
 const isModalOpen = ref(false);
 const openModal = () => {
   isModalOpen.value = true;
@@ -32,7 +33,9 @@ const openModal = () => {
 <style scoped lang="scss">
 .project-card {
   position: relative;
-  max-width: 33%;
+  max-width: 30%;
+  width: 100%;
+  margin: 1%;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--box-shadow);
@@ -127,6 +130,15 @@ const openModal = () => {
   &:hover .project-content {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+  }
+
+  @media (max-width: 1200px) {
+    max-width: 46%;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 10px 0;
   }
 }
 </style>

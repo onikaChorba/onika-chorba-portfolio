@@ -1,16 +1,21 @@
 <template>
   <div className="hero" id="home">
-    <img className="hero__img" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg" />
+    <img className="hero__img appear" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg" />
+
     <div class="title">
-      <h1 className="hero__title1">
-        <span className="hero__span"> {{ t('hero.name') }} </span> {{ t('hero.surname') }}
+      <h1 className="hero__title1 appear">
+        <span className="hero__span">{{ t('hero.name') }}</span> {{ t('hero.surname') }}
       </h1>
-      <h3 className="hero__title2 title2"> {{ t('hero.title2') }}</h3>
+      <h3 className="hero__title2 title2 appear">
+        {{ t('hero.title2') }}
+      </h3>
     </div>
-    <p className="hero__text text">
+
+    <p className="hero__text text appear">
       {{ t('hero.text') }}
     </p>
-    <button @click="scrollToAbout" class="arrow">
+
+    <button @click="scrollToAbout" class="arrow appear">
       <span></span>
       <span></span>
       <span></span>
@@ -19,21 +24,28 @@
 </template>
 
 <script setup lang="js">
+import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const scrollToAbout = () => {
-  document.getElementById('About')?.scrollIntoView({ behavior: 'smooth' })
-}
+  document.getElementById('About')?.scrollIntoView({ behavior: 'smooth' });
+};
 
+onMounted(() => {
+  const elements = document.querySelectorAll('.appear');
+  elements.forEach((el, idx) => {
+    el.style.transitionDelay = `${idx * 0.2}s`;
+    el.classList.add('visible');
+  });
+});
 </script>
 
 <style lang="scss" scoped>
 .hero {
   width: 100%;
   min-height: calc(100vh - 64px);
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,10 +55,6 @@ const scrollToAbout = () => {
 
   &__img {
     width: 300px;
-
-    img {
-      width: 100%;
-    }
   }
 
   &__title1 {
@@ -55,14 +63,11 @@ const scrollToAbout = () => {
     font-weight: 700;
     font-size: 44px;
     line-height: 50px;
-    position: relative;
-    display: inline-block;
   }
 
-  &__span {
-    display: inline-block;
-    cursor: pointer;
-    transition: letter-spacing 2s, color 2s;
+  &__title2 {
+    font-size: 24px;
+    text-align: center;
     color: var(--color-primary);
   }
 
@@ -73,12 +78,15 @@ const scrollToAbout = () => {
   }
 }
 
-.title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.appear {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
 
+.appear.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .arrow {

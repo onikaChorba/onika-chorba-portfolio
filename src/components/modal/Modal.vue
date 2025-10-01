@@ -1,54 +1,64 @@
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <button class="modal-close" @click="$emit('close')">×</button>
-
-      <img v-if="project.imgs?.length" :src="project.imgs[0]" :alt="project.name" />
-
-      <h2>{{ project.name }}</h2>
-      <p>{{ project.text }}</p>
-
-      <div class="tags">
-        <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span>
+    <div class="modal"> <button class="modal-close" @click="$emit('close')">×</button>
+      <div class="img-wrapper">
+        <img v-if="project.imgs?.length" :src="project.imgs[project.imgs.length - 1]" :alt="project.name" />
       </div>
-
+      <h2>{{ project.name }}</h2>
+      <p>{{ project.text?.[locale as 'en' | 'uk'] }}</p>
+      <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
       <ul class="tools">
-        <li v-for="(tool, indx) in project.tools" :key="indx">
-          <img :src="icons.find(i => i.alt === 'check')?.src" :alt="tool" class="tool-icon" />
-          {{ tool }}
+        <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index"
+          :class="tool.includes(':') ? 'column' : 'flex'">
+          <template v-if="tool.includes(':')">
+            <strong>
+              <img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />
+              {{ tool.split(':')[0] }}:
+            </strong>
+            <p>{{ tool.split(':').slice(1).join(':').trim() }}</p>
+          </template>
+          <template v-else>
+            <img :src="icons.find(i => i.alt === 'check')?.src" alt="check" class="tool-icon" />
+            <p>{{ tool }}</p>
+          </template>
         </li>
       </ul>
-
-      <div class="links">
-        <a v-if="project.links?.browser" :href="project.links.browser" target="_blank" class="btn browser">
+      <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
+          class="btn browser">
           <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
-          Live Demo
-        </a>
-
-        <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank" class="btn github">
-          <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
-          View on GitHub
-        </a>
-      </div>
+          Live Demo </a> <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank"
+          class="btn github"> <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
+          View on GitHub </a> </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { icons } from '../../icons';
 import { Project } from '../../types';
+
+
 defineProps<{ project: Project }>();
+
+const { locale } = useI18n();
+
 </script>
 
 <style scoped lang="scss">
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.15) 100%);
 }
 
 .modal {
@@ -96,10 +106,41 @@ defineProps<{ project: Project }>();
   }
 }
 
-.modal img {
+.img-wrapper {
   width: 100%;
+  max-height: 400px;
+  overflow: auto;
   border-radius: 12px;
   margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-bg);
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 8px;
+    border: 2px solid var(--color-bg);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-btn-hover-bg);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
 }
 
 .modal-close {
@@ -118,7 +159,6 @@ defineProps<{ project: Project }>();
 
   li {
     display: flex;
-    align-items: center;
     font-size: 0.95rem;
 
     .tool-icon {
@@ -126,6 +166,45 @@ defineProps<{ project: Project }>();
       margin-right: 8px;
     }
   }
+}
+
+.tools li {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.tools li strong {
+  display: flex;
+  align-items: left;
+  width: 100%;
+  margin-bottom: 0.3rem;
+  color: var(--color-primary);
+}
+
+.tools li p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-text);
+
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  flex-direction: inherit;
+  gap: 0.5rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tool-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .tags {
@@ -139,7 +218,7 @@ defineProps<{ project: Project }>();
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.85rem;
-    color: var(--color-text);
+    color: white;
   }
 }
 

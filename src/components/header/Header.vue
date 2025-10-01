@@ -1,26 +1,49 @@
 <template>
-  <header class="header">
-    <div class="header__logo logo">
-      <p class="logo__text">
-        <span class="logo__text2">Onika</span> Chorba
-      </p>
+  <header class="header" :class="{ hidden: isHidden }">
+    <div class="header__logo logo" @click="scrollToSection('#home')">
+      <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
 
-    <nav class="header__nav">
+    <button class="burger" @click="toggleMenu">
+      <span :class="{ open: isMenuOpen }"></span>
+      <span :class="{ open: isMenuOpen }"></span>
+      <span :class="{ open: isMenuOpen }"></span>
+    </button>
+
+    <nav class="header__nav" :class="{ open: isMenuOpen }">
       <ul class="header-navs">
         <li v-for="(el, index) in headerNav" :key="index">
-          <a :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
+          <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
+            :class="{ 'header-nav-active': route.path === el.to }">
+            {{ t(el.text) }}
+          </router-link>
+
+          <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
             @click.prevent="scrollToSection(el.to)">
             {{ t(el.text) }}
           </a>
         </li>
       </ul>
+
+      <div class="btn-wrapper-mobile">
+        <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
+          {{ t('header.contactBtn') }}
+        </button>
+        <button class="btn" @click.prevent="logout" v-else>Exit</button>
+        <button class="btn-switch-theme" @click="toggleTheme">
+          <img :src="isDark ? sunIcon : moonIcon" />
+        </button>
+        <button @click="switchLanguage" class="btn-switch-lang">
+          {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
+        </button>
+      </div>
     </nav>
 
-    <div class="btn-wrapper">
-      <button class="btn" @click.prevent="scrollToSection('#contact')">
+    <div class="btn-wrapper" v-if="!isMobile">
+      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
         {{ t('header.contactBtn') }}
       </button>
+      <button class="btn" @click.prevent="logout" v-else>Exit</button>
       <button class="btn-switch-theme" @click="toggleTheme">
         <img :src="isDark ? sunIcon : moonIcon" />
       </button>
@@ -31,35 +54,67 @@
   </header>
 </template>
 
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 
+const props = defineProps<{ isAdmin: boolean }>();
 const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);
-
-const headerNav = ref([
-  { text: 'header.home', to: "#home" },
-  { text: 'header.about', to: "#about" },
-  { text: 'header.projects', to: "#projects" },
-]);
+const route = useRoute();
 
 const isDark = ref(false);
-const activeSection = ref('#home');
+const isMenuOpen = ref(false);
+const isMobile = ref(window.innerWidth <= 768);
+const isHidden = ref(false);
+let lastScroll = 0;
+
+const headerNav = computed(() =>
+  props.isAdmin && route.path.startsWith("/admin")
+    ? [
+      { text: 'header.mainInfo', to: '/admin' },
+      { text: 'header.adminProjects', to: '/admin/projects' },
+    ]
+    : [
+      { text: 'header.home', to: '#home' },
+      { text: 'header.about', to: '#about' },
+      { text: 'header.projects', to: '#projects' },
+    ]
+);
+
+const toggleMenu = () => isMenuOpen.value = !isMenuOpen.value;
+
+const applyTheme = (dark: boolean) => {
+  document.body.classList.toggle('dark', dark);
+  document.body.classList.toggle('light', !dark);
+};
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;
-  if (isDark.value) {
-    document.body.classList.add('dark');
-    document.body.classList.remove('light');
-  } else {
-    document.body.classList.add('light');
-    document.body.classList.remove('dark');
-  }
+  applyTheme(isDark.value);
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
 };
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme');
+  isDark.value = savedTheme ? savedTheme === 'dark' : true;
+  applyTheme(isDark.value);
+
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth <= 768;
+    if (!isMobile.value) isMenuOpen.value = false;
+  });
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    isHidden.value = currentScroll > lastScroll && currentScroll > 100;
+    lastScroll = currentScroll;
+  });
+});
 
 const switchLanguage = async () => {
   const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
@@ -68,38 +123,21 @@ const switchLanguage = async () => {
   currentLocale.value = newLocale;
 };
 
-// Плавний скрол до секції
-const scrollToSection = (id) => {
+const activeSection = ref('#home');
+const scrollToSection = (id: string) => {
   const section = document.querySelector(id);
   if (section) {
-    const offset = 64; // висота header
+    const offset = 64;
     const top = section.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
+    isMenuOpen.value = false;
   }
 };
 
-// Підсвітка активної секції при скролі
-const onScroll = () => {
-  for (const nav of headerNav.value) {
-    const section = document.querySelector(nav.to);
-    if (section) {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= 64 && rect.bottom > 64) {
-        activeSection.value = nav.to;
-      }
-    }
-  }
+const logout = () => {
+  localStorage.removeItem('isAuthenticated');
+  window.location.href = '/admin';
 };
-
-onMounted(() => {
-  window.addEventListener('scroll', onScroll);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll);
-});
-
-document.body.classList.add('dark');
 </script>
 
 <style scoped lang="scss">
@@ -107,103 +145,200 @@ document.body.classList.add('dark');
   position: fixed;
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 32px;
+  justify-content: space-between;
   height: 64px;
-  background: var(--color-bg);
   padding: 0 20px;
-  font-family: 'Montserat';
-  font-weight: 400;
-  font-size: 16px;
-  color: var(--color-text);
+  box-shadow: var(--box-shadow);
   z-index: 1000;
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s ease, background 0.4s ease;
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
 
   &__logo {
-    font-size: 22px;
-    font-family: "Oleo Script", system-ui;
-  }
-}
-
-.logo {
-  &__text {
     color: var(--color-text);
-  }
-
-  &__text2 {
-    color: var(--color-primary);
+    font-size: 24px;
+    font-family: "Oleo Script", system-ui;
+    cursor: pointer;
+    animation: fadeSlideIn 0.6s ease forwards;
   }
 }
 
 .header-navs {
   display: flex;
   list-style: none;
+  gap: 32px;
   padding: 0;
   margin: 0;
-  gap: 32px;
+  animation: fadeSlideIn 0.8s ease forwards;
 }
 
 .header-nav {
-  color: var(--color-text);
-  text-decoration: none;
   padding: 6px 16px;
-  border-radius: 6px;
-  transition: color 0.3s;
+  border-radius: 8px;
   cursor: pointer;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: 0.3s, transform 0.3s;
 
   &:hover {
     color: var(--color-primary);
+    transform: scale(1.1);
+    box-shadow: var(--box-shadow);
+    background: rgba(0, 0, 0, 0.05);
   }
 }
 
 .header-nav-active {
   color: var(--color-primary);
   font-weight: 600;
-}
+  position: relative;
 
-.btn {
-  border: 1.5px solid var(--color-btn-border);
-  color: var(--color-btn-border);
-  background: transparent;
-  border-radius: 6px;
-  padding: 6px 16px;
-  cursor: pointer;
-  font-family: "Montserat";
-  font-weight: 400;
-  font-size: 16px;
-  transition: background-color 0.3s, color 0.3s;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+  }
 
-  &:hover {
-    background-color: var(--color-btn-hover-bg);
-    color: var(--color-btn-hover-text);
+  &:hover::after {
+    width: 100%;
   }
 }
 
-.btn-wrapper {
+.btn-wrapper,
+.btn-wrapper-mobile {
   display: flex;
   gap: 20px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: none;
+  padding: 10px 20px;
+  font-family: 'Montserat';
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-btn-hover-bg));
+  color: white;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .btn-switch-theme,
 .btn-switch-lang {
-  cursor: pointer;
-  border: none;
   background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+  font-weight: 700;
 }
 
-.btn-switch-theme {
+.btn-switch-theme img {
   width: 30px;
   height: 30px;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: var(--color-text);
+    transition: 0.3s;
+  }
+
+  span.open:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  span.open:nth-child(2) {
+    opacity: 0;
+  }
+
+  span.open:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
   }
 }
 
-.btn-switch-lang {
-  color: var(--color-text);
-  font-weight: 600;
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  transition: max-height 0.3s ease;
+}
+
+.header__nav.open {
+  max-height: 500px;
+}
+
+.btn-wrapper-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .burger {
+    display: flex;
+  }
+
+  .header__nav {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: var(--color-bg);
+    overflow: hidden;
+    max-height: 0;
+  }
+
+  .header-navs {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .btn-wrapper {
+    display: none;
+  }
+
+  .btn-wrapper-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

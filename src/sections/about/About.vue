@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import { icons } from '../../icons';
-import { ref, onMounted } from 'vue';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase.config';
-
-const { locale, t } = useI18n<{ locale: string; t: any }>();
-
-const experience = ref<any[]>([]);
-
-onMounted(async () => {
-  const refDoc = doc(db, "experience", "main");
-  const snap = await getDoc(refDoc);
-  if (snap.exists()) {
-    experience.value = snap.data().experience;
-  } else {
-    console.warn("❌ Немає досвіду у Firestore");
-  }
-});
-
-</script>
-
 <template>
   <section class="about" id="about">
     <h2 class="about__title title2">{{ t('about.title') }}</h2>
@@ -43,7 +20,8 @@ onMounted(async () => {
         src="https://github-readme-stats.vercel.app/api/top-langs/?username=onikaChorba&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact"
         alt="status" class="statusSkill" />
       <div class="iconsSkills">
-        <img v-for="(el, index) in icons" :key="index" :src="el.src" :alt="el.alt" class="iconSkills" :title="el.alt" />
+        <img v-for="(el, index) in filteredExperience" :key="index" :src="el.src" :alt="el.alt" class="iconSkills"
+          :title="el.alt" />
       </div>
     </div>
 
@@ -58,6 +36,31 @@ onMounted(async () => {
     </a>
   </section>
 </template>
+
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import { icons } from '../../icons';
+import { ref, onMounted } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
+
+const { locale, t } = useI18n<{ locale: string; t: any }>();
+
+const experience = ref<any[]>([]);
+const selectedIcons = ['ts', 'js', 'react', 'redux', 'next', 'vue', 'html', 'css', 'scss', 'styledComponents', 'mui', 'wing', 'wb', 'api', 'git', 'gitLab', 'bitbuked', 'figma'];
+
+onMounted(async () => {
+  const refDoc = doc(db, "experience", "main");
+  const snap = await getDoc(refDoc);
+  if (snap.exists()) {
+    experience.value = snap.data().experience;
+  } else {
+    console.warn("❌ Немає досвіду у Firestore");
+  }
+});
+
+const filteredExperience = icons.filter(icon => selectedIcons.includes(icon.alt));
+</script>
 
 <style lang="scss" scoped>
 .about {
