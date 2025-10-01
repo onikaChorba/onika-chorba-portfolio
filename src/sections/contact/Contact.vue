@@ -8,8 +8,16 @@ const { t } = useI18n();
 <template>
   <section class="contact" id="contact">
     <h2 class="contact__title title2">{{ t('contact.contact') }}</h2>
-    <p class="text" v-html="t('contact.contactText')"></p>
-
+    <p class="text">
+      <i18n-t keypath="contact.contactText">
+        <template #resumeLink>
+          <a class="link" href="https://drive.google.com/file/d/1jdhA3vJxIkG1Xx1H1iss5eDB8JOkn7nk/view?usp=sharing"
+            target="_blank" rel="noreferrer">
+            <span>view or download</span>
+          </a>
+        </template>
+      </i18n-t>
+    </p>
     <div class="section">
       <Form />
     </div>
