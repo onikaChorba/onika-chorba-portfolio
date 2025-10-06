@@ -101,5 +101,43 @@ export default {
       }
     }
   }
+
+  @media (max-width: 768px) {
+    gap: 12px;
+    padding: 8px;
+
+    a {
+      width: 40px;
+      height: 40px;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        transform: translateX(2px);
+
+        img {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 8px;
+    padding: 6px;
+
+    a {
+      width: 36px;
+      height: 36px;
+
+      img {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
 }
 </style>
