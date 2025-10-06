@@ -123,3 +123,86 @@ span {
 .contact {
   min-height: 100vh;
 }
+
+@media (max-width: 768px) {
+  .mainContainer {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .text,
+  .text1 {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .strong {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .title2 {
+    font-size: 22px;
+    line-height: 26px;
+  }
+
+  .title3 {
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .section {
+    padding-left: 5%;
+    padding-top: 4%;
+    padding-bottom: 2%;
+    width: 100%;
+  }
+
+  .textLists {
+    width: 95%;
+    padding-top: 1%;
+  }
+
+  .textList::before {
+    border-width: 6px;
+    margin-left: -25px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .mainContainer {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+
+  .text,
+  .text1 {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .strong {
+    font-size: 19px;
+    line-height: 26px;
+  }
+
+  .title2 {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .title3 {
+    font-size: 19px;
+    line-height: 22px;
+  }
+
+  .section {
+    padding-left: 8%;
+    padding-top: 4%;
+    padding-bottom: 2.5%;
+  }
+
+  .textLists {
+    width: 92%;
+  }
+}

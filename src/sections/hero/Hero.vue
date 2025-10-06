@@ -130,4 +130,36 @@ onMounted(() => {
     transform: rotate(45deg) translate(20px, 20px);
   }
 }
+
+@media (max-width: 768px) {
+  .hero {
+    gap: 15px;
+  }
+
+  .hero__img {
+    width: 200px;
+  }
+
+  .arrow span {
+    width: 3vw;
+    height: 3vw;
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+    margin: -6px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .hero__img {
+    width: 250px;
+  }
+
+  .arrow span {
+    width: 2vw;
+    height: 2vw;
+    border-bottom-width: 5px;
+    border-right-width: 5px;
+    margin: -8px;
+  }
+}
 </style>
