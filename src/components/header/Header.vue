@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :class="{ hidden: isHidden }">
+  <header v-if="isLocaleLoaded" class="header" :class="{ hidden: isHidden }">
     <div class="header__logo logo" @click="scrollToSection('#home')">
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
@@ -71,6 +71,7 @@ const isDark = ref(false);
 const isMenuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
 const isHidden = ref(false);
+const isLocaleLoaded = ref(false);
 let lastScroll = 0;
 
 const headerNav = computed(() =>
@@ -99,10 +100,13 @@ const toggleTheme = () => {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
 };
 
-onMounted(() => {
+onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
+
+  await loadLocaleMessages(locale.value);
+  isLocaleLoaded.value = true;
 
   window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth <= 768;
