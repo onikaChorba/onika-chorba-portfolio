@@ -56,10 +56,10 @@ export function useCanvas(themeClassRef?: Ref<string>) {
         : ["#fff", "#fff", "#fff", "#fff"],
       radius: 1,
       maxCircle: width < 768 ? 50 : 80,
-      maxV: 0.5,
+      maxV: width < 768 ? 0.25 : 0.4,
       minRadius: 1.5,
       maxRadius: 3,
-      lineLength: width < 768 ? 100 : 150,
+      lineLength: width < 768 ? 70 : 150,
       circlesLife: 18,
     };
   };
@@ -82,7 +82,6 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     const reDrawBackground = () => {
-      if (!ctx) return;
       const rootStyles = getComputedStyle(document.body);
       const bgColor = rootStyles.getPropertyValue("--color-bg").trim();
       ctx.fillStyle = bgColor;
@@ -90,7 +89,6 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     const drawLines = () => {
-      if (!ctx) return;
       for (let i = 0; i < circles.length; i++) {
         for (let j = i + 1; j < circles.length; j++) {
           const x1 = circles[i].x;
