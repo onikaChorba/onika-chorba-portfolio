@@ -56,10 +56,10 @@ export function useCanvas(themeClassRef?: Ref<string>) {
         : ["#fff", "#fff", "#fff", "#fff"],
       radius: 1,
       maxCircle: width < 768 ? 50 : 80,
-      maxV: width < 768 ? 0.25 : 0.4,
+      maxV: 0.5,
       minRadius: 1.5,
       maxRadius: 3,
-      lineLength: width < 768 ? 70 : 150,
+      lineLength: width < 768 ? 100 : 150,
       circlesLife: 18,
     };
   };
@@ -76,15 +76,13 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     let animationFrameId: number;
 
     const resizeCanvas = () => {
-      if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      updateProperties();
     };
 
     const reDrawBackground = () => {
-      const rootStyles = getComputedStyle(document.body);
-      const bgColor = rootStyles.getPropertyValue("--color-bg").trim();
-      ctx.fillStyle = bgColor;
+      ctx.fillStyle = properties.value.bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
@@ -176,7 +174,8 @@ export function useCanvas(themeClassRef?: Ref<string>) {
             Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
           this.vY =
             Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
-          this.circlesLife = Math.random() * properties.value.circlesLife * 60;
+          this.circlesLife =
+            Math.random() * properties.value.circlesLife * 60;
           this.randomColor =
             properties.value.colors[
             Math.floor(Math.random() * properties.value.colors.length)
@@ -213,22 +212,14 @@ export function useCanvas(themeClassRef?: Ref<string>) {
       loop();
     };
 
-    const resizeAndAnimate = () => {
-      resizeCanvas();
-      animate();
-    };
+    resizeCanvas();
+    animate();
 
-    resizeAndAnimate();
-
-    window.addEventListener("resize", () => {
-      updateProperties();
-      resizeAndAnimate();
-    });
+    window.addEventListener("resize", resizeCanvas);
 
     if (themeClassRef) {
       watch(themeClassRef, () => {
         updateProperties();
-        resizeAndAnimate();
       });
     }
 
