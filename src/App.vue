@@ -21,12 +21,13 @@
     <AdminPage v-else-if="isAuthenticated && route.path.startsWith('/admin')" />
     <FrontPage v-else />
   </div>
+  <Footer />
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Header, Canvas } from "./components";
+import { Header, Canvas, Footer } from "./components";
 import { FrontPage, AdminPage } from './pages';
 
 const route = useRoute();

@@ -37,7 +37,6 @@ import { ref } from "vue";
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
 const form = ref(null);
 
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
@@ -45,7 +44,6 @@ const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
 const sendEmail = async (e) => {
   e.preventDefault();
-
   if (!form.value) return;
 
   const formData = new FormData(form.value);
@@ -61,10 +59,7 @@ const sendEmail = async (e) => {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: text,
-        }),
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text }),
       }
     );
 
@@ -83,92 +78,130 @@ const sendEmail = async (e) => {
 .form {
   max-width: 700px;
   margin: 0 auto;
+  padding: 1.5rem;
   box-shadow: 5px 2px 7px -3px var(--color-primary);
   border: 1px solid var(--color-primary);
-  padding: 2rem;
 
   &__label {
-    margin: 20px 0px 10px 0px;
+    margin: 10px 0 5px 0;
+    font-size: 16px;
   }
 
   &__input {
+    width: 100%;
     border: 1px solid var(--color-primary);
     background: var(--color-bg);
-    padding: 1rem;
+    padding: 0.8rem;
     color: var(--color-text);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 16px;
+    line-height: 22px;
     font-family: inherit;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     &::placeholder {
       opacity: 0.7;
-      font-weight: 400;
-      font-size: 20px;
-      line-height: 28px;
+      font-size: 16px;
+      line-height: 22px;
     }
 
     &:focus {
       outline: none;
       border-color: var(--color-primary);
-      box-shadow: 0 0 6px var(--color-primary);
+      box-shadow: 0 0 4px var(--color-primary);
     }
   }
 }
 
 .textarea {
-  min-height: 200px;
   width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 28px;
+  min-height: 120px;
+  padding: 0.8rem;
+  font-size: 16px;
+  line-height: 22px;
   font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
   &::placeholder {
-    opacity: 0.7;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   &:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 6px var(--color-primary);
+    box-shadow: 0 0 4px var(--color-primary);
   }
 }
 
 .buttonForm {
-  margin-top: 2rem;
+  margin-top: 1rem;
   display: flex;
   justify-content: center;
-  align-items: center;
 
   &__button {
     cursor: pointer;
-    width: 30%;
+    width: 60%;
+    min-width: 100px;
     border: none;
+    border-radius: 8px;
     background: var(--color-primary);
-    border-radius: 10px;
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
 
     &:hover {
       background: var(--color-btn-hover-bg);
       color: var(--color-btn-hover-text);
-      cursor: pointer;
     }
-  }
-
-  &__text {
-    font-weight: 600;
-    color: white;
-    margin: 0 auto;
   }
 }
 
-input {
-  width: 100%;
+/* --- адаптив --- */
+@media (max-width: 768px) {
+  .form {
+    padding: 1rem;
+  }
+
+  .form__input,
+  .textarea {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0.6rem;
+  }
+
+  .textarea {
+    min-height: 100px;
+  }
+
+  .buttonForm__button {
+    width: 70%;
+    padding: 0.3rem 0.5rem;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form {
+    padding: 0.8rem;
+  }
+
+  .form__input,
+  .textarea {
+    font-size: 13px;
+    line-height: 18px;
+    padding: 0.5rem;
+  }
+
+  .textarea {
+    min-height: 80px;
+  }
+
+  .buttonForm__button {
+    width: 80%;
+    padding: 0.25rem 0.5rem;
+    font-size: 13px;
+  }
 }
 </style>
