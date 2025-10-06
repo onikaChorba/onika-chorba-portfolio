@@ -15,12 +15,12 @@
         <li v-for="(el, index) in headerNav" :key="index">
           <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
             :class="{ 'header-nav-active': route.path === el.to }">
-            {{ t(el.text) }}
+            {{ t(el.textKey) }}
           </router-link>
 
           <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
             @click.prevent="scrollToSection(el.to)">
-            {{ t(el.text) }}
+            {{ t(el.textKey) }}
           </a>
         </li>
       </ul>
@@ -29,7 +29,9 @@
         <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
           {{ t('header.contactBtn') }}
         </button>
-        <button class="btn" @click.prevent="logout" v-else>Exit</button>
+        <button class="btn" @click.prevent="logout" v-else>
+          {{ t('header.exitBtn') }}
+        </button>
         <button class="btn-switch-theme" @click="toggleTheme">
           <img :src="isDark ? sunIcon : moonIcon" />
         </button>
@@ -43,7 +45,9 @@
       <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
         {{ t('header.contactBtn') }}
       </button>
-      <button class="btn" @click.prevent="logout" v-else>Exit</button>
+      <button class="btn" @click.prevent="logout" v-else>
+        {{ t('header.exitBtn') }}
+      </button>
       <button class="btn-switch-theme" @click="toggleTheme">
         <img :src="isDark ? sunIcon : moonIcon" />
       </button>
@@ -63,7 +67,7 @@ import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 
 const props = defineProps<{ isAdmin: boolean }>();
-const { t, locale } = useI18n();
+const { locale, t } = useI18n();
 const currentLocale = ref(locale.value);
 const route = useRoute();
 
@@ -75,19 +79,19 @@ const isLocaleLoaded = ref(false);
 let lastScroll = 0;
 
 const headerNav = computed(() =>
-  props.isAdmin && route.path.startsWith("/admin")
+  props.isAdmin && route.path.startsWith('/admin')
     ? [
-      { text: 'header.mainInfo', to: '/admin' },
-      { text: 'header.adminProjects', to: '/admin/projects' },
+      { textKey: 'header.mainInfo', to: '/admin' },
+      { textKey: 'header.adminProjects', to: '/admin/projects' },
     ]
     : [
-      { text: 'header.home', to: '#home' },
-      { text: 'header.about', to: '#about' },
-      { text: 'header.projects', to: '#projects' },
+      { textKey: 'header.home', to: '#home' },
+      { textKey: 'header.about', to: '#about' },
+      { textKey: 'header.projects', to: '#projects' },
     ]
 );
 
-const toggleMenu = () => isMenuOpen.value = !isMenuOpen.value;
+const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
 
 const applyTheme = (dark: boolean) => {
   document.body.classList.toggle('dark', dark);
