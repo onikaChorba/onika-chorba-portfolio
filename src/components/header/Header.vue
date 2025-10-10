@@ -67,15 +67,16 @@ import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 
 const props = defineProps<{ isAdmin: boolean }>();
-const { locale, t } = useI18n();
-const currentLocale = ref(locale.value);
 const route = useRoute();
 
-const isDark = ref(false);
+const { locale, t, setLocaleMessage } = useI18n();
+const currentLocale = ref(locale.value);
+const isLocaleLoaded = ref(false);
+
+const isDark = ref(true);
 const isMenuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
 const isHidden = ref(false);
-const isLocaleLoaded = ref(false);
 let lastScroll = 0;
 
 const headerNav = computed(() =>
@@ -104,34 +105,6 @@ const toggleTheme = () => {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
 };
 
-onMounted(async () => {
-  const savedTheme = localStorage.getItem('theme');
-  isDark.value = savedTheme ? savedTheme === 'dark' : true;
-  applyTheme(isDark.value);
-
-  await loadLocaleMessages(locale.value);
-  isLocaleLoaded.value = true;
-
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth <= 768;
-    if (!isMobile.value) isMenuOpen.value = false;
-  });
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    isHidden.value = currentScroll > lastScroll && currentScroll > 100;
-    lastScroll = currentScroll;
-  });
-});
-
-const switchLanguage = async () => {
-  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
-  await loadLocaleMessages(newLocale);
-  locale.value = newLocale;
-  currentLocale.value = newLocale;
-};
-
-const activeSection = ref('#home');
 const scrollToSection = (id: string) => {
   const section = document.querySelector(id);
   if (section) {
@@ -146,15 +119,31 @@ const logout = () => {
   localStorage.removeItem('isAuthenticated');
   window.location.href = '/admin';
 };
+
+const switchLanguage = async () => {
+  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
+  try {
+    const messages = await loadLocaleMessages(newLocale);
+    setLocaleMessage(newLocale, messages);
+    locale.value = newLocale;
+    currentLocale.value = newLocale;
+  } catch (err) {
+    console.error('Locale load error:', err);
+  }
+};
+
+const activeSection = ref('#home');
+
 onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
 
   try {
-    const data = await loadLocaleMessages(locale.value);
-    console.log('Locale data loaded:', data);
+    const messages = await loadLocaleMessages(locale.value);
+    setLocaleMessage(locale.value, messages);
     isLocaleLoaded.value = true;
+    console.log('Locale data loaded:', messages);
   } catch (err) {
     console.error('Locale load error:', err);
   }
@@ -164,14 +153,12 @@ onMounted(async () => {
     if (!isMobile.value) isMenuOpen.value = false;
   });
 
-  let lastScroll = 0;
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
     lastScroll = currentScroll;
   });
 });
-
 </script>
 
 <style scoped lang="scss">
