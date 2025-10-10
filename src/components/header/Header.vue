@@ -1,5 +1,5 @@
 <template>
-  <header v-if="isLocaleLoaded" class="header" :class="{ hidden: isHidden }">
+  <header class="header" :class="{ hidden: isHidden }">
     <div class="header__logo logo" @click="scrollToSection('#home')">
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
@@ -57,7 +57,6 @@
     </div>
   </header>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -69,9 +68,8 @@ import { loadLocaleMessages } from '../../locales';
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
 
-const { locale, t, setLocaleMessage, getLocaleMessage } = useI18n();
+const { locale, t, setLocaleMessage } = useI18n({ useScope: 'global' });
 const currentLocale = ref(locale.value);
-const isLocaleLoaded = ref(false);
 
 const isDark = ref(true);
 const isMenuOpen = ref(false);
@@ -93,12 +91,10 @@ const headerNav = computed(() =>
 );
 
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
-
 const applyTheme = (dark: boolean) => {
   document.body.classList.toggle('dark', dark);
   document.body.classList.toggle('light', !dark);
 };
-
 const toggleTheme = () => {
   isDark.value = !isDark.value;
   applyTheme(isDark.value);
@@ -120,35 +116,24 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
+// зміна мови
 const switchLanguage = async () => {
-  const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
-  try {
-    if (!Object.keys(getLocaleMessage(newLocale)).length) {
-      const messages = await loadLocaleMessages(newLocale);
-      setLocaleMessage(newLocale, messages);
-    }
-    locale.value = newLocale;
-    currentLocale.value = newLocale;
-  } catch (err) {
-    console.error('Locale load error:', err);
-  }
+  const newLocale = locale.value === 'uk' ? 'en' : 'uk';
+  const messages = await loadLocaleMessages(newLocale);
+
+  // тут ми оновлюємо локалі через setLocaleMessage
+  setLocaleMessage(newLocale, messages);
+
+  // змінюємо поточну мову
+  locale.value = newLocale;
 };
 
 const activeSection = ref('#home');
 
-onMounted(async () => {
+onMounted(() => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
-
-  try {
-    const messages = await loadLocaleMessages(locale.value);
-    setLocaleMessage(locale.value, messages);
-    isLocaleLoaded.value = true;
-    console.log('Locale data loaded:', messages);
-  } catch (err) {
-    console.error('Locale load error:', err);
-  }
 
   window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth <= 768;
