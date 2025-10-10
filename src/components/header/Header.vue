@@ -69,7 +69,7 @@ import { loadLocaleMessages } from '../../locales';
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
 
-const { locale, t, setLocaleMessage } = useI18n();
+const { locale, t, setLocaleMessage, getLocaleMessage } = useI18n();
 const currentLocale = ref(locale.value);
 const isLocaleLoaded = ref(false);
 
@@ -123,8 +123,11 @@ const logout = () => {
 const switchLanguage = async () => {
   const newLocale = currentLocale.value === 'uk' ? 'en' : 'uk';
   try {
-    const messages = await loadLocaleMessages(newLocale);
-    setLocaleMessage(newLocale, messages);
+    // Завантажуємо лише якщо немає локалі
+    if (!Object.keys(getLocaleMessage(newLocale)).length) {
+      const messages = await loadLocaleMessages(newLocale);
+      setLocaleMessage(newLocale, messages);
+    }
     locale.value = newLocale;
     currentLocale.value = newLocale;
   } catch (err) {
@@ -135,10 +138,12 @@ const switchLanguage = async () => {
 const activeSection = ref('#home');
 
 onMounted(async () => {
+  // Тема
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
 
+  // Завантаження локалі
   try {
     const messages = await loadLocaleMessages(locale.value);
     setLocaleMessage(locale.value, messages);
@@ -148,11 +153,13 @@ onMounted(async () => {
     console.error('Locale load error:', err);
   }
 
+  // Resize
   window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth <= 768;
     if (!isMobile.value) isMenuOpen.value = false;
   });
 
+  // Scroll
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
