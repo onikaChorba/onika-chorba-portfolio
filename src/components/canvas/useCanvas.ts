@@ -1,4 +1,4 @@
-import { ref, onMounted, onBeforeUnmount, watch, Ref } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, Ref, nextTick } from "vue";
 
 interface Properties {
   bg: string;
@@ -28,8 +28,8 @@ interface Circle {
 export function useCanvas(themeClassRef?: Ref<string>) {
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const properties = ref<Properties>({
-    bg: "#000",
-    colors: ["#fff", "#f00", "grey", "maroon"],
+    bg: "#fff",
+    colors: ["#000"],
     radius: 1,
     maxCircle: 80,
     maxV: 0.5,
@@ -39,7 +39,8 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     circlesLife: 18,
   });
 
-  const updateProperties = () => {
+  const updateProperties = async () => {
+    await nextTick();
     const rootStyles = getComputedStyle(document.body);
     const isLight = document.body.classList.contains("light");
     const width = window.innerWidth;
@@ -53,7 +54,12 @@ export function useCanvas(themeClassRef?: Ref<string>) {
           "#DED9DB",
           "#FFFEFF",
         ]
-        : ["#fff", "#fff", "#fff", "#fff"],
+        : [
+          rootStyles.getPropertyValue("--color-text").trim(),
+          rootStyles.getPropertyValue("--color-primary").trim(),
+          "#888",
+          "#fff",
+        ],
       radius: 1,
       maxCircle: width < 768 ? 50 : 80,
       maxV: 0.5,
@@ -65,8 +71,6 @@ export function useCanvas(themeClassRef?: Ref<string>) {
   };
 
   onMounted(() => {
-    updateProperties();
-
     const canvas = canvasRef.value!;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
@@ -99,11 +103,10 @@ export function useCanvas(themeClassRef?: Ref<string>) {
 
           if (length < properties.value.lineLength) {
             const opacity = 1 - length / properties.value.lineLength;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2.5;
             ctx.strokeStyle = isLight
-              ? `rgba(255, 254, 255, ${opacity})`
-              : `rgba(139, 71, 98, ${opacity})`;
-
+              ? `rgba(255,255,255,${opacity})`
+              : `rgba(139,71,98,${opacity})`;
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
@@ -171,9 +174,11 @@ export function useCanvas(themeClassRef?: Ref<string>) {
           this.x = Math.random() * canvas.width;
           this.y = Math.random() * canvas.height;
           this.vX =
-            Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
+            Math.random() * (properties.value.maxV * 2) -
+            properties.value.maxV;
           this.vY =
-            Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
+            Math.random() * (properties.value.maxV * 2) -
+            properties.value.maxV;
           this.circlesLife =
             Math.random() * properties.value.circlesLife * 60;
           this.randomColor =
@@ -213,9 +218,12 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     resizeCanvas();
-    animate();
+    updateProperties().then(animate);
 
     window.addEventListener("resize", resizeCanvas);
+
+    const observer = new MutationObserver(() => updateProperties());
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
     if (themeClassRef) {
       watch(themeClassRef, () => {
@@ -226,6 +234,7 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     onBeforeUnmount(() => {
       window.removeEventListener("resize", resizeCanvas);
       cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
     });
   });
 
