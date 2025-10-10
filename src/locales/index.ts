@@ -8,14 +8,19 @@ const messages: Record<string, Record<string, string>> = {
 };
 
 export const loadLocaleMessages = async (locale: string) => {
-  const ref = doc(db, "locales", locale);
-  const snap = await getDoc(ref);
+  try {
+    const ref = doc(db, "locales", locale);
+    const snap = await getDoc(ref);
 
-  if (snap.exists()) {
-    messages[locale] = snap.data() as Record<string, string>;
-  } else {
-    console.warn(`No translations found for ${locale}`);
+    if (snap.exists()) {
+      messages[locale] = snap.data() as Record<string, string>;
+    } else {
+      console.warn(`⚠️ No translations found for "${locale}"`);
+    }
+  } catch (e) {
+    console.error("Error loading locale messages:", e);
   }
+
   return messages[locale];
 };
 
