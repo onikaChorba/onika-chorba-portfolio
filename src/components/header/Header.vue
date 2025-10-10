@@ -159,6 +159,7 @@ const logout = () => {
   padding: 0 20px;
   box-shadow: var(--box-shadow);
   z-index: 1000;
+  background: var(--color-bg);
   backdrop-filter: blur(10px);
   transition: transform 0.4s ease, background 0.4s ease;
 
