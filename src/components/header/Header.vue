@@ -146,6 +146,17 @@ const logout = () => {
   localStorage.removeItem('isAuthenticated');
   window.location.href = '/admin';
 };
+
+onMounted(async () => {
+  try {
+    const data = await loadLocaleMessages(locale.value);
+    console.log('Locale data loaded:', data);
+    isLocaleLoaded.value = true;
+  } catch (err) {
+    console.error('Locale load error:', err);
+  }
+});
+
 </script>
 
 <style scoped lang="scss">
