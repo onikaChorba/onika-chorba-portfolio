@@ -146,8 +146,11 @@ const logout = () => {
   localStorage.removeItem('isAuthenticated');
   window.location.href = '/admin';
 };
-
 onMounted(async () => {
+  const savedTheme = localStorage.getItem('theme');
+  isDark.value = savedTheme ? savedTheme === 'dark' : true;
+  applyTheme(isDark.value);
+
   try {
     const data = await loadLocaleMessages(locale.value);
     console.log('Locale data loaded:', data);
@@ -155,6 +158,18 @@ onMounted(async () => {
   } catch (err) {
     console.error('Locale load error:', err);
   }
+
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth <= 768;
+    if (!isMobile.value) isMenuOpen.value = false;
+  });
+
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    isHidden.value = currentScroll > lastScroll && currentScroll > 100;
+    lastScroll = currentScroll;
+  });
 });
 
 </script>
