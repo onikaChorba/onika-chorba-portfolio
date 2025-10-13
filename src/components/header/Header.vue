@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :class="{ hidden: isHidden }">
+  <header class="header" :class="{ hidden: isHidden }" v-if="translationsLoaded">
     <div class="header__logo logo" @click="scrollToSection('#home')">
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
@@ -57,6 +57,7 @@
     </div>
   </header>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -79,6 +80,8 @@ const isMobile = ref(window.innerWidth <= 768);
 const isHidden = ref(false);
 let lastScroll = 0;
 
+const translationsLoaded = ref(false); // чекаємо переклади
+
 const headerNav = computed(() =>
   props.isAdmin && route.path.startsWith('/admin')
     ? [
@@ -93,6 +96,7 @@ const headerNav = computed(() =>
 );
 
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
+
 const applyTheme = (dark: boolean) => {
   document.body.classList.toggle('dark', dark);
   document.body.classList.toggle('light', !dark);
@@ -122,17 +126,15 @@ const logout = () => {
 const switchLanguage = async () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
   const messages = await loadLocaleMessages(newLocale);
-
-  // тут ми оновлюємо локалі через setLocaleMessage
   setLocaleMessage(newLocale, messages);
-
-  // змінюємо поточну мову
   locale.value = newLocale;
+  currentLocale.value = newLocale;
 };
 
 const activeSection = ref('#home');
-const headerLoaded = ref(false);
+
 onMounted(async () => {
+  // тема
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
@@ -148,6 +150,7 @@ onMounted(async () => {
     lastScroll = currentScroll;
   });
 
+  // завантажуємо переклади з Firestore
   const docRef = doc(db, 'about', 'header');
   const docSnap = await getDoc(docRef);
 
@@ -157,19 +160,18 @@ onMounted(async () => {
     setLocaleMessage('en', {
       header: Object.fromEntries(
         Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
-      )
+      ),
     });
 
     setLocaleMessage('uk', {
       header: Object.fromEntries(
         Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
-      )
+      ),
     });
   }
 
-  headerLoaded.value = true;
+  translationsLoaded.value = true; // тепер рендеримо компонент
 
-  // Логування тільки після того, як переклади підвантажені
   console.log('Header translation test:', t('header.home'));
 });
 </script>
