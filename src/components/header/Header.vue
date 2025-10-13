@@ -15,7 +15,7 @@
         <li v-for="(el, index) in headerNav" :key="index">
           <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
             :class="{ 'header-nav-active': route.path === el.to }">
-            {{ t(el.textKey) }}
+            {{ $t(el.textKey) }}
           </router-link>
 
           <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
