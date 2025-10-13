@@ -131,7 +131,7 @@ const switchLanguage = async () => {
 };
 
 const activeSection = ref('#home');
-const headerLoaded = ref(false);
+
 onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
@@ -147,34 +147,6 @@ onMounted(async () => {
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
     lastScroll = currentScroll;
   });
-
-  const docRef = doc(db, 'about', 'header');
-  const docSnap = await getDoc(docRef);
-
-  console.log('✅ Firestore connected:', docSnap.exists());
-  if (docSnap.exists()) {
-    const headerTranslations = docSnap.data();
-    console.log('📄 Firestore data:', headerTranslations);
-
-    setLocaleMessage('en', {
-      header: Object.fromEntries(
-        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en?.trim?.() || val["en "]])
-      )
-    });
-
-    setLocaleMessage('uk', {
-      header: Object.fromEntries(
-        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
-      )
-    });
-
-    console.log('🈶 i18n messages after set:', {
-      en: t('header.home'),
-      uk: t('header.home')
-    });
-  } else {
-    console.warn('⚠️ Header document not found in Firestore');
-  }
 });
 </script>
 
