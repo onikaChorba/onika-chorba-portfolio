@@ -64,6 +64,8 @@ import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
@@ -129,7 +131,8 @@ const switchLanguage = async () => {
 };
 
 const activeSection = ref('#home');
-onMounted(() => {
+const headerLoaded = ref(false);
+onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
@@ -145,6 +148,28 @@ onMounted(() => {
     lastScroll = currentScroll;
   });
 
+  const docRef = doc(db, 'about', 'header');
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const headerTranslations = docSnap.data();
+
+    setLocaleMessage('en', {
+      header: Object.fromEntries(
+        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
+      )
+    });
+
+    setLocaleMessage('uk', {
+      header: Object.fromEntries(
+        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
+      )
+    });
+  }
+
+  headerLoaded.value = true;
+
+  // Логування тільки після того, як переклади підвантажені
   console.log('Header translation test:', t('header.home'));
 });
 </script>
