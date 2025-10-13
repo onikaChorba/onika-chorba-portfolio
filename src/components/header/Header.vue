@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :class="{ hidden: isHidden }">
+  <header class="header" v-if="headerLoaded" :class="{ hidden: isHidden }">
     <div class="header__logo logo" @click="scrollToSection('#home')">
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
@@ -127,37 +127,36 @@ const switchLanguage = () => {
 // активний розділ
 const activeSection = ref('#home');
 
+const headerLoaded = ref(false);
+
 onMounted(async () => {
-  // 🔹 Завантаження перекладів хедера з Firestore
-  const docRef = doc(db, 'about', 'header');
-  const docSnap = await getDoc(docRef);
+  try {
+    const docRef = doc(db, 'about', 'header');
+    const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
-    const headerTranslations = docSnap.data();
+    if (docSnap.exists()) {
+      const headerTranslations = docSnap.data();
 
-    setLocaleMessage('en', {
-      header: Object.fromEntries(
-        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
-      )
-    });
+      setLocaleMessage('en', {
+        header: Object.fromEntries(
+          Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
+        )
+      });
 
-    setLocaleMessage('uk', {
-      header: Object.fromEntries(
-        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
-      )
-    });
+      setLocaleMessage('uk', {
+        header: Object.fromEntries(
+          Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
+        )
+      });
+    }
+  } catch (err) {
+    // для дебагу на проді можна використати alert()
+    alert('Помилка завантаження хедера з Firestore');
+  } finally {
+    headerLoaded.value = true;
   }
-
-  // 🔹 Тема
-  const savedTheme = localStorage.getItem('theme');
-  isDark.value = savedTheme ? savedTheme === 'dark' : true;
-  applyTheme(isDark.value);
-
-  // 🔹 Мова
-  const savedLocale = localStorage.getItem('locale') || locale.value;
-  locale.value = savedLocale;
-  currentLocale.value = savedLocale;
 });
+
 
 defineExpose({ switchLanguage });
 </script>
