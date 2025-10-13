@@ -11,19 +11,17 @@
     </button>
 
     <nav class="header__nav" :class="{ open: isMenuOpen }">
-      <ul class="header-navs">
-        <li v-for="el in headerNav" :key="el.to">
-          <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
-            :class="{ 'header-nav-active': route.path === el.to }">
-            {{ t(el.textKey) }}
-          </router-link>
+      <template v-for="el in headerNav" :key="el.to">
+        <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
+          :class="{ 'header-nav-active': route.path === el.to }">
+          {{ t(el.textKey) }}
+        </router-link>
 
-          <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
-            @click.prevent="scrollToSection(el.to)">
-            {{ t(el.textKey) }}
-          </a>
-        </li>
-      </ul>
+        <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
+          @click.prevent="scrollToSection(el.to)">
+          {{ t(el.textKey) }}
+        </a>
+      </template>
 
       <div class="btn-wrapper-mobile">
         <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
@@ -57,14 +55,14 @@
     </div>
   </header>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import moonIcon from '../../assets/icons/moon.svg';
-import { loadLocaleMessages } from '../../locales';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
@@ -76,7 +74,6 @@ const isDark = ref(true);
 const isMenuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
 const isHidden = ref(false);
-let lastScroll = 0;
 
 const headerNav = computed(() =>
   props.isAdmin && route.path.startsWith('/admin')
@@ -92,10 +89,12 @@ const headerNav = computed(() =>
 );
 
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
+
 const applyTheme = (dark: boolean) => {
   document.body.classList.toggle('dark', dark);
   document.body.classList.toggle('light', !dark);
 };
+
 const toggleTheme = () => {
   isDark.value = !isDark.value;
   applyTheme(isDark.value);
@@ -117,33 +116,53 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
-const switchLanguage = async () => {
+// 🔹 Зміна мови
+const switchLanguage = () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
-  const messages = await loadLocaleMessages(newLocale);
-  setLocaleMessage(newLocale, messages);
   locale.value = newLocale;
   currentLocale.value = newLocale;
+  localStorage.setItem('locale', newLocale);
 };
 
+// активний розділ
 const activeSection = ref('#home');
 
-onMounted(() => {
+onMounted(async () => {
+  // 🔹 Завантаження перекладів хедера з Firestore
+  const docRef = doc(db, 'about', 'header');
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const headerTranslations = docSnap.data();
+
+    setLocaleMessage('en', {
+      header: Object.fromEntries(
+        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
+      )
+    });
+
+    setLocaleMessage('uk', {
+      header: Object.fromEntries(
+        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
+      )
+    });
+  }
+
+  // 🔹 Тема
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
 
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth <= 768;
-    if (!isMobile.value) isMenuOpen.value = false;
-  });
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    isHidden.value = currentScroll > lastScroll && currentScroll > 100;
-    lastScroll = currentScroll;
-  });
+  // 🔹 Мова
+  const savedLocale = localStorage.getItem('locale') || locale.value;
+  locale.value = savedLocale;
+  currentLocale.value = savedLocale;
 });
+
+defineExpose({ switchLanguage });
 </script>
+
+
 
 <style scoped lang="scss">
 .header {
