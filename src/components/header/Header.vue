@@ -129,7 +129,6 @@ const switchLanguage = async () => {
 };
 
 const activeSection = ref('#home');
-
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
@@ -145,6 +144,8 @@ onMounted(() => {
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
     lastScroll = currentScroll;
   });
+
+  console.log('Header translation test:', t('header.home'));
 });
 </script>
 
