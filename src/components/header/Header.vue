@@ -12,7 +12,7 @@
 
     <nav class="header__nav" :class="{ open: isMenuOpen }">
       <ul class="header-navs">
-        <li v-for="(el, index) in headerNav" :key="index">
+        <li v-for="el in headerNav" :key="el.to">
           <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
             :class="{ 'header-nav-active': route.path === el.to }">
             {{ t(el.textKey) }}
@@ -57,6 +57,7 @@
     </div>
   </header>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -116,16 +117,12 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
-// зміна мови
 const switchLanguage = async () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
   const messages = await loadLocaleMessages(newLocale);
-
-  // тут ми оновлюємо локалі через setLocaleMessage
   setLocaleMessage(newLocale, messages);
-
-  // змінюємо поточну мову
   locale.value = newLocale;
+  currentLocale.value = newLocale;
 };
 
 const activeSection = ref('#home');
