@@ -158,7 +158,7 @@ onMounted(async () => {
 
     setLocaleMessage('en', {
       header: Object.fromEntries(
-        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en])
+        Object.entries(headerTranslations).map(([key, val]: any) => [key, val.en?.trim?.() || val["en "]])
       )
     });
 
