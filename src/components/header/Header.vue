@@ -151,8 +151,10 @@ onMounted(async () => {
   const docRef = doc(db, 'about', 'header');
   const docSnap = await getDoc(docRef);
 
+  console.log('✅ Firestore connected:', docSnap.exists());
   if (docSnap.exists()) {
     const headerTranslations = docSnap.data();
+    console.log('📄 Firestore data:', headerTranslations);
 
     setLocaleMessage('en', {
       header: Object.fromEntries(
@@ -165,12 +167,14 @@ onMounted(async () => {
         Object.entries(headerTranslations).map(([key, val]: any) => [key, val.uk])
       )
     });
+
+    console.log('🈶 i18n messages after set:', {
+      en: t('header.home'),
+      uk: t('header.home')
+    });
+  } else {
+    console.warn('⚠️ Header document not found in Firestore');
   }
-
-  headerLoaded.value = true;
-
-  // Логування тільки після того, як переклади підвантажені
-  console.log('Header translation test:', t('header.home'));
 });
 </script>
 
