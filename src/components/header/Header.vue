@@ -27,7 +27,7 @@
 
       <div class="btn-wrapper-mobile">
         <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
-          {{ headerTranslations.contactBtn || t('header.contactBtn') }}
+          {{ headerTranslations['header.contactBtn'] || t('header.contactBtn') }}
         </button>
         <button class="btn" @click.prevent="logout" v-else>
           {{ headerTranslations.exitBtn || t('header.exitBtn') }}
@@ -43,7 +43,7 @@
 
     <div class="btn-wrapper" v-if="!isMobile">
       <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
-        {{ headerTranslations.contactBtn || t('header.contactBtn') }}
+        {{ headerTranslations['header.contactBtn'] || t('header.contactBtn') }}
       </button>
       <button class="btn" @click.prevent="logout" v-else>
         {{ headerTranslations.exitBtn || t('header.exitBtn') }}
