@@ -9,16 +9,16 @@ import { loadLocaleMessages } from './locales';
 async function bootstrap() {
   const defaultLocale = 'en';
 
-  // завантажуємо локалі до монтування
-  const messages = await loadLocaleMessages(defaultLocale);
+  const messages = {
+    uk: await loadLocaleMessages('uk'),
+    en: await loadLocaleMessages('en'),
+  };
 
   const i18n = createI18n({
     legacy: false,
     locale: defaultLocale,
     fallbackLocale: 'en',
-    messages: {
-      [defaultLocale]: messages
-    }
+    messages,
   });
 
   const app = createApp(App);

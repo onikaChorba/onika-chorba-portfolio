@@ -64,8 +64,6 @@ import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase.config';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
