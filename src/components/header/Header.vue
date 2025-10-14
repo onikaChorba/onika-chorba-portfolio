@@ -64,8 +64,6 @@ import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase.config';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
@@ -118,15 +116,12 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
-// зміна мови
 const switchLanguage = async () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
   const messages = await loadLocaleMessages(newLocale);
 
-  // тут ми оновлюємо локалі через setLocaleMessage
   setLocaleMessage(newLocale, messages);
 
-  // змінюємо поточну мову
   locale.value = newLocale;
 };
 
