@@ -2,7 +2,7 @@
   <section class="about" id="about">
     <h2 class="about__title title2">{{ aboutTranslations.title || t('about.title') }}</h2>
     <p class="text about__text">{{ aboutTranslations.text1 || t('about.text1') }}</p>
-    <p class="text about__text">{{ aboutTranslations.text2 t('about.text2') }}</p>
+    <p class="text about__text">{{ aboutTranslations.text2 || t('about.text2') }}</p>
 
     <h2 class="about__title title3">{{ aboutTranslations.journeyTitle || t('about.journeyTitle') }}</h2>
 
