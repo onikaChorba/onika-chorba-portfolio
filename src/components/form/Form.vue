@@ -2,37 +2,37 @@
   <form ref="form" class="form" id="form">
     <div class="name">
       <label class="text1" for="name">
-        <p class="form__label">{{ t('contact.name') }}</p>
+        <p class="form__label">{{ contactTranslations.name || t('contact.name') }}</p>
       </label>
-      <input type="text" id="name" name="user_name" class="form__input" :placeholder="t('contact.enterYourName')"
-        required />
+      <input type="text" id="name" name="user_name" class="form__input"
+        :placeholder="contactTranslations.enterYourName || t('contact.enterYourName')" required />
     </div>
 
     <div class="email">
       <label class="text1" for="email">
-        <p class="form__label">{{ t('contact.email') }}</p>
+        <p class="form__label">{{ contactTranslations.email || t('contact.email') }}</p>
       </label>
-      <input type="email" id="email" name="user_email" class="form__input" :placeholder="t('contact.enterYourEmail')"
-        required />
+      <input type="email" id="email" name="user_email" class="form__input"
+        :placeholder="contactTranslations.enterYourEmail || t('contact.enterYourEmail')" required />
     </div>
 
     <div class="message">
       <label class="text1" for="message">
-        <p class="form__label">{{ t('contact.message') }}</p>
+        <p class="form__label">{{ contactTranslations.message || t('contact.message') }}</p>
       </label>
       <textarea class="form__input textarea text1" id="message" name="message"
-        :placeholder="t('contact.enterYourMessage')" required></textarea>
+        :placeholder="contactTranslations.enterYourMessage || t('contact.enterYourMessage')" required></textarea>
     </div>
 
     <div class="buttonForm">
       <button type="submit" class="buttonForm__button" @click="sendEmail">
-        <span class="buttonForm__text text">{{ t('contact.submit') }}</span>
+        <span class="buttonForm__text text">{{ contactTranslations.submit || t('contact.submit') }}</span>
       </button>
     </div>
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from 'vue-i18n';
 
@@ -42,7 +42,7 @@ const form = ref(null);
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
-const sendEmail = async (e) => {
+const sendEmail = async (e: any) => {
   e.preventDefault();
   if (!form.value) return;
 
@@ -66,12 +66,17 @@ const sendEmail = async (e) => {
     if (!response.ok) throw new Error("Telegram API error");
 
     alert("Message sent successfully!");
+    //@ts-ignore
     form.value.reset();
   } catch (error) {
     console.error(error);
     alert("Failed to send message.");
   }
 };
+
+defineProps<{
+  contactTranslations: Record<string, string>
+}>();
 </script>
 
 <style scoped lang="scss">

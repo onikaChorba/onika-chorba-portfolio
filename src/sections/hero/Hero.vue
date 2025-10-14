@@ -4,15 +4,16 @@
 
     <div class="title">
       <h1 className="hero__title1 appear">
-        <span className="hero__span">{{ t('hero.name') }}</span> {{ t('hero.surname') }}
+        <span className="hero__span">{{ heroTranslations.name || t('hero.name') }}</span> {{ heroTranslations.surname ||
+          t('hero.surname') }}
       </h1>
       <h3 className="hero__title2 title2 appear">
-        {{ t('hero.title2') }}
+        {{ heroTranslations.title2 || t('hero.title2') }}
       </h3>
     </div>
 
     <p className="hero__text text appear">
-      {{ t('hero.text') }}
+      {{ heroTranslations.text || t('hero.text') }}
     </p>
 
     <button @click="scrollToAbout" class="arrow appear">
@@ -23,22 +24,48 @@
   </div>
 </template>
 
-<script setup lang="js">
-import { onMounted } from 'vue';
+<script setup lang="ts">
+import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { ref, onMounted } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
 
-const { t } = useI18n();
+const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
+const heroTranslations = ref<Record<string, string>>({});
 
 const scrollToAbout = () => {
   document.getElementById('About')?.scrollIntoView({ behavior: 'smooth' });
 };
 
-onMounted(() => {
+onMounted(async () => {
   const elements = document.querySelectorAll('.appear');
   elements.forEach((el, idx) => {
+    //@ts-ignore
     el.style.transitionDelay = `${idx * 0.2}s`;
     el.classList.add('visible');
   });
+
+  const heroDoc = doc(db, "locales", locale.value);
+  const heroSnap = await getDoc(heroDoc);
+
+  if (heroSnap.exists()) {
+    const messages = heroSnap.data();
+    heroTranslations.value = messages.hero || {};
+    setLocaleMessage(locale.value, messages);
+  } else {
+    console.warn("❌ Немає перекладів для about у Firestore");
+  }
+});
+
+watch(locale, async (newLocale) => {
+  const heroDoc = doc(db, "locales", newLocale);
+  const heroSnap = await getDoc(heroDoc);
+  if (heroSnap.exists()) {
+    const messages = heroSnap.data();
+    heroTranslations.value = messages.hero || {};
+    setLocaleMessage(newLocale, messages);
+  }
 });
 </script>
 

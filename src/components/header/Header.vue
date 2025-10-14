@@ -61,12 +61,12 @@
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
 import sunIcon from '../../assets/icons/sun.svg';
 import { doc, getDoc } from 'firebase/firestore';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 import { db } from '../../firebase/firebase.config';
-import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
@@ -127,11 +127,24 @@ const switchLanguage = async () => {
 };
 
 const activeSection = ref('#home');
+
 const headerTranslations = ref<Record<string, string>>({});
+
+const transformHeaderKeys = (messages: Record<string, any>) => {
+  const transformed: Record<string, string> = {};
+  if (messages?.header) {
+    for (const key in messages.header) {
+      transformed[`header.${key}`] = messages.header[key];
+    }
+  }
+  return transformed;
+};
+
 onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
+
   const headerDoc = doc(db, "locales", locale.value);
   const headerSnap = await getDoc(headerDoc);
 
@@ -145,12 +158,13 @@ onMounted(async () => {
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
     lastScroll = currentScroll;
   });
+
   if (headerSnap.exists()) {
     const messages = headerSnap.data();
-    headerTranslations.value = messages?.header || {};
+    headerTranslations.value = transformHeaderKeys(messages);
     setLocaleMessage(locale.value, messages || {});
   } else {
-    console.warn("❌ Немає перекладів для about у Firestore");
+    console.warn("❌ Немає перекладів для header у Firestore");
   }
 });
 
@@ -159,10 +173,11 @@ watch(locale, async (newLocale) => {
   const headerSnap = await getDoc(headerDoc);
   if (headerSnap.exists()) {
     const messages = headerSnap.data();
-    headerTranslations.value = messages.about || {};
+    headerTranslations.value = transformHeaderKeys(messages);
     setLocaleMessage(newLocale, messages);
   }
 });
+
 </script>
 
 <style scoped lang="scss">

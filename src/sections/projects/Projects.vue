@@ -1,11 +1,11 @@
 <template>
   <div class="projects" id="projects">
-    <h2 class="projects__title title2">{{ t('projects.projects') }}</h2>
-    <p class="text">{{ t('projects.about') }}</p>
+    <h2 class="projects__title title2">{{ projectsTranslations.projects || t('projects.projects') }}</h2>
+    <p class="text">{{ projectsTranslations.about || t('projects.about') }}</p>
 
     <div class="filters">
       <button @click="setFilter(null)" :class="{ active: activeFilter === null }">
-        {{ t('projects.all') }}
+        {{ projectsTranslations.all || t('projects.all') }}
       </button>
       <button v-for="tag in allTags" :key="tag" @click="setFilter(tag)" :class="{ active: activeFilter === tag }">
         {{ tag }}
@@ -19,15 +19,17 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, computed } from "vue";
 import { Project } from "../../components";
+import { ref, onMounted, computed } from "vue";
 import { db } from "../../firebase/firebase.config";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, getDoc } from "firebase/firestore";
 
-const { t } = useI18n();
+const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 const projects = ref<any[]>([]);
 const activeFilter = ref<string | null>(null);
+const projectsTranslations = ref<Record<string, string>>({});
 
 onMounted(async () => {
   const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
@@ -36,6 +38,17 @@ onMounted(async () => {
     id: doc.id,
     ...doc.data(),
   }));
+
+  const projectsDoc = doc(db, "locales", locale.value);
+  const projectsSnap = await getDoc(projectsDoc);
+
+  if (projectsSnap.exists()) {
+    const messages = projectsSnap.data();
+    projectsTranslations.value = messages.projects || {};
+    setLocaleMessage(locale.value, messages);
+  } else {
+    console.warn("❌ Немає перекладів для about у Firestore");
+  }
 });
 
 const allTags = computed(() => {
@@ -56,6 +69,16 @@ const filteredProjects = computed(() => {
 function setFilter(tag: string | null) {
   activeFilter.value = tag;
 }
+
+watch(locale, async (newLocale) => {
+  const projectsDoc = doc(db, "locales", newLocale);
+  const projectsSnap = await getDoc(projectsDoc);
+  if (projectsSnap.exists()) {
+    const messages = projectsSnap.data();
+    projectsTranslations.value = messages.projects || {};
+    setLocaleMessage(newLocale, messages);
+  }
+});
 </script>
 
 <style scoped lang="scss">
