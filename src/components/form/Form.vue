@@ -33,11 +33,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
 const form = ref(null);
+const props = defineProps<{ contactTranslations: Record<string, string> }>();
+const { t } = useI18n();
+
+const localTranslations = ref({});
+watch(
+  () => props.contactTranslations,
+  (newVal) => {
+    localTranslations.value = newVal;
+  },
+  { deep: true, immediate: true }
+);
 
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
@@ -73,10 +83,6 @@ const sendEmail = async (e: any) => {
     alert("Failed to send message.");
   }
 };
-
-defineProps<{
-  contactTranslations: Record<string, string>
-}>();
 </script>
 
 <style scoped lang="scss">

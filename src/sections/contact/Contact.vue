@@ -2,11 +2,11 @@
   <section class="contact" id="contact">
     <h2 class="contact__title title2">{{ contactTranslations.contact || t('contact.contact') }}</h2>
     <p class="text">
-      <i18n-t keypath="contact.contactText">
+      <i18n-t :keypath="contactTranslations.contactText || 'contact.contactText'">
         <template #resumeLink>
           <a class="link" href="https://drive.google.com/file/d/1jdhA3vJxIkG1Xx1H1iss5eDB8JOkn7nk/view?usp=sharing"
             target="_blank" rel="noreferrer">
-            <span>view or download</span>
+            <span>{{ contactTranslations.viewOrDownload || t('contact.viewOrDownload') }}</span>
           </a>
         </template>
       </i18n-t>
