@@ -9,17 +9,17 @@ import { loadLocaleMessages } from "./locales";
 async function bootstrap() {
   const defaultLocale = "uk"; // або дістань із localStorage
 
-  // 🟢 1. Завантажуємо переклади перед створенням i18n
-  const messages = await loadLocaleMessages(defaultLocale);
+  const messages = {
+    uk: await loadLocaleMessages('uk'),
+    en: await loadLocaleMessages('en'),
+  };
 
   // 🟢 2. Створюємо i18n після завантаження
   const i18n = createI18n({
     legacy: false,
     locale: defaultLocale,
-    fallbackLocale: "en",
-    messages: {
-      [defaultLocale]: messages,
-    },
+    fallbackLocale: 'en',
+    messages,
   });
 
   // 🟢 3. Тепер створюємо застосунок

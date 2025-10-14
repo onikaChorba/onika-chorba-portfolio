@@ -5,21 +5,11 @@ import { db } from "../firebase/firebase.config";
 const messages: Record<string, Record<string, string>> = {};
 
 export const loadLocaleMessages = async (locale: string) => {
-  try {
-    const ref = doc(db, "locales", locale);
+  if (!messages[locale]) {
+    const ref = doc(db, 'locales', locale);
     const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-      messages[locale] = snap.data() as Record<string, string>;
-    } else {
-      console.warn(`⚠️ No translations found for "${locale}"`);
-      messages[locale] = {};
-    }
-  } catch (e) {
-    console.error("Error loading locale messages:", e);
-    messages[locale] = {};
+    messages[locale] = snap.exists() ? snap.data() : {};
   }
-
   return messages[locale];
 };
 
