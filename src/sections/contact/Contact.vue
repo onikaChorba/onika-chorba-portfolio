@@ -1,6 +1,6 @@
 <template>
   <section class="contact" id="contact">
-    <h2 class="contact__title title2">{{ contactTranslations.contact t('contact.contact') }}</h2>
+    <h2 class="contact__title title2">{{ contactTranslations.contact || t('contact.contact') }}</h2>
     <p class="text">
       <i18n-t keypath="contact.contactText">
         <template #resumeLink>
