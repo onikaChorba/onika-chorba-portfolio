@@ -14,15 +14,18 @@ export const loadLocaleMessages = async (locale: string) => {
 };
 
 export const setupI18n = async (initialLocale = "uk") => {
+  // ✅ 1. Спочатку чекаємо на переклади
+  const loadedMessages = await loadLocaleMessages(initialLocale);
+
+  // ✅ 2. Тільки тепер створюємо i18n
   const i18n = createI18n({
     legacy: false,
     locale: initialLocale,
     fallbackLocale: "en",
-    messages,
+    messages: {
+      [initialLocale]: loadedMessages,
+    },
   });
-
-  const loadedMessages = await loadLocaleMessages(initialLocale);
-  i18n.global.setLocaleMessage(initialLocale, loadedMessages);
 
   return i18n;
 };

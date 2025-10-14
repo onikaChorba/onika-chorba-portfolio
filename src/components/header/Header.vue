@@ -116,15 +116,12 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
-// зміна мови
 const switchLanguage = async () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
   const messages = await loadLocaleMessages(newLocale);
 
-  // тут ми оновлюємо локалі через setLocaleMessage
   setLocaleMessage(newLocale, messages);
 
-  // змінюємо поточну мову
   locale.value = newLocale;
 };
 
