@@ -169,7 +169,6 @@ const sendEmail = async (e: any) => {
   }
 }
 
-/* --- адаптив --- */
 @media (max-width: 768px) {
   .form {
     padding: 1rem;
