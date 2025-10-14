@@ -1,23 +1,27 @@
 <template>
   <div class="admin">
-    <form @submit.prevent="saveProject" class="form">
-      <input v-model="form.name" placeholder="Name" required />
-      <textarea v-model="textEnInput" placeholder="Text (English)"></textarea>
-      <textarea v-model="textUkInput" placeholder="Text (Ukrainian)"></textarea>
-      <input v-model="tagsInput" placeholder="Tags (comma separated)" />
+    <button class="open-popup-btn" @click="openPopup">+ Add Project</button>
+    <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
+      <div class="popup-content">
+        <form @submit.prevent="saveProject" class="form">
+          <h2>{{ editingId ? "Edit Project" : "Add Project" }}</h2>
 
-      <textarea v-model="imgsInput" placeholder="Image URLs (one per line)"></textarea>
+          <input v-model="form.name" placeholder="Name" required />
+          <textarea v-model="textEnInput" placeholder="Text (English)"></textarea>
+          <textarea v-model="textUkInput" placeholder="Text (Ukrainian)"></textarea>
+          <input v-model="tagsInput" placeholder="Tags (comma separated)" />
+          <textarea v-model="imgsInput" placeholder="Image URLs (one per line)"></textarea>
+          <textarea v-model="linksInput" placeholder="Links: browser, GitHub (one per line)"></textarea>
+          <textarea v-model="toolsEnInput" placeholder="Tools (English, one per line)"></textarea>
+          <textarea v-model="toolsUkInput" placeholder="Tools (Ukrainian, one per line)"></textarea>
 
-      <textarea v-model="linksInput" placeholder="Links: browser, GitHub (one per line)"></textarea>
-
-      <textarea v-model="toolsEnInput" placeholder="Tools (English, one per line)"></textarea>
-      <textarea v-model="toolsUkInput" placeholder="Tools (Ukrainian, one per line)"></textarea>
-
-      <div class="form-buttons">
-        <button type="submit">{{ editingId ? "Update" : "Add" }} Project</button>
-        <button v-if="editingId" type="button" @click="cancelEdit">Cancel</button>
+          <div class="form-buttons">
+            <button type="submit">{{ editingId ? "Update" : "Add" }}</button>
+            <button type="button" @click="closePopup">Cancel</button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
 
     <ul class="projects">
       <li v-for="project in projects" :key="project.id">
@@ -67,7 +71,7 @@ const toolsEnInput = ref("");
 const toolsUkInput = ref("");
 const textEnInput = ref("");
 const textUkInput = ref("");
-
+const isPopupOpen = ref(false);
 const form = reactive<Project>({
   name: "",
   text: {
@@ -126,6 +130,16 @@ async function saveProject() {
   await loadProjects();
 }
 
+function openPopup() {
+  resetForm();
+  isPopupOpen.value = true;
+}
+
+function closePopup() {
+  isPopupOpen.value = false;
+  editingId.value = null;
+}
+
 function editProject(project: Project) {
   editingId.value = project.id || null;
   form.name = project.name;
@@ -144,10 +158,7 @@ function editProject(project: Project) {
   toolsUkInput.value = project.tools?.uk?.join("\n") || "";
   imgsInput.value = project.imgs?.join("\n") || "";
   linksInput.value = [form.links.browser, form.links.gitHub].join("\n");
-}
-
-function cancelEdit() {
-  resetForm();
+  isPopupOpen.value = true;
 }
 
 async function deleteProject(id?: string) {
@@ -197,19 +208,58 @@ h1 {
   text-align: center;
 }
 
+.open-popup-btn {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-bottom: 2rem;
+}
+
+.open-popup-btn:hover {
+  background: var(--color-btn-hover-bg);
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: var(--content-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 95vh;
+  overflow-y: scroll;
+  box-shadow: var(--box-shadow);
+  animation: fadeIn 0.25s ease;
+}
+
 .form {
   display: grid;
   gap: 1rem;
-  padding: 2rem;
   background: var(--content-bg);
   border-radius: 16px;
-  box-shadow: var(--box-shadow);
   margin-bottom: 2.5rem;
 }
 
 .form input,
 .form textarea {
-  padding: 0.9rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 10px;
   border: 1px solid var(--color-btn-border);
   background: transparent;
@@ -410,5 +460,17 @@ h1 {
 .actions button:hover {
   background: var(--color-btn-hover-bg);
   color: var(--color-btn-hover-text);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

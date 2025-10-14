@@ -81,6 +81,7 @@ onMounted(() => {
 .container {
   padding-top: 64px;
   max-width: 1550px;
+  min-height: calc(100vh - 50px);
   margin: auto;
   padding-left: 20px;
   padding-right: 20px;
@@ -127,7 +128,7 @@ onMounted(() => {
   padding: 10px;
   border: 1px solid var(--color-btn-border);
   border-radius: 6px;
-  background: #fff;
+  background: var(--content-bg);
   color: var(--color-text);
 
   &:focus {
