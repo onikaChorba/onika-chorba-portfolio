@@ -1,10 +1,10 @@
 <template>
   <section class="about" id="about">
     <h2 class="about__title title2">{{ aboutTranslations.title || t('about.title') }}</h2>
-    <p class="text about__text">{{ t('about.text1') }}</p>
-    <p class="text about__text">{{ t('about.text2') }}</p>
+    <p class="text about__text">{{ aboutTranslations.text1 || t('about.text1') }}</p>
+    <p class="text about__text">{{ aboutTranslations.text2 t('about.text2') }}</p>
 
-    <h2 class="about__title title3">{{ t('about.journeyTitle') }}</h2>
+    <h2 class="about__title title3">{{ aboutTranslations.journeyTitle || t('about.journeyTitle') }}</h2>
 
     <div v-for="(item, i) in experience" :key="i" class="experience-item">
       <h3 class="strong">{{ item.position?.[locale] }}</h3>
@@ -13,7 +13,7 @@
       <br /> <br />
       <p class="text">{{ item.description?.[locale] }}</p>
     </div>
-    <h2 class="about__title title2">{{ t('about.skillsTitle') }}</h2>
+    <h2 class="about__title title2">{{ aboutTranslations.skillsTitle || t('about.skillsTitle') }}</h2>
 
     <div class="about__icon">
       <img
@@ -26,7 +26,7 @@
     </div>
 
     <h2 class="about__title title2">
-      {{ t('about.statsTitle') }} <span>GitHub</span>
+      {{ aboutTranslations.statsTitle || t('about.statsTitle') }} <span>GitHub</span>
     </h2>
 
     <a href="https://git.io/streak-stats">

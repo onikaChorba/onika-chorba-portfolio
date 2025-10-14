@@ -15,22 +15,22 @@
         <li v-for="(el, index) in headerNav" :key="index">
           <router-link v-if="props.isAdmin && route.path.startsWith('/admin')" :to="el.to" class="header-nav"
             :class="{ 'header-nav-active': route.path === el.to }">
-            {{ $t(el.textKey) }}
+            {{ headerTranslations[el.textKey] || t(el.textKey) }}
           </router-link>
 
           <a v-else :href="el.to" class="header-nav" :class="{ 'header-nav-active': activeSection === el.to }"
             @click.prevent="scrollToSection(el.to)">
-            {{ t(el.textKey) }}
+            {{ headerTranslations[el.textKey] || t(el.textKey) }}
           </a>
         </li>
       </ul>
 
       <div class="btn-wrapper-mobile">
         <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
-          {{ t('header.contactBtn') }}
+          {{ headerTranslations.contactBtn || t('header.contactBtn') }}
         </button>
         <button class="btn" @click.prevent="logout" v-else>
-          {{ t('header.exitBtn') }}
+          {{ headerTranslations.exitBtn || t('header.exitBtn') }}
         </button>
         <button class="btn-switch-theme" @click="toggleTheme">
           <img :src="isDark ? sunIcon : moonIcon" />
@@ -43,10 +43,10 @@
 
     <div class="btn-wrapper" v-if="!isMobile">
       <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
-        {{ t('header.contactBtn') }}
+        {{ headerTranslations.contactBtn || t('header.contactBtn') }}
       </button>
       <button class="btn" @click.prevent="logout" v-else>
-        {{ t('header.exitBtn') }}
+        {{ headerTranslations.exitBtn || t('header.exitBtn') }}
       </button>
       <button class="btn-switch-theme" @click="toggleTheme">
         <img :src="isDark ? sunIcon : moonIcon" />
@@ -58,14 +58,15 @@
   </header>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import sunIcon from '../../assets/icons/sun.svg';
+import { doc, getDoc } from 'firebase/firestore';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
-import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
@@ -118,24 +119,21 @@ const logout = () => {
   window.location.href = '/admin';
 };
 
-// зміна мови
 const switchLanguage = async () => {
   const newLocale = locale.value === 'uk' ? 'en' : 'uk';
   const messages = await loadLocaleMessages(newLocale);
-
-  // тут ми оновлюємо локалі через setLocaleMessage
   setLocaleMessage(newLocale, messages);
-
-  // змінюємо поточну мову
   locale.value = newLocale;
 };
 
 const activeSection = ref('#home');
-
+const headerTranslations = ref<Record<string, string>>({});
 onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
+  const headerDoc = doc(db, "locales", locale.value);
+  const headerSnap = await getDoc(headerDoc);
 
   window.addEventListener('resize', () => {
     isMobile.value = window.innerWidth <= 768;
@@ -147,6 +145,23 @@ onMounted(async () => {
     isHidden.value = currentScroll > lastScroll && currentScroll > 100;
     lastScroll = currentScroll;
   });
+  if (headerSnap.exists()) {
+    const messages = headerSnap.data();
+    headerTranslations.value = messages?.header || {};
+    setLocaleMessage(locale.value, messages || {});
+  } else {
+    console.warn("❌ Немає перекладів для about у Firestore");
+  }
+});
+
+watch(locale, async (newLocale) => {
+  const headerDoc = doc(db, "locales", newLocale);
+  const headerSnap = await getDoc(headerDoc);
+  if (headerSnap.exists()) {
+    const messages = headerSnap.data();
+    headerTranslations.value = messages.about || {};
+    setLocaleMessage(newLocale, messages);
+  }
 });
 </script>
 
