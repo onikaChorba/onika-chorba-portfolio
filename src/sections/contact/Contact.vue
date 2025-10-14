@@ -45,7 +45,7 @@ watch(locale, async (newLocale) => {
   const contactSnap = await getDoc(contactDoc);
   if (contactSnap.exists()) {
     const messages = contactSnap.data();
-    contactTranslations.value = messages.about || {};
+    contactTranslations.value = messages.contact || {};
     setLocaleMessage(newLocale, messages);
   }
 });
