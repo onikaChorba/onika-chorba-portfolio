@@ -1,6 +1,6 @@
 <template>
   <section class="about" id="about">
-    <h2 class="about__title title2">{{ t('about.title') }}</h2>
+    <h2 class="about__title title2">{{ aboutTranslations.title || t('about.title') }}</h2>
     <p class="text about__text">{{ t('about.text1') }}</p>
     <p class="text about__text">{{ t('about.text2') }}</p>
 
@@ -44,18 +44,29 @@ import { ref, onMounted } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
 
-const { locale, t } = useI18n<{ locale: string; t: any }>();
+const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 
 const experience = ref<any[]>([]);
+const aboutTranslations = ref<Record<string, string>>({});
 const selectedIcons = ['ts', 'js', 'react', 'redux', 'next', 'vue', 'html', 'css', 'scss', 'styledComponents', 'mui', 'wing', 'wb', 'api', 'git', 'gitLab', 'bitbuked', 'figma'];
 
 onMounted(async () => {
   const refDoc = doc(db, "experience", "main");
+  const aboutDoc = doc(db, "locales", locale.value);
   const snap = await getDoc(refDoc);
+  const aboutSnap = await getDoc(aboutDoc);
   if (snap.exists()) {
     experience.value = snap.data().experience;
   } else {
     console.warn("❌ Немає досвіду у Firestore");
+  }
+
+  if (aboutSnap.exists()) {
+    const messages = aboutSnap.data();
+    aboutTranslations.value = messages.about || {}; // беремо лише about.*
+    setLocaleMessage(locale.value, messages); // додаємо у i18n
+  } else {
+    console.warn("❌ Немає перекладів для about у Firestore");
   }
 });
 
