@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { icons } from '../../icons';
 import { ref, onMounted } from 'vue';
@@ -63,14 +64,24 @@ onMounted(async () => {
 
   if (aboutSnap.exists()) {
     const messages = aboutSnap.data();
-    aboutTranslations.value = messages.about || {}; // беремо лише about.*
-    setLocaleMessage(locale.value, messages); // додаємо у i18n
+    aboutTranslations.value = messages.about || {};
+    setLocaleMessage(locale.value, messages);
   } else {
     console.warn("❌ Немає перекладів для about у Firestore");
   }
 });
 
 const filteredExperience = icons.filter(icon => selectedIcons.includes(icon.alt));
+
+watch(locale, async (newLocale) => {
+  const aboutDoc = doc(db, "locales", newLocale);
+  const aboutSnap = await getDoc(aboutDoc);
+  if (aboutSnap.exists()) {
+    const messages = aboutSnap.data();
+    aboutTranslations.value = messages.about || {};
+    setLocaleMessage(newLocale, messages);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
