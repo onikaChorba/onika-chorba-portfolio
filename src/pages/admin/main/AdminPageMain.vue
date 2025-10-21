@@ -246,5 +246,40 @@ const addExperience = () => {
     border: 1px solid var(--tag-bg);
     margin: 32px 0;
   }
+
+  .experience-item {
+    background: var(--content-bg);
+    padding: 16px 20px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .lang-group {
+      gap: 12px;
+    }
+
+    label {
+      font-weight: 500;
+
+      input,
+      textarea {
+        background: var(--tag-bg);
+        border: 1px solid var(--color-btn-border);
+        border-radius: 6px;
+        padding: 8px 10px;
+        margin-top: 6px;
+      }
+
+      textarea {
+        min-height: 70px;
+      }
+    }
+  }
 }
 </style>
