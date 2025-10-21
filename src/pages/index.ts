@@ -1,4 +1,4 @@
 import { FrontPage } from "./front-page";
-import { AdminPage } from "./admin-page";
+import { AdminPageProjects, AdminPageMain } from './admin';
 
-export { FrontPage, AdminPage }
+export { FrontPage, AdminPageProjects, AdminPageMain }
