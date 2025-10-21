@@ -69,6 +69,18 @@ watch(() => route.path, (newPath) => {
   }
 });
 
+const updateTitle = () => {
+  if (route.path.startsWith("/admin")) {
+    document.title = isAuthenticated.value ? "Admin Panel | Portfolio" : "Login | Admin Panel";
+  } else if (route.path === "/projects") {
+    document.title = "Projects | Portfolio";
+  } else if (route.path === "/about") {
+    document.title = "About | Portfolio";
+  } else {
+    document.title = "Onika Chorba | Portfolio";
+  }
+};
+
 onMounted(() => {
   if (localStorage.getItem('isAuthenticated') === 'true') {
     isAuthenticated.value = true;
@@ -77,6 +89,7 @@ onMounted(() => {
     isAuthenticated.value = false;
     showLoginForm.value = true;
   }
+  updateTitle();
 })
 </script>
 
