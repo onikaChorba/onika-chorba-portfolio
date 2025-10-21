@@ -4,10 +4,21 @@
       <h2>Hero</h2>
       <div class="lang-group" v-for="field in ['name', 'surname', 'title2', 'text']" :key="field">
         <label>{{ field }} (UA)
-          <input v-model="hero.ua[field]" />
+          <template v-if="field === 'text'">
+            <textarea v-model="hero.ua[field]"></textarea>
+          </template>
+          <template v-else>
+            <input v-model="hero.ua[field]" />
+          </template>
         </label>
+
         <label>{{ field }} (EN)
-          <input v-model="hero.en[field]" />
+          <template v-if="field === 'text'">
+            <textarea v-model="hero.en[field]"></textarea>
+          </template>
+          <template v-else>
+            <input v-model="hero.en[field]" />
+          </template>
         </label>
       </div>
     </section>
@@ -16,15 +27,27 @@
       <h2>About</h2>
       <div class="lang-group" v-for="field in ['title', 'text1', 'text2', 'journeyTitle', 'skillsTitle', 'statsTitle']"
         :key="field">
+
         <label>{{ field }} (UA)
-          <input v-model="about.ua[field]" />
+          <template v-if="field.toLowerCase().includes('text')">
+            <textarea v-model="about.ua[field]"></textarea>
+          </template>
+          <template v-else>
+            <input v-model="about.ua[field]" />
+          </template>
         </label>
+
         <label>{{ field }} (EN)
-          <input v-model="about.en[field]" />
+          <template v-if="field.toLowerCase().includes('text')">
+            <textarea v-model="about.en[field]"></textarea>
+          </template>
+          <template v-else>
+            <input v-model="about.en[field]" />
+          </template>
         </label>
+
       </div>
     </section>
-
     <hr />
     <section>
       <h2>Досвід</h2>
@@ -136,43 +159,92 @@ const addExperience = () => {
 .admin-page {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px;
+  gap: 24px;
+  padding: 32px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
 
-  label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
+  section {
+    background: var(--content-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    transition: background 0.3s, color 0.3s;
 
-  input,
-  textarea {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 100%;
-  }
-
-  textarea {
-    min-height: 60px;
-  }
-
-  button {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background-color: var(--color-primary);
-    color: #fff;
-    cursor: pointer;
-  }
-
-  hr {
-    margin: 20px 0;
-    border: 1px solid #ccc;
+    h2 {
+      margin-bottom: 16px;
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: 1.5rem;
+      border-bottom: 2px solid var(--color-primary);
+      padding-bottom: 4px;
+    }
   }
 
   .lang-group {
     display: flex;
-    gap: 12px;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+
+    label {
+      flex: 1 1 200px;
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+
+      input,
+      textarea {
+        margin-top: 6px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--color-btn-border);
+        background: var(--tag-bg);
+        color: var(--color-text);
+        font-size: 0.95rem;
+        transition: border-color 0.2s, background 0.2s;
+
+        &:focus {
+          border-color: var(--color-primary);
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(200, 111, 141, 0.2);
+        }
+      }
+
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+    }
+  }
+
+  button {
+    align-self: flex-start;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background-color: var(--color-primary);
+    border: none;
+    color: var(--color-btn-hover-text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+
+    &:hover {
+      background-color: var(--color-btn-hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: var(--box-shadow);
+    }
+  }
+
+  hr {
+    border: 1px solid var(--tag-bg);
+    margin: 32px 0;
   }
 }
 </style>
