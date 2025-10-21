@@ -1,170 +1,163 @@
 <template>
-  <div class="admin-page">
-    <section>
-      <h2>Hero</h2>
-      <div class="lang-group" v-for="field in ['name', 'surname', 'title2', 'text']" :key="field">
-        <label>{{ field }} (UA)
-          <input v-model="hero.ua[field]" />
-        </label>
-        <label>{{ field }} (EN)
-          <input v-model="hero.en[field]" />
-        </label>
-      </div>
-    </section>
-    <hr />
-    <section>
-      <h2>About</h2>
-      <div class="lang-group" v-for="field in ['title', 'text1', 'text2', 'journeyTitle', 'skillsTitle', 'statsTitle']"
-        :key="field">
-        <label>{{ field }} (UA)
-          <input v-model="about.ua[field]" />
-        </label>
-        <label>{{ field }} (EN)
-          <input v-model="about.en[field]" />
-        </label>
-      </div>
-    </section>
-    <hr />
-    <section>
-      <h2>Досвід</h2>
-      <div v-for="(item, i) in experience" :key="i" class="experience-item">
-        <label>Position:
-          <input v-model="item.position[currentLocale]" />
-        </label>
-        <label>Company:
-          <input v-model="item.company[currentLocale]" />
-        </label>
-        <label>Period:
-          <input v-model="item.period[currentLocale]" />
-        </label>
-        <label>Description:
-          <textarea v-model="item.description[currentLocale]"></textarea>
-        </label>
-      </div>
-      <button @click="addExperience">Додати досвід</button>
-    </section>
+  <section class="about" id="about">
+    <h2 class="about__title title2">{{ aboutTranslations.title || t('about.title') }}</h2>
+    <p class="text about__text">{{ aboutTranslations.text1 || t('about.text1') }}</p>
+    <p class="text about__text">{{ aboutTranslations.text2 || t('about.text2') }}</p>
 
-    <hr />
-    <button @click="saveAll">Зберегти всі зміни</button>
-  </div>
+    <h2 class="about__title title3">{{ aboutTranslations.journeyTitle || t('about.journeyTitle') }}</h2>
+
+    <div v-for="(item, i) in experience" :key="i" class="experience-item">
+      <h3 class="strong">{{ item.position?.[locale] }}</h3>
+      <span class="text">{{ item.company?.[locale] }}</span>
+      <small class="small">{{ item.period?.[locale] }}</small>
+      <br /> <br />
+      <p class="text">{{ item.description?.[locale] }}</p>
+    </div>
+    <h2 class="about__title title2">{{ aboutTranslations.skillsTitle || t('about.skillsTitle') }}</h2>
+
+    <div class="about__icon">
+      <img
+        src="https://github-readme-stats.vercel.app/api/top-langs/?username=onikaChorba&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact"
+        alt="status" class="statusSkill" />
+      <div class="iconsSkills">
+        <img v-for="(el, index) in filteredExperience" :key="index" :src="el.src" :alt="el.alt" class="iconSkills"
+          :title="el.alt" />
+      </div>
+    </div>
+
+    <h2 class="about__title title2">
+      {{ aboutTranslations.statsTitle || t('about.statsTitle') }} <span>GitHub</span>
+    </h2>
+
+    <a href="https://git.io/streak-stats">
+      <img
+        src="http://github-readme-streak-stats.herokuapp.com?user=onikaChorba&theme=dark&hide_border=true&border_radius=4.8"
+        alt="status" class="status" />
+    </a>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase.config';
+import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { icons } from '../../icons';
+import { ref, onMounted } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase.config';
 
-const { locale } = useI18n();
-const currentLocale = ref<'ua' | 'en'>(locale.value as 'ua' | 'en');
+const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 
-const hero = ref<{ ua: Record<string, string>; en: Record<string, string> }>({
-  ua: { name: '', surname: '', title2: '', text: '' },
-  en: { name: '', surname: '', title2: '', text: '' },
-});
+const experience = ref<any[]>([]);
+const aboutTranslations = ref<Record<string, string>>({});
+const selectedIcons = ['ts', 'js', 'react', 'redux', 'next', 'vue', 'html', 'css', 'scss', 'styledComponents', 'mui', 'wing', 'wb', 'api', 'git', 'gitLab', 'bitbuked', 'figma'];
 
-const about = ref<{ ua: Record<string, string>; en: Record<string, string> }>({
-  ua: { title: '', text1: '', text2: '', journeyTitle: '', skillsTitle: '', statsTitle: '' },
-  en: { title: '', text1: '', text2: '', journeyTitle: '', skillsTitle: '', statsTitle: '' },
-});
-
-interface IExperienceItem {
-  position: Record<'ua' | 'en', string>;
-  company: Record<'ua' | 'en', string>;
-  period: Record<'ua' | 'en', string>;
-  description: Record<'ua' | 'en', string>;
-}
-const experience = ref<IExperienceItem[]>([]);
-
-const loadData = async () => {
-  const heroSnapUA = await getDoc(doc(db, 'locales', 'uk'));
-  if (heroSnapUA.exists()) hero.value.ua = heroSnapUA.data().hero || hero.value.ua;
-
-  const heroSnapEN = await getDoc(doc(db, 'locales', 'en'));
-  if (heroSnapEN.exists()) hero.value.en = heroSnapEN.data().hero || hero.value.en;
-
-  const aboutSnapUA = await getDoc(doc(db, 'locales', 'uk'));
-  if (aboutSnapUA.exists()) about.value.ua = aboutSnapUA.data().about || about.value.ua;
-
-  const aboutSnapEN = await getDoc(doc(db, 'locales', 'en'));
-  if (aboutSnapEN.exists()) about.value.en = aboutSnapEN.data().about || about.value.en;
-
-  const expSnap = await getDoc(doc(db, 'experience', 'main'));
-  if (expSnap.exists()) {
-    experience.value = expSnap.data().experience.map((item: any) => ({
-      position: { ua: item.position || '', en: item.position || '' },
-      company: { ua: item.company || '', en: item.company || '' },
-      period: { ua: item.period || '', en: item.period || '' },
-      description: { ua: item.description || '', en: item.description || '' },
-    }));
+onMounted(async () => {
+  const refDoc = doc(db, "experience", "main");
+  const aboutDoc = doc(db, "locales", locale.value);
+  const snap = await getDoc(refDoc);
+  const aboutSnap = await getDoc(aboutDoc);
+  if (snap.exists()) {
+    experience.value = snap.data().experience;
+  } else {
+    console.warn("❌ Немає досвіду у Firestore");
   }
-};
 
-onMounted(loadData);
+  if (aboutSnap.exists()) {
+    const messages = aboutSnap.data();
+    aboutTranslations.value = messages.about || {};
+    setLocaleMessage(locale.value, messages);
+  } else {
+    console.warn("❌ Немає перекладів для about у Firestore");
+  }
+});
 
-const saveAll = async () => {
-  await setDoc(doc(db, 'locales', 'uk'), { hero: hero.value.ua, about: about.value.ua }, { merge: true });
-  await setDoc(doc(db, 'locales', 'en'), { hero: hero.value.en, about: about.value.en }, { merge: true });
-  await setDoc(doc(db, 'experience', 'main'), { experience: experience.value }, { merge: true });
-  alert('✅ Збережено успішно');
-};
+const filteredExperience = icons.filter(icon => selectedIcons.includes(icon.alt));
 
-const addExperience = () => {
-  experience.value.push({
-    position: { ua: '', en: '' },
-    company: { ua: '', en: '' },
-    period: { ua: '', en: '' },
-    description: { ua: '', en: '' },
-  });
-};
+watch(locale, async (newLocale) => {
+  const aboutDoc = doc(db, "locales", newLocale);
+  const aboutSnap = await getDoc(aboutDoc);
+  if (aboutSnap.exists()) {
+    const messages = aboutSnap.data();
+    aboutTranslations.value = messages.about || {};
+    setLocaleMessage(newLocale, messages);
+  }
+});
 </script>
 
-<style scoped lang="scss">
-.admin-page {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
+<style lang="scss" scoped>
+.about {
+  min-height: 100vh;
 
-  label {
+  &__text {
+    margin-top: 1%;
+  }
+
+  &__icon {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.experience-item {
+  margin-bottom: 15px;
+}
+
+.iconsSkills {
+  width: 100%;
+  margin: 0 auto;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    width: 73%;
+  }
+}
+
+.iconSkills {
+  margin-left: 2%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  width: 40px;
+  margin-right: 30px;
+  transition: all 0.3s ease-in-out;
+
+  @media (min-width: 576px) {
+    width: 70px;
   }
 
-  input,
-  textarea,
-  select {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 100%;
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.statusSkill {
+  width: 100%;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  border: 2px solid white;
+  border-radius: 10px;
+
+  @media (min-width: 576px) {
+    width: 50%;
   }
 
-  textarea {
-    min-height: 60px;
+  @media (min-width: 768px) {
+    width: 25%;
+  }
+}
+
+.status {
+  width: 100%;
+  border: 2px solid white;
+  border-radius: 10px;
+
+  @media (min-width: 576px) {
+    width: 50%;
   }
 
-  button {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background-color: var(--color-primary);
-    color: #fff;
-    cursor: pointer;
-  }
-
-  hr {
-    margin: 20px 0;
-    border: 1px solid #ccc;
-  }
-
-  .lang-group {
-    display: flex;
-    gap: 12px;
-  }
-
-  .experience-item {
-    margin-bottom: 15px;
+  @media (min-width: 768px) {
+    width: 35%;
   }
 }
 </style>
