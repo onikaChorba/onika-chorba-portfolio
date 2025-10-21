@@ -5,10 +5,10 @@
       <div class="lang-group" v-for="field in ['name', 'surname', 'title2', 'text']" :key="field">
         <label>{{ field }} (UA)
           <template v-if="field === 'text'">
-            <textarea v-model="hero.ua[field]"></textarea>
+            <textarea v-model="hero.uk[field]"></textarea>
           </template>
           <template v-else>
-            <input v-model="hero.ua[field]" />
+            <input v-model="hero.uk[field]" />
           </template>
         </label>
 
@@ -30,10 +30,10 @@
 
         <label>{{ field }} (UA)
           <template v-if="field.toLowerCase().includes('text')">
-            <textarea v-model="about.ua[field]"></textarea>
+            <textarea v-model="about.uk[field]"></textarea>
           </template>
           <template v-else>
-            <input v-model="about.ua[field]" />
+            <input v-model="about.uk[field]" />
           </template>
         </label>
 
@@ -54,7 +54,7 @@
       <div v-for="(item, i) in experience" :key="i" class="experience-item">
         <div class="lang-group">
           <label>Position (UA)
-            <input v-model="item.position.ua" />
+            <input v-model="item.position.uk" />
           </label>
           <label>Position (EN)
             <input v-model="item.position.en" />
@@ -63,7 +63,7 @@
 
         <div class="lang-group">
           <label>Period (UA)
-            <input v-model="item.period.ua" />
+            <input v-model="item.period.uk" />
           </label>
           <label>Period (EN)
             <input v-model="item.period.en" />
@@ -72,7 +72,7 @@
 
         <div class="lang-group">
           <label>Description (UA)
-            <textarea v-model="item.description.ua"></textarea>
+            <textarea v-model="item.description.uk"></textarea>
           </label>
           <label>Description (EN)
             <textarea v-model="item.description.en"></textarea>
@@ -93,13 +93,13 @@ import { ref, onMounted } from 'vue';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/firebase.config';
 
-const hero = ref<{ ua: Record<string, string>, en: Record<string, string> }>({
-  ua: { name: '', surname: '', title2: '', text: '' },
+const hero = ref<{ uk: Record<string, string>, en: Record<string, string> }>({
+  uk: { name: '', surname: '', title2: '', text: '' },
   en: { name: '', surname: '', title2: '', text: '' }
 });
 
-const about = ref<{ ua: Record<string, string>, en: Record<string, string> }>({
-  ua: { title: '', text1: '', text2: '', journeyTitle: '', skillsTitle: '', statsTitle: '' },
+const about = ref<{ uk: Record<string, string>, en: Record<string, string> }>({
+  uk: { title: '', text1: '', text2: '', journeyTitle: '', skillsTitle: '', statsTitle: '' },
   en: { title: '', text1: '', text2: '', journeyTitle: '', skillsTitle: '', statsTitle: '' }
 });
 
@@ -114,14 +114,14 @@ const experience = ref<IExperienceItem[]>([]);
 const loadData = async () => {
   const docRef = doc(db, 'locales', 'uk');
   const snapUA = await getDoc(docRef);
-  if (snapUA.exists()) hero.value.ua = snapUA.data().hero || hero.value.ua;
+  if (snapUA.exists()) hero.value.uk = snapUA.data().hero || hero.value.uk;
 
   const docRefEn = doc(db, 'locales', 'en');
   const snapEN = await getDoc(docRefEn);
   if (snapEN.exists()) hero.value.en = snapEN.data().hero || hero.value.en;
 
   const aboutSnapUA = await getDoc(doc(db, 'locales', 'uk'));
-  if (aboutSnapUA.exists()) about.value.ua = aboutSnapUA.data().about || about.value.ua;
+  if (aboutSnapUA.exists()) about.value.uk = aboutSnapUA.data().about || about.value.uk;
 
   const aboutSnapEN = await getDoc(doc(db, 'locales', 'en'));
   if (aboutSnapEN.exists()) about.value.en = aboutSnapEN.data().about || about.value.en;
@@ -139,7 +139,7 @@ const loadData = async () => {
 onMounted(loadData);
 
 const saveAll = async () => {
-  await setDoc(doc(db, 'locales', 'uk'), { hero: hero.value.ua, about: about.value.ua }, { merge: true });
+  await setDoc(doc(db, 'locales', 'uk'), { hero: hero.value.uk, about: about.value.uk }, { merge: true });
   await setDoc(doc(db, 'locales', 'en'), { hero: hero.value.en, about: about.value.en }, { merge: true });
   await setDoc(doc(db, 'experience', 'main'), { experience: experience.value }, { merge: true });
   alert('✅ Збережено успішно');
@@ -147,9 +147,9 @@ const saveAll = async () => {
 
 const addExperience = () => {
   experience.value.push({
-    position: { ua: '', en: '' },
-    period: { ua: '', en: '' },
-    description: { ua: '', en: '' },
+    position: { uk: '', en: '' },
+    period: { uk: '', en: '' },
+    description: { uk: '', en: '' },
   });
 };
 
