@@ -59,9 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { Project } from "../../types";
+import { Project } from "../../../types";
 import { ref, reactive, onMounted } from "vue";
-import { db } from "../../firebase/firebase.config";
+import { db } from "../../../firebase/firebase.config";
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
 
 const projects = ref<Project[]>([]);
@@ -471,6 +471,144 @@ h1 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin {
+    padding: 1.5rem;
+  }
+
+  .projects li {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .popup-content {
+    padding: 1.2rem;
+    max-width: 90%;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .form button {
+    font-size: 0.95rem;
+  }
+
+  .imgs img {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  .open-popup-btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .popup-content {
+    width: 95%;
+    max-height: 90vh;
+    padding: 1rem;
+  }
+
+  .projects {
+    flex-direction: column;
+  }
+
+  .projects li {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .project-wrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .form button {
+    width: 100%;
+  }
+
+  .links {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .links a {
+    font-size: 1.1rem;
+  }
+
+  .imgs img {
+    width: 65px;
+    height: 65px;
+  }
+}
+
+/* Дуже малі екрани */
+@media (max-width: 480px) {
+  .admin {
+    padding: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .open-popup-btn {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .form input,
+  .form textarea {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .projects li {
+    padding: 1rem;
+  }
+
+  .projects h3 {
+    font-size: 1.2rem;
+  }
+
+  .projects p {
+    font-size: 0.95rem;
+  }
+
+  .imgs img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+  .tools li {
+    padding: 0.8rem;
   }
 }
 </style>

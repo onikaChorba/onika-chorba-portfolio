@@ -18,7 +18,8 @@
       </form>
     </div>
 
-    <AdminPage v-else-if="isAuthenticated && route.path.startsWith('/admin')" />
+    <router-view v-else-if="isAuthenticated" />
+
     <FrontPage v-else />
   </div>
   <Footer />
@@ -26,11 +27,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Header, Canvas, Footer } from "./components";
-import { FrontPage, AdminPage } from './pages';
+import { FrontPage } from './pages';
 
 const route = useRoute();
+const router = useRouter();
 const isAuthenticated = ref(false);
 const username = ref("");
 const password = ref("");
@@ -46,7 +48,8 @@ const login = () => {
   if (username.value === "admin" && password.value === "1234") {
     isAuthenticated.value = true;
     showLoginForm.value = false;
-    localStorage.setItem('isAuthenticated', 'true')
+    localStorage.setItem('isAuthenticated', 'true');
+    router.push("/admin");
   } else {
     alert("Невірний логін або пароль");
     isAuthenticated.value = false;

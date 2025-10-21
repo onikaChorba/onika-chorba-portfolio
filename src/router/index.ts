@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { FrontPage, AdminPage } from '../pages'
+import { FrontPage, AdminPageMain, AdminPageProjects } from '../pages'
 
 const routes = [
   { path: '/', name: 'Home', component: FrontPage },
-  { path: '/admin', name: 'Admin', component: AdminPage },
+  { path: '/admin', name: 'AdminMain', component: AdminPageMain },
+  { path: '/admin/projects', name: 'AdminProjects', component: AdminPageProjects },
 ]
 
 const router = createRouter({
