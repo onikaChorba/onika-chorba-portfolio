@@ -124,6 +124,7 @@ const switchLanguage = async () => {
   const messages = await loadLocaleMessages(newLocale);
   setLocaleMessage(newLocale, messages);
   locale.value = newLocale;
+  localStorage.setItem('locale', newLocale);
 };
 
 const activeSection = ref('#home');
@@ -144,6 +145,12 @@ onMounted(async () => {
   const savedTheme = localStorage.getItem('theme');
   isDark.value = savedTheme ? savedTheme === 'dark' : true;
   applyTheme(isDark.value);
+
+  const savedLocale = localStorage.getItem('locale');
+  if (savedLocale) {
+    locale.value = savedLocale;
+    currentLocale.value = savedLocale;
+  }
 
   const headerDoc = doc(db, "locales", locale.value);
   const headerSnap = await getDoc(headerDoc);
