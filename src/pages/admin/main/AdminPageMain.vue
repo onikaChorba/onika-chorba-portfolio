@@ -11,10 +11,7 @@
         </label>
       </div>
     </section>
-
     <hr />
-
-    <!-- About -->
     <section>
       <h2>About</h2>
       <div class="lang-group" v-for="field in ['title', 'text1', 'text2', 'journeyTitle', 'skillsTitle', 'statsTitle']"
@@ -29,15 +26,35 @@
     </section>
 
     <hr />
-
-    <!-- Experience -->
     <section>
       <h2>Досвід</h2>
       <div v-for="(item, i) in experience" :key="i" class="experience-item">
-        <label>Position: <input v-model="item.position[currentLocale]" /></label>
-        <label>Company: <input v-model="item.company[currentLocale]" /></label>
-        <label>Period: <input v-model="item.period[currentLocale]" /></label>
-        <label>Description: <textarea v-model="item.description[currentLocale]"></textarea></label>
+        <div class="lang-group">
+          <label>Position (UA)
+            <input v-model="item.position.ua" />
+          </label>
+          <label>Position (EN)
+            <input v-model="item.position.en" />
+          </label>
+        </div>
+
+        <div class="lang-group">
+          <label>Period (UA)
+            <input v-model="item.period.ua" />
+          </label>
+          <label>Period (EN)
+            <input v-model="item.period.en" />
+          </label>
+        </div>
+
+        <div class="lang-group">
+          <label>Description (UA)
+            <textarea v-model="item.description.ua"></textarea>
+          </label>
+          <label>Description (EN)
+            <textarea v-model="item.description.en"></textarea>
+          </label>
+        </div>
       </div>
 
       <button @click="addExperience">Додати досвід</button>
@@ -65,13 +82,11 @@ const about = ref<{ ua: Record<string, string>, en: Record<string, string> }>({
 
 interface IExperienceItem {
   position: Record<string, string>;
-  company: Record<string, string>;
   period: Record<string, string>;
   description: Record<string, string>;
 }
 
 const experience = ref<IExperienceItem[]>([]);
-const currentLocale = ref<'ua' | 'en'>('ua');
 
 const loadData = async () => {
   const docRef = doc(db, 'locales', 'uk');
@@ -89,7 +104,13 @@ const loadData = async () => {
   if (aboutSnapEN.exists()) about.value.en = aboutSnapEN.data().about || about.value.en;
 
   const expSnap = await getDoc(doc(db, 'experience', 'main'));
-  if (expSnap.exists()) experience.value = expSnap.data().experience || [];
+  if (expSnap.exists()) {
+    experience.value = expSnap.data().experience.map((item: any) => ({
+      position: { ua: item.position?.uk || '', en: item.position?.en || '' },
+      period: { ua: item.period?.uk || '', en: item.period?.en || '' },
+      description: { ua: item.description?.uk || '', en: item.description?.en || '' },
+    }));
+  }
 };
 
 onMounted(loadData);
@@ -104,11 +125,11 @@ const saveAll = async () => {
 const addExperience = () => {
   experience.value.push({
     position: { ua: '', en: '' },
-    company: { ua: '', en: '' },
     period: { ua: '', en: '' },
     description: { ua: '', en: '' },
   });
 };
+
 </script>
 
 <style scoped lang="scss">
