@@ -59,9 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { Project } from "@/types";
+import { Project } from "../../../types";
 import { ref, reactive, onMounted } from "vue";
-import { db } from "@/firebase/firebase.config";
+import { db } from "../../../firebase/firebase.config";
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
 
 const projects = ref<Project[]>([]);
