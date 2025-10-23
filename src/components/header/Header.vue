@@ -85,6 +85,7 @@ const headerNav = computed(() =>
     ? [
       { textKey: 'header.mainInfo', to: '/admin' },
       { textKey: 'header.adminProjects', to: '/admin/projects' },
+      { textKey: 'header.adminResume', to: '/admin/resume' },
     ]
     : [
       { textKey: 'header.home', to: '#home' },
