@@ -99,8 +99,13 @@ onMounted(() => {
   max-width: 1550px;
   min-height: calc(100vh - 50px);
   margin: auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 55px;
+  padding-right: 55px;
+
+  @media (min-width: 769px) {
+    padding-left: 65px;
+    padding-right: 65px;
+  }
 }
 
 .bg-login {
