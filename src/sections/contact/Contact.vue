@@ -1,16 +1,7 @@
 <template>
   <section class="contact" id="contact">
     <h2 class="contact__title title2">{{ contactTranslations.contact || t('contact.contact') }}</h2>
-    <p class="text">
-      <i18n-t :keypath="contactTranslations.contactText || 'contact.contactText'">
-        <template #resumeLink>
-          <a class="link" href="https://drive.google.com/file/d/1jdhA3vJxIkG1Xx1H1iss5eDB8JOkn7nk/view?usp=sharing"
-            target="_blank" rel="noreferrer">
-            <span>{{ contactTranslations.viewOrDownload || t('contact.viewOrDownload') }}</span>
-          </a>
-        </template>
-      </i18n-t>
-    </p>
+    <p class="text" v-html="contactTextWithLink"></p>
     <div class="section">
       <Form :contact-translations="contactTranslations" />
     </div>
@@ -18,12 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Form } from '@/components';
-import { ref, onMounted } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
+import { ref, onMounted, computed, watch } from 'vue';
 
 const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 const contactTranslations = ref<Record<string, string>>({});
@@ -48,6 +38,12 @@ watch(locale, async (newLocale) => {
     contactTranslations.value = messages.contact || {};
     setLocaleMessage(newLocale, messages);
   }
+});
+
+const contactTextWithLink = computed(() => {
+  const base = contactTranslations.value.contactText || t('contact.contactText');
+  const linkHtml = `<a class="link" href="https://drive.google.com/file/d/1jdhA3vJxIkG1Xx1H1iss5eDB8JOkn7nk/view?usp=sharing" target="_blank" rel="noreferrer">${contactTranslations.value.viewOrDownload || t('contact.viewOrDownload')}</a>`;
+  return base.replace('{resumeLink}', linkHtml);
 });
 </script>
 

@@ -164,6 +164,8 @@ const addExperience = () => {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: 'Inter', sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 
   section {
     background: var(--content-bg);
@@ -189,7 +191,7 @@ const addExperience = () => {
     margin-bottom: 12px;
 
     label {
-      flex: 1 1 200px;
+      flex: 1 1 45%;
       display: flex;
       flex-direction: column;
       font-weight: 500;
@@ -279,6 +281,81 @@ const addExperience = () => {
       textarea {
         min-height: 70px;
       }
+    }
+  }
+
+  /* --- Адаптивність --- */
+
+  @media (max-width: 1024px) {
+    padding: 24px;
+
+    .lang-group label {
+      flex: 1 1 100%;
+    }
+
+    section h2 {
+      font-size: 1.3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+
+    section {
+      padding: 16px;
+    }
+
+    .lang-group {
+      flex-direction: column;
+      gap: 12px;
+
+      label {
+        flex: 1 1 100%;
+      }
+
+      input,
+      textarea {
+        font-size: 0.9rem;
+      }
+    }
+
+    button {
+      width: 100%;
+      align-self: stretch;
+      font-size: 0.95rem;
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px;
+
+    section {
+      padding: 14px;
+    }
+
+    section h2 {
+      font-size: 1.1rem;
+    }
+
+    .lang-group {
+      gap: 10px;
+
+      label {
+        font-size: 0.9rem;
+      }
+
+      input,
+      textarea {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+    }
+
+    button {
+      font-size: 0.9rem;
+      border-radius: 8px;
+      padding: 10px;
     }
   }
 }
