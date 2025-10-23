@@ -159,13 +159,16 @@ const sendEmail = async (e: any) => {
     padding: 0.35rem 0.6rem;
     font-size: 15px;
     font-weight: 600;
-    color: white;
     transition: all 0.3s ease;
 
     &:hover {
       background: var(--color-btn-hover-bg);
       color: var(--color-btn-hover-text);
     }
+  }
+
+  &__text {
+    color: white;
   }
 }
 

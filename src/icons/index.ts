@@ -20,6 +20,11 @@ import browser from '@/assets/icons/browser.svg'
 import check from '@/assets/icons/check.svg'
 import linkedIn from '@/assets/icons/linkedin.svg'
 import gmail from '@/assets/icons/gmail.svg'
+import email from '@/assets/icons/email.svg'
+import location from '@/assets/icons/location-cv.svg'
+import telegram from '@/assets/icons/telegram.svg'
+import linkedInCV from '@/assets/icons/linkedin-cv.svg'
+import gitHubCV from '@/assets/icons/github-cv.svg'
 
 export const icons = [
   { src: ts, alt: 'ts' },
@@ -44,4 +49,9 @@ export const icons = [
   { src: check, alt: 'check' },
   { src: linkedIn, alt: 'linkedin' },
   { src: gmail, alt: 'gmail' },
+  { src: linkedInCV, alt: 'linkedInCV' },
+  { src: email, alt: 'email' },
+  { src: gitHubCV, alt: 'gitHubCV' },
+  { src: telegram, alt: 'telegram' },
+  { src: location, alt: 'location' },
 ]
