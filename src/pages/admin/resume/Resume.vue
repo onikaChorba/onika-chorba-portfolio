@@ -1,34 +1,45 @@
 <template>
   <div class="resume-wrapper">
     <div class="controls">
-      <button @click="downloadPdf" class="btn">Download PDF</button>
-      <button @click="printPage" class="btn btn-ghost">Print</button>
+      <button @click="downloadPdf" class="btn" :disabled="loading">Download PDF</button>
+      <button @click="printPage" class="btn btn-ghost" :disabled="loading">Print</button>
     </div>
 
-    <article ref="printRef" class="resume a4" id="resume-to-pdf">
+    <p v-if="loading">Loading CV…</p>
+    <p v-if="error" style="color:red">{{ error }}</p>
+
+    <article v-if="!loading && data" ref="printRef" class="resume a4" id="resume-to-pdf">
       <aside class="sidebar">
         <h1 class="name">{{ data.name }}</h1>
         <p class="role">{{ data.title }}</p>
 
         <div class="contacts">
           <p class="contact-cv">
-            <img :src="icons.find(icon => icon.alt === 'telegram')?.src" class="icon" />
-            <a :href="`https://t.me/${data.telegram}`" target="_blank" rel="noreferrer" class="link">
+            <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
+            <a :href="`https://t.me/${data.telegram}`" target="_blank" class="link">
               {{ data.telegram }}
             </a>
           </p>
+
           <p class="contact-cv">
-            <img :src="icons.find(icon => icon.alt === 'location')?.src" class="icon" />
-          <p>{{ data.location }}</p>
+            <img :src="icons.find(i => i.alt === 'location')?.src" class="icon" />
+            <span>{{ data.location }}</span>
           </p>
-          <p class="contact-cv"> <img :src="icons.find(icon => icon.alt === 'email')?.src" class="icon" />
+
+          <p class="contact-cv">
+            <img :src="icons.find(i => i.alt === 'email')?.src" class="icon" />
             <a :href="`mailto:${data.email}`" class="link">{{ data.email }}</a>
           </p>
-          <p class="contact-cv"> <img :src="icons.find(icon => icon.alt === 'linkedInCV')?.src" class="icon" /><a
-              :href="data.linkedin" target="_blank" rel="noreferrer"
-              class="link">https://www.linkedin.com/in/оnika-chorba</a></p>
-          <p class="contact-cv"> <img :src="icons.find(icon => icon.alt === 'gitHubCV')?.src" class="icon" /><a
-              :href="data.github" target="_blank" rel="noreferrer" class="link">https://github.com/onikaChorba</a></p>
+
+          <p class="contact-cv">
+            <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
+            <a :href="data.linkedin" target="_blank" class="link">{{ data.linkedin }}</a>
+          </p>
+
+          <p class="contact-cv">
+            <img :src="icons.find(i => i.alt === 'gitHubCV')?.src" class="icon" />
+            <a :href="data.github" target="_blank" class="link">{{ data.github }}</a>
+          </p>
         </div>
       </aside>
 
@@ -70,15 +81,17 @@
               <hr />
             </div>
             <div class="edu-item">
-              <b class="section-text"><b>{{ data.education.degree }}</b>, <span class="section-text">{{
-                data.education.school }}</span></b>
+              <b class="section-text">
+                <b>{{ data.education.degree }}</b>,
+                <span class="section-text">{{ data.education.school }}</span>
+              </b>
             </div>
           </div>
         </div>
 
         <div class="wrapper">
           <div class="section-title">
-            <h2 class="title"> WORK EXPERIENCE </h2>
+            <h2 class="title">WORK EXPERIENCE</h2>
             <hr />
           </div>
           <div class="experience">
@@ -87,15 +100,17 @@
                 <h3 class="section-text-large"><b>{{ exp.role }}</b>, {{ exp.company }}</h3>
                 <span class="section-text">{{ exp.period }}</span>
               </div>
-              <p class="section-text skillset"><b>Skillset:</b>{{ exp.skillSet }}
+              <p class="section-text skillset" v-if="exp.skillSet">
+                <b>Skillset:</b> {{ exp.skillSet }}
               </p>
-              <p class="section-text">{{ exp.description }}</p>
-              <ul class="list">
+              <p class="section-text" v-if="exp.description">{{ exp.description }}</p>
+              <ul class="list" v-if="exp.points?.length">
                 <li v-for="(d, i) in exp.points" :key="i">{{ d }}</li>
               </ul>
             </div>
           </div>
         </div>
+
         <div class="wrapper" v-if="data.hobbies?.length">
           <div class="section-title">
             <h2 class="title">Hobbies</h2>
@@ -109,76 +124,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { icons } from '@/icons';
-const data = {
-  name: 'ONIKA CHORBA',
-  title: 'Frontend Developer',
-  telegram: '@onika_chorba',
-  location: 'Uzhgorod, Ukraine',
-  email: 'onika.chorba@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/%D0%BEnika-chorba/',
-  github: 'https://github.com/onikaChorba',
-  summary:
-    'Frontend developer experienced in building responsive, user- focused web applications with React.js, Next.js, and TypeScript.Developed customizable ordering flows with carts and contextual upsell logic, as well as role - based admin panels with full CRUD and interactive data tables.Integrated RESTful APIs with secure validation, local storage auth, and environment - based configs.Set up CI / CD pipelines using GitHub Actions and deployed to Firebase.',
-  skills: [
-    'JavaScript, TypeScript',
-    'React, Redux, Next.js, Vue.js, Next.js, Vue.js',
-    'Node.js',
-    'HTML5, CSS3, Sass/SCSS, BEM, Styled-components, Tailwind CSS, Material - UI, Radix UI',
-    'SwiperJS, Framer Motion, GSAP',
-    'Firebase (Authentication, Firestore, Storage, Hosting)',
-    'REST API, SPA Architecture',
-    'Git, GitLab, Bitbucket, Webpack, Jira, Slack',
-  ],
-  languages: ['Ukrainian — Native', 'English — Intermediate'],
-  hobbies: ['I enjoy reading scientific literature, psychology, and detective novels, staying active through sports, and teaching children programming.'],
-  education: { degree: 'Master', school: 'Uzhgorod National University' },
-  experience: [
-    {
-      role: 'Frontend Developer',
-      roleDetails: "delivered several short-term commercial projects (3-5 months each)",
-      company: 'Self-employed',
-      period: '09/2024 – Present',
-      skillSet: "TypeScript, JavaScript, React, Sass, Single Page Applications (SPAs), Webpack, Firebase (Authentication, Firestore, Storage, Hosting), Figma",
-      description: "Built React/TypeScript ordering interfaces with customizable products, carts and upsell logic; responsive, role-based admin panels with full CRUD and interactive data tables; used RESTful APIs with secure validation, local- storage auth and env configs; CI/ CD via GitHub Actions to Firebase.",
-      points: [
-        'Developed modern, user-focused ordering interfaces with customizable product options, shopping cart functionality, and contextual upsell recommendations.',
-        'Created responsive role-based admin panels with full CRUD and interactive tables.',
-        'Set up CI/CD pipelines via GitHub Actions and deployed to Firebase.'
-      ]
-    },
-    {
-      role: 'Frontend Layout Developer — Pixel24 AG',
-      company: 'Pixel24 AG',
-      period: '07/2023 – 09/2024',
-      points: [
-        'Worked with TypeScript, React, Sass, Styled-components and Tailwind.',
-        'Improved reliability of codebase and implemented reusable components.'
-      ]
+import { ref, onMounted } from 'vue';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase/firebase.config';
+
+const data = ref<any>(null);
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+const currentLang = 'en';
+
+onMounted(async () => {
+  try {
+    const cvRef = doc(db, 'resume', 'cv');
+    const snapshot = await getDoc(cvRef);
+
+    if (!snapshot.exists()) {
+      error.value = 'CV not found in Firestore';
+      return;
     }
-  ]
-};
+
+    const docData = snapshot.data();
+    const langObj = docData.languages.find((l: any) => l.code === currentLang);
+    data.value = langObj?.data ?? null;
+  } catch (e: any) {
+    error.value = e.message;
+  } finally {
+    loading.value = false;
+  }
+});
 
 const printRef = ref<HTMLElement | null>(null);
 
 async function downloadPdf() {
   if (!printRef.value) return;
-  try {
-    const html2pdf = (await import('html2pdf.js')).default || (await import('html2pdf.js'));
-    const opt = {
-      margin: [10, 10, 10, 10],
-      filename: `${data.name.replace(/\s+/g, '_')}_CV.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    // @ts-ignore
-    html2pdf().from(printRef.value).set(opt).save();
-  } catch (err) {
-    console.error('PDF generation failed — try installing html2pdf.js', err);
-    alert('PDF generation failed. If you are in dev, run: npm install html2pdf.js');
-  }
+  const html2pdf = (await import('html2pdf.js')).default;
+  html2pdf().from(printRef.value).set({
+    margin: [10, 10, 10, 10],
+    filename: `${data.value.name.replace(/\s+/g, '_')}_CV.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).save();
 }
 
 function printPage() {
