@@ -6,7 +6,7 @@
       <button @click="showModal = true" class="btn btn-ghost">Edit CV</button>
       <select v-model="currentLang" class="currentLang">
         <option value="en">EN</option>
-        <option value="ua">UA</option>
+        <option value="uk">UA</option>
       </select>
     </div>
 
@@ -28,7 +28,7 @@
 
           <p class="contact-cv">
             <img :src="icons.find(i => i.alt === 'location')?.src" class="icon" />
-            <span>{{ data.location }}</span>
+          <p>{{ data.location }}</p>
           </p>
 
           <p class="contact-cv">
@@ -87,8 +87,8 @@
             </div>
             <div class="edu-item">
               <b class="section-text">
-                <b>{{ data.education.degree }}</b>,
-                <span class="section-text">{{ data.education.school }}</span>
+                <b>{{ data.education?.degree }}</b>,
+                <span class="section-text">{{ data.education?.school }}</span>
               </b>
             </div>
           </div>
@@ -100,9 +100,10 @@
             <hr />
           </div>
           <div class="experience">
-            <div v-for="(exp, idx) in data.experience" :key="idx" class="exp-item">
+            <div v-for="(exp, idx) in data.experience.slice().reverse()" :key="idx" class="exp-item">
               <div class="experience-title">
                 <h3 class="section-text-large"><b>{{ exp.role }}</b>, {{ exp.company }}</h3>
+                <p class="section-text-small">{{ exp.details }}</p>
                 <span class="section-text">{{ exp.period }}</span>
               </div>
               <p class="section-text skillset" v-if="exp.skillSet">
@@ -132,6 +133,29 @@
       <h2>Edit CV ({{ currentLang.toUpperCase() }})</h2>
       <label>Name: <input v-model="editData.name" /></label>
       <label>Title: <input v-model="editData.title" /></label>
+      <h3>Contacts</h3>
+      <div class="contacts-edit">
+        <label>
+          Telegram:
+          <input v-model="editData.telegram" placeholder="Telegram username" />
+        </label>
+        <label>
+          Email:
+          <input v-model="editData.email" placeholder="Email address" />
+        </label>
+        <label>
+          Location:
+          <input v-model="editData.location" placeholder="City, Country" />
+        </label>
+        <label>
+          LinkedIn:
+          <input v-model="editData.linkedin" placeholder="LinkedIn URL" />
+        </label>
+        <label>
+          GitHub:
+          <input v-model="editData.github" placeholder="GitHub URL" />
+        </label>
+      </div>
       <label>Summary: <textarea v-model="editData.summary"></textarea></label>
 
       <h3>Skills</h3>
@@ -145,6 +169,7 @@
       <div v-for="(exp, i) in editData.experience" :key="i" class="exp-edit">
         <label>Role: <input v-model="exp.role" /></label>
         <label>Company: <input v-model="exp.company" /></label>
+        <label>Details: <input v-model="exp.details" /></label>
         <label>Period: <input v-model="exp.period" /></label>
         <label>SkillSet: <input v-model="exp.skillSet" /></label>
         <label>Description: <textarea v-model="exp.description"></textarea></label>
@@ -304,9 +329,10 @@ function printPage() { window.print(); }
   box-sizing: border-box;
 
   .name {
+    text-transform: uppercase;
     margin: 0;
     padding-top: 40px;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     letter-spacing: 0.6px;
   }
@@ -342,6 +368,7 @@ function printPage() { window.print(); }
     width: 25px;
     height: 25px;
     display: inline-block;
+    color: var(--color-primary);
   }
 
   .link {
@@ -404,6 +431,13 @@ function printPage() { window.print(); }
 .section-text {
   font-size: 14px;
   line-height: 24px;
+  color: var(--text-color);
+  font-weight: 400;
+}
+
+.section-text-small {
+  font-size: 12px;
+  line-height: 22px;
   color: var(--text-color);
   font-weight: 400;
 }
@@ -586,5 +620,36 @@ button.add-btn:hover {
 .currentLang {
   width: 100px;
   margin-top: 0px;
+}
+
+.contacts-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 14px;
+
+    input {
+      margin-top: 5px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+    }
+  }
 }
 </style>
