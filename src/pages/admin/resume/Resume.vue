@@ -11,7 +11,7 @@
     </div>
 
     <p v-if="loading">Loading CV…</p>
-    <p v-if="error" style="color:red">{{ error }}</p>
+    <p v-if="error" class="error">{{ error }}</p>
 
     <article v-if="!loading && data" ref="printRef" class="resume a4" id="resume-to-pdf">
       <aside class="sidebar">
@@ -19,29 +19,29 @@
         <p class="role">{{ data.title }}</p>
 
         <div class="contacts">
-          <p class="contact-cv">
+          <p class="contact-cv" v-if="data.telegram">
             <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
-            <a :href="`https://t.me/${data.telegram}`" target="_blank" class="link">
+            <a :href="`https://t.me/${data.telegram.replace(/^@/, '')}`" target="_blank" class="link">
               {{ data.telegram }}
             </a>
           </p>
 
-          <p class="contact-cv">
+          <p class="contact-cv" v-if="data.location">
             <img :src="icons.find(i => i.alt === 'location')?.src" class="icon" />
           <p>{{ data.location }}</p>
           </p>
 
-          <p class="contact-cv">
+          <p class="contact-cv" v-if="data.email">
             <img :src="icons.find(i => i.alt === 'email')?.src" class="icon" />
             <a :href="`mailto:${data.email}`" class="link">{{ data.email }}</a>
           </p>
 
-          <p class="contact-cv">
+          <p class="contact-cv" v-if="data.linkedin">
             <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
             <a :href="data.linkedin" target="_blank" class="link">{{ data.linkedin }}</a>
           </p>
 
-          <p class="contact-cv">
+          <p class="contact-cv" v-if="data.github">
             <img :src="icons.find(i => i.alt === 'gitHubCV')?.src" class="icon" />
             <a :href="data.github" target="_blank" class="link">{{ data.github }}</a>
           </p>
@@ -100,10 +100,10 @@
             <hr />
           </div>
           <div class="experience">
-            <div v-for="(exp, idx) in data.experience.slice().reverse()" :key="idx" class="exp-item">
+            <div v-for="(exp, idx) in data.experience" :key="idx" class="exp-item">
               <div class="experience-title">
                 <h3 class="section-text-large"><b>{{ exp.role }}</b>, {{ exp.company }}</h3>
-                <p class="section-text-small">{{ exp.details }}</p>
+                <p class="section-text-small" v-if="exp.details">{{ exp.details }}</p>
                 <span class="section-text">{{ exp.period }}</span>
               </div>
               <p class="section-text skillset" v-if="exp.skillSet">
@@ -128,91 +128,156 @@
     </article>
   </div>
 
-  <div v-if="showModal" class="modal-backdrop">
-    <div class="modal">
+  <div v-if="showModal" class="modal-backdrop" @keydown.esc="showModal = false">
+    <div class="modal" role="dialog" aria-modal="true">
       <h2>Edit CV ({{ currentLang.toUpperCase() }})</h2>
-      <label>Name: <input v-model="editData.name" /></label>
-      <label>Title: <input v-model="editData.title" /></label>
+
+      <label>Name:
+        <input v-model="editData.name" />
+      </label>
+
+      <label>Title:
+        <input v-model="editData.title" />
+      </label>
+
       <h3>Contacts</h3>
       <div class="contacts-edit">
-        <label>
-          Telegram:
-          <input v-model="editData.telegram" placeholder="Telegram username" />
+        <label>Telegram:
+          <input v-model="editData.telegram" placeholder="@username" />
         </label>
-        <label>
-          Email:
-          <input v-model="editData.email" placeholder="Email address" />
+        <label>Email:
+          <input v-model="editData.email" placeholder="email@example.com" />
         </label>
-        <label>
-          Location:
+        <label>Location:
           <input v-model="editData.location" placeholder="City, Country" />
         </label>
-        <label>
-          LinkedIn:
-          <input v-model="editData.linkedin" placeholder="LinkedIn URL" />
+        <label>LinkedIn:
+          <input v-model="editData.linkedin" placeholder="https://..." />
         </label>
-        <label>
-          GitHub:
-          <input v-model="editData.github" placeholder="GitHub URL" />
+        <label>GitHub:
+          <input v-model="editData.github" placeholder="https://github.com/..." />
         </label>
       </div>
-      <label>Summary: <textarea v-model="editData.summary"></textarea></label>
+
+      <label>Summary:
+        <textarea v-model="editData.summary" rows="4"></textarea>
+      </label>
 
       <h3>Skills</h3>
-      <div v-for="(s, i) in editData.skills" :key="i">
+      <div v-for="(s, i) in editData.skills" :key="`skill-${i}`" class="chip-row">
         <input v-model="editData.skills[i]" />
-        <button @click="removeSkill(i)">Remove</button>
+        <button type="button" class="small-btn" @click="removeSkill(i)">Remove</button>
       </div>
-      <button @click="addSkill">Add Skill</button>
+      <button type="button" class="add-btn" @click="addSkill">Add Skill</button>
 
       <h3>Experience</h3>
-      <div v-for="(exp, i) in editData.experience" :key="i" class="exp-edit">
-        <label>Role: <input v-model="exp.role" /></label>
-        <label>Company: <input v-model="exp.company" /></label>
-        <label>Details: <input v-model="exp.details" /></label>
-        <label>Period: <input v-model="exp.period" /></label>
-        <label>SkillSet: <input v-model="exp.skillSet" /></label>
-        <label>Description: <textarea v-model="exp.description"></textarea></label>
+      <div v-for="(exp, i) in editData.experience" :key="`exp-${i}`" class="exp-edit">
+        <label>Role:
+          <input v-model="exp.role" />
+        </label>
+        <label>Company:
+          <input v-model="exp.company" />
+        </label>
+        <label>Details:
+          <input v-model="exp.details" />
+        </label>
+        <label>Period:
+          <input v-model="exp.period" />
+        </label>
+        <label>SkillSet:
+          <input v-model="exp.skillSet" />
+        </label>
+        <label>Description:
+          <textarea v-model="exp.description" rows="2"></textarea>
+        </label>
+
         <h4>Points</h4>
-        <div v-for="(p, j) in exp.points" :key="j">
+        <div v-for="(p, j) in exp.points" :key="`p-${i}-${j}`" class="point-row">
           <input v-model="exp.points[j]" />
-          <button @click="removePoint(i, j)">Remove</button>
+          <button type="button" class="small-btn" @click="removePoint(i, j)">Remove</button>
         </div>
-        <button @click="addPoint(i)">Add Point</button>
-        <button @click="removeExp(i)">Remove Experience</button>
+        <div class="exp-actions">
+          <button type="button" class="small-btn" @click="addPoint(i)">Add Point</button>
+          <button type="button" class="small-btn danger" @click="removeExp(i)">Remove Experience</button>
+        </div>
       </div>
-      <button @click="addExp">Add Experience</button>
+      <button type="button" class="add-btn" @click="addExp">Add Experience (top)</button>
+
+      <h3>Languages</h3>
+      <div v-for="(l, i) in editData.languages" :key="`lang-${i}`" class="language-row">
+        <input v-model="editData.languages[i]" placeholder="e.g. English (B2)" />
+        <button type="button" class="small-btn" @click="editData.languages.splice(i, 1)">Remove</button>
+      </div>
+      <button type="button" class="add-btn" @click="editData.languages.push('')">Add Language</button>
+
+      <h3>Education</h3>
+      <label>Degree:
+        <input v-model="editData.education.degree" placeholder="Bachelor of ..." />
+      </label>
+
+      <label>School:
+        <input v-model="editData.education.school" placeholder="University name" />
+      </label>
 
       <h3>Hobbies</h3>
-      <div v-for="(h, i) in editData.hobbies" :key="i">
+      <div v-for="(h, i) in editData.hobbies" :key="`h-${i}`" class="hobby-row">
         <input v-model="editData.hobbies[i]" />
-        <button @click="removeHobby(i)">Remove</button>
+        <button type="button" class="small-btn" @click="removeHobby(i)">Remove</button>
       </div>
-      <button @click="addHobby">Add Hobby</button>
+
+      <div class="hobby-add">
+        <input v-model="newHobby" placeholder="Add new hobby..." @keyup.enter="addHobbyFromInput" />
+        <button type="button" class="add-btn" @click="addHobbyFromInput">Add Hobby</button>
+      </div>
 
       <div class="modal-actions">
-        <button @click="saveCV">Save</button>
-        <button @click="showModal = false">Cancel</button>
+        <button class="btn-primary" @click="saveCV">Save</button>
+        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { icons } from '@/icons';
 import { ref, onMounted, watch } from 'vue';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebase.config';
+import { icons } from '@/icons';
 
 const data = ref<any>(null);
-const editData = ref<any>(null);
+const editData = ref<any>({
+  name: '',
+  title: '',
+  telegram: '',
+  location: '',
+  email: '',
+  linkedin: '',
+  github: '',
+  summary: '',
+  skills: [],
+  languages: [],
+  education: { degree: '', school: '' },
+  experience: [],
+  hobbies: []
+});
 const loading = ref(true);
 const error = ref<string | null>(null);
 const currentLang = ref('en');
 const showModal = ref(false);
+const printRef = ref<HTMLElement | null>(null);
+const newHobby = ref('');
+
+function ensureArrays(obj: any) {
+  obj.skills ??= [];
+  obj.languages ??= [];
+  obj.experience ??= [];
+  obj.hobbies ??= [];
+  obj.education ??= { degree: '', school: '' };
+}
 
 async function fetchCV() {
   loading.value = true;
+  error.value = null;
   try {
     const cvRef = doc(db, 'resume', 'cv');
     const snapshot = await getDoc(cvRef);
@@ -221,11 +286,33 @@ async function fetchCV() {
       return;
     }
     const docData = snapshot.data();
-    const langObj = docData.languages.find((l: any) => l.code === currentLang.value);
-    data.value = langObj?.data ?? null;
+    const langObj = docData.languages?.find((l: any) => l.code === currentLang.value);
+    const langData = langObj?.data ?? null;
+    if (!langData) {
+      data.value = {
+        name: '',
+        title: '',
+        telegram: '',
+        location: '',
+        email: '',
+        linkedin: '',
+        github: '',
+        summary: '',
+        skills: [],
+        languages: [],
+        education: { degree: '', school: '' },
+        experience: [],
+        hobbies: []
+      };
+    } else {
+      data.value = langData;
+    }
+    ensureArrays(data.value);
     editData.value = JSON.parse(JSON.stringify(data.value));
+    ensureArrays(editData.value);
   } catch (e: any) {
-    error.value = e.message;
+    console.error(e);
+    error.value = e.message || 'Error fetching CV';
   } finally {
     loading.value = false;
   }
@@ -234,71 +321,149 @@ async function fetchCV() {
 onMounted(fetchCV);
 watch(currentLang, fetchCV);
 
-function addSkill() { editData.value.skills.push(''); }
-function removeSkill(i: number) { editData.value.skills.splice(i, 1); }
+function addSkill() {
+  editData.value.skills ??= [];
+  editData.value.skills.push('');
+}
+function removeSkill(i: number) {
+  editData.value.skills?.splice(i, 1);
+}
 
-function addExp() { editData.value.experience.push({ role: '', company: '', period: '', skillSet: '', description: '', points: [] }); }
-function removeExp(i: number) { editData.value.experience.splice(i, 1); }
+function addExp() {
+  editData.value.experience ??= [];
+  editData.value.experience.unshift({
+    role: '',
+    company: '',
+    details: '',
+    period: '',
+    skillSet: '',
+    description: '',
+    points: []
+  });
+}
+function removeExp(i: number) {
+  editData.value.experience?.splice(i, 1);
+}
 
-function addPoint(expIdx: number) { editData.value.experience[expIdx].points.push(''); }
-function removePoint(expIdx: number, i: number) { editData.value.experience[expIdx].points.splice(i, 1); }
+function addPoint(expIdx: number) {
+  editData.value.experience[expIdx].points ??= [];
+  editData.value.experience[expIdx].points.push('');
+}
+function removePoint(expIdx: number, i: number) {
+  editData.value.experience[expIdx].points.splice(i, 1);
+}
 
-function addHobby() { editData.value.hobbies.push(''); }
-function removeHobby(i: number) { editData.value.hobbies.splice(i, 1); }
+function addHobbyFromInput() {
+  const val = (newHobby.value || '').trim();
+  if (!val) return;
+  editData.value.hobbies ??= [];
+  editData.value.hobbies.push(val);
+  newHobby.value = '';
+}
+function removeHobby(i: number) {
+  editData.value.hobbies?.splice(i, 1);
+}
+
+function cancelEdit() {
+  editData.value = JSON.parse(JSON.stringify(data.value));
+  showModal.value = false;
+}
 
 async function saveCV() {
   try {
     const cvRef = doc(db, 'resume', 'cv');
     const snapshot = await getDoc(cvRef);
-    if (!snapshot.exists()) return;
+
+    if (!snapshot.exists()) {
+      alert('CV document not found in Firestore.');
+      return;
+    }
+
     const docData = snapshot.data();
+    docData.languages ??= [];
+
+    editData.value.hobbies ??= [];
+    editData.value.hobbies = editData.value.hobbies.filter((h: string) => h.trim() !== '');
+
     const langIndex = docData.languages.findIndex((l: any) => l.code === currentLang.value);
-    docData.languages[langIndex].data = editData.value;
-    await updateDoc(cvRef, docData);
+
+    if (langIndex === -1) {
+      docData.languages.push({
+        code: currentLang.value,
+        data: { ...editData.value }
+      });
+    } else {
+      docData.languages[langIndex].data = { ...editData.value };
+    }
+
+    await updateDoc(cvRef, { languages: docData.languages });
+
     data.value = JSON.parse(JSON.stringify(editData.value));
+    ensureArrays(data.value);
     showModal.value = false;
+
   } catch (e: any) {
-    alert('Save failed: ' + e.message);
+    console.error('Save failed', e);
+    alert('Save failed: ' + (e.message || e));
   }
 }
 
-const printRef = ref<HTMLElement | null>(null);
 async function downloadPdf() {
   if (!printRef.value) return;
-  const html2pdf = (await import('html2pdf.js')).default;
-  html2pdf().from(printRef.value).set({
-    margin: [10, 10, 10, 10],
-    filename: `${data.value.name.replace(/\s+/g, '_')}_CV.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).save();
+  try {
+    const html2pdf = (await import('html2pdf.js')).default;
+    html2pdf()
+      .from(printRef.value)
+      .set({
+        margin: [10, 10, 10, 10],
+        filename: `${(data.value.name || 'CV').replace(/\s+/g, '_')}_CV.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      })
+      .save();
+  } catch (err) {
+    console.error('PDF generation failed', err);
+    alert('PDF generation failed — check console.');
+  }
 }
+
 function printPage() {
   if (!printRef.value) return;
 
   const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-    .map(el => el.outerHTML)
+    .map(el => (el as HTMLElement).outerHTML)
     .join('\n');
 
   const printWindow = window.open('', '', 'width=900,height=1200');
-  if (!printWindow) return;
+  if (!printWindow) {
+    alert('Cannot open print window (probably blocked).');
+    return;
+  }
 
   printWindow.document.write(`
     <html>
       <head>
-        <title>${data.value.name}_frontend_developer_CV</title>
+        <title>${(data.value.name || 'CV')}_CV</title>
         ${styles}
+        <style>
+          /* ensure printed page margins / page-break behaviour */
+          @page { size: A4; margin: 12mm; }
+          body { margin: 0; -webkit-print-color-adjust: exact; }
+        </style>
       </head>
       <body>
         ${printRef.value.outerHTML}
       </body>
     </html>
   `);
+
   printWindow.document.close();
   printWindow.focus();
-  printWindow.print();
-  printWindow.close();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 300);
 }
 </script>
 
