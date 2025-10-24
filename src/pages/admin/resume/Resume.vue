@@ -3,6 +3,11 @@
     <div class="controls">
       <button @click="downloadPdf" class="btn" :disabled="loading">Download PDF</button>
       <button @click="printPage" class="btn btn-ghost" :disabled="loading">Print</button>
+      <button @click="showModal = true" class="btn btn-ghost">Edit CV</button>
+      <select v-model="currentLang" class="currentLang">
+        <option value="en">EN</option>
+        <option value="ua">UA</option>
+      </select>
     </div>
 
     <p v-if="loading">Loading CV…</p>
@@ -121,42 +126,118 @@
       </main>
     </article>
   </div>
+
+  <div v-if="showModal" class="modal-backdrop">
+    <div class="modal">
+      <h2>Edit CV ({{ currentLang.toUpperCase() }})</h2>
+      <label>Name: <input v-model="editData.name" /></label>
+      <label>Title: <input v-model="editData.title" /></label>
+      <label>Summary: <textarea v-model="editData.summary"></textarea></label>
+
+      <h3>Skills</h3>
+      <div v-for="(s, i) in editData.skills" :key="i">
+        <input v-model="editData.skills[i]" />
+        <button @click="removeSkill(i)">Remove</button>
+      </div>
+      <button @click="addSkill">Add Skill</button>
+
+      <h3>Experience</h3>
+      <div v-for="(exp, i) in editData.experience" :key="i" class="exp-edit">
+        <label>Role: <input v-model="exp.role" /></label>
+        <label>Company: <input v-model="exp.company" /></label>
+        <label>Period: <input v-model="exp.period" /></label>
+        <label>SkillSet: <input v-model="exp.skillSet" /></label>
+        <label>Description: <textarea v-model="exp.description"></textarea></label>
+        <h4>Points</h4>
+        <div v-for="(p, j) in exp.points" :key="j">
+          <input v-model="exp.points[j]" />
+          <button @click="removePoint(i, j)">Remove</button>
+        </div>
+        <button @click="addPoint(i)">Add Point</button>
+        <button @click="removeExp(i)">Remove Experience</button>
+      </div>
+      <button @click="addExp">Add Experience</button>
+
+      <h3>Hobbies</h3>
+      <div v-for="(h, i) in editData.hobbies" :key="i">
+        <input v-model="editData.hobbies[i]" />
+        <button @click="removeHobby(i)">Remove</button>
+      </div>
+      <button @click="addHobby">Add Hobby</button>
+
+      <div class="modal-actions">
+        <button @click="saveCV">Save</button>
+        <button @click="showModal = false">Cancel</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { icons } from '@/icons';
-import { ref, onMounted } from 'vue';
-import { doc, getDoc } from 'firebase/firestore';
+import { ref, onMounted, watch } from 'vue';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebase.config';
 
 const data = ref<any>(null);
+const editData = ref<any>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
+const currentLang = ref('en');
+const showModal = ref(false);
 
-const currentLang = 'en';
-
-onMounted(async () => {
+async function fetchCV() {
+  loading.value = true;
   try {
     const cvRef = doc(db, 'resume', 'cv');
     const snapshot = await getDoc(cvRef);
-
     if (!snapshot.exists()) {
-      error.value = 'CV not found in Firestore';
+      error.value = 'CV not found';
       return;
     }
-
     const docData = snapshot.data();
-    const langObj = docData.languages.find((l: any) => l.code === currentLang);
+    const langObj = docData.languages.find((l: any) => l.code === currentLang.value);
     data.value = langObj?.data ?? null;
+    editData.value = JSON.parse(JSON.stringify(data.value));
   } catch (e: any) {
     error.value = e.message;
   } finally {
     loading.value = false;
   }
-});
+}
+
+onMounted(fetchCV);
+watch(currentLang, fetchCV);
+
+function addSkill() { editData.value.skills.push(''); }
+function removeSkill(i: number) { editData.value.skills.splice(i, 1); }
+
+function addExp() { editData.value.experience.push({ role: '', company: '', period: '', skillSet: '', description: '', points: [] }); }
+function removeExp(i: number) { editData.value.experience.splice(i, 1); }
+
+function addPoint(expIdx: number) { editData.value.experience[expIdx].points.push(''); }
+function removePoint(expIdx: number, i: number) { editData.value.experience[expIdx].points.splice(i, 1); }
+
+function addHobby() { editData.value.hobbies.push(''); }
+function removeHobby(i: number) { editData.value.hobbies.splice(i, 1); }
+
+async function saveCV() {
+  try {
+    const cvRef = doc(db, 'resume', 'cv');
+    const snapshot = await getDoc(cvRef);
+    if (!snapshot.exists()) return;
+    const docData = snapshot.data();
+    const langIndex = docData.languages.findIndex((l: any) => l.code === currentLang.value);
+    docData.languages[langIndex].data = editData.value;
+    await updateDoc(cvRef, docData);
+    data.value = JSON.parse(JSON.stringify(editData.value));
+    showModal.value = false;
+  } catch (e: any) {
+    alert('Save failed: ' + e.message);
+  }
+}
 
 const printRef = ref<HTMLElement | null>(null);
-
 async function downloadPdf() {
   if (!printRef.value) return;
   const html2pdf = (await import('html2pdf.js')).default;
@@ -168,10 +249,7 @@ async function downloadPdf() {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).save();
 }
-
-function printPage() {
-  window.print();
-}
+function printPage() { window.print(); }
 </script>
 
 <style scoped lang="scss">
@@ -180,6 +258,9 @@ function printPage() {
   background: #f3f4f6;
 
   .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 12px;
     margin-bottom: 14px;
 
@@ -187,7 +268,7 @@ function printPage() {
       padding: 8px 12px;
       border-radius: 8px;
       border: none;
-      background: var(--accent);
+      background: var(--color-primary);
       color: #fff;
       cursor: pointer;
       font-weight: 600;
@@ -349,5 +430,161 @@ function printPage() {
 .experience-title,
 .skillset {
   margin-bottom: 10px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 30px 40px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal h2 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 5px;
+}
+
+.modal h3 {
+  margin: 15px 0 5px 0;
+  font-size: 18px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal h4 {
+  margin: 10px 0 3px 0;
+  font-size: 16px;
+  color: #666;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+input,
+textarea,
+select {
+  margin-top: 5px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #f3f3f3;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.exp-edit {
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  background: #fafafa;
+}
+
+.exp-edit label {
+  font-weight: 500;
+}
+
+.exp-edit input,
+.exp-edit textarea {
+  font-size: 13px;
+}
+
+.exp-edit button {
+  margin-top: 5px;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.exp-edit button:hover {
+  background: var(--color-primary);
+}
+
+button.add-btn {
+  background: #4caf50;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+button.add-btn:hover {
+  background: #43a047;
+}
+
+.currentLang {
+  width: 100px;
+  margin-top: 0px;
 }
 </style>
