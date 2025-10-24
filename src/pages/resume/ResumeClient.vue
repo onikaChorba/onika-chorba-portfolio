@@ -3,7 +3,6 @@
     <div class="controls">
       <button @click="downloadPdf" class="btn" :disabled="loading">Download PDF</button>
       <button @click="printPage" class="btn btn-ghost" :disabled="loading">Print</button>
-      <button @click="showModal = true" class="btn btn-ghost">Edit CV</button>
       <select v-model="currentLang" class="currentLang">
         <option value="en">EN</option>
         <option value="uk">UA</option>
@@ -127,89 +126,18 @@
       </main>
     </article>
   </div>
-
-  <div v-if="showModal" class="modal-backdrop">
-    <div class="modal">
-      <h2>Edit CV ({{ currentLang.toUpperCase() }})</h2>
-      <label>Name: <input v-model="editData.name" /></label>
-      <label>Title: <input v-model="editData.title" /></label>
-      <h3>Contacts</h3>
-      <div class="contacts-edit">
-        <label>
-          Telegram:
-          <input v-model="editData.telegram" placeholder="Telegram username" />
-        </label>
-        <label>
-          Email:
-          <input v-model="editData.email" placeholder="Email address" />
-        </label>
-        <label>
-          Location:
-          <input v-model="editData.location" placeholder="City, Country" />
-        </label>
-        <label>
-          LinkedIn:
-          <input v-model="editData.linkedin" placeholder="LinkedIn URL" />
-        </label>
-        <label>
-          GitHub:
-          <input v-model="editData.github" placeholder="GitHub URL" />
-        </label>
-      </div>
-      <label>Summary: <textarea v-model="editData.summary"></textarea></label>
-
-      <h3>Skills</h3>
-      <div v-for="(s, i) in editData.skills" :key="i">
-        <input v-model="editData.skills[i]" />
-        <button @click="removeSkill(i)">Remove</button>
-      </div>
-      <button @click="addSkill">Add Skill</button>
-
-      <h3>Experience</h3>
-      <div v-for="(exp, i) in editData.experience" :key="i" class="exp-edit">
-        <label>Role: <input v-model="exp.role" /></label>
-        <label>Company: <input v-model="exp.company" /></label>
-        <label>Details: <input v-model="exp.details" /></label>
-        <label>Period: <input v-model="exp.period" /></label>
-        <label>SkillSet: <input v-model="exp.skillSet" /></label>
-        <label>Description: <textarea v-model="exp.description"></textarea></label>
-        <h4>Points</h4>
-        <div v-for="(p, j) in exp.points" :key="j">
-          <input v-model="exp.points[j]" />
-          <button @click="removePoint(i, j)">Remove</button>
-        </div>
-        <button @click="addPoint(i)">Add Point</button>
-        <button @click="removeExp(i)">Remove Experience</button>
-      </div>
-      <button @click="addExp">Add Experience</button>
-
-      <h3>Hobbies</h3>
-      <div v-for="(h, i) in editData.hobbies" :key="i">
-        <input v-model="editData.hobbies[i]" />
-        <button @click="removeHobby(i)">Remove</button>
-      </div>
-      <button @click="addHobby">Add Hobby</button>
-
-      <div class="modal-actions">
-        <button @click="saveCV">Save</button>
-        <button @click="showModal = false">Cancel</button>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">
 import { icons } from '@/icons';
 import { ref, onMounted, watch } from 'vue';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebase.config';
 
 const data = ref<any>(null);
-const editData = ref<any>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const currentLang = ref('en');
-const showModal = ref(false);
 
 async function fetchCV() {
   loading.value = true;
@@ -223,7 +151,6 @@ async function fetchCV() {
     const docData = snapshot.data();
     const langObj = docData.languages.find((l: any) => l.code === currentLang.value);
     data.value = langObj?.data ?? null;
-    editData.value = JSON.parse(JSON.stringify(data.value));
   } catch (e: any) {
     error.value = e.message;
   } finally {
@@ -233,34 +160,6 @@ async function fetchCV() {
 
 onMounted(fetchCV);
 watch(currentLang, fetchCV);
-
-function addSkill() { editData.value.skills.push(''); }
-function removeSkill(i: number) { editData.value.skills.splice(i, 1); }
-
-function addExp() { editData.value.experience.push({ role: '', company: '', period: '', skillSet: '', description: '', points: [] }); }
-function removeExp(i: number) { editData.value.experience.splice(i, 1); }
-
-function addPoint(expIdx: number) { editData.value.experience[expIdx].points.push(''); }
-function removePoint(expIdx: number, i: number) { editData.value.experience[expIdx].points.splice(i, 1); }
-
-function addHobby() { editData.value.hobbies.push(''); }
-function removeHobby(i: number) { editData.value.hobbies.splice(i, 1); }
-
-async function saveCV() {
-  try {
-    const cvRef = doc(db, 'resume', 'cv');
-    const snapshot = await getDoc(cvRef);
-    if (!snapshot.exists()) return;
-    const docData = snapshot.data();
-    const langIndex = docData.languages.findIndex((l: any) => l.code === currentLang.value);
-    docData.languages[langIndex].data = editData.value;
-    await updateDoc(cvRef, docData);
-    data.value = JSON.parse(JSON.stringify(editData.value));
-    showModal.value = false;
-  } catch (e: any) {
-    alert('Save failed: ' + e.message);
-  }
-}
 
 const printRef = ref<HTMLElement | null>(null);
 async function downloadPdf() {
@@ -274,6 +173,7 @@ async function downloadPdf() {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).save();
 }
+
 function printPage() {
   if (!printRef.value) return;
 
@@ -300,6 +200,7 @@ function printPage() {
   printWindow.print();
   printWindow.close();
 }
+
 </script>
 
 <style scoped lang="scss">

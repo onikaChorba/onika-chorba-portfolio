@@ -42,9 +42,10 @@ watch(locale, async (newLocale) => {
 
 const contactTextWithLink = computed(() => {
   const base = contactTranslations.value.contactText || t('contact.contactText');
-  const linkHtml = `<a class="link" href="https://drive.google.com/file/d/1jdhA3vJxIkG1Xx1H1iss5eDB8JOkn7nk/view?usp=sharing" target="_blank" rel="noreferrer">${contactTranslations.value.viewOrDownload || t('contact.viewOrDownload')}</a>`;
+  const linkHtml = `<a class="link" href="/resume">${contactTranslations.value.viewOrDownload || t('contact.viewOrDownload')}</a>`;
   return base.replace('{resumeLink}', linkHtml);
 });
+
 </script>
 
 <style scoped lang="scss">
