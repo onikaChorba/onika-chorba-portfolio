@@ -99,7 +99,7 @@
             <hr />
           </div>
           <div class="experience">
-            <div v-for="(exp, idx) in data.experience.slice().reverse()" :key="idx" class="exp-item">
+            <div v-for="(exp, idx) in data.experience.slice()" :key="idx" class="exp-item">
               <div class="experience-title">
                 <h3 class="section-text-large"><b>{{ exp.role }}</b>, {{ exp.company }}</h3>
                 <p class="section-text-small">{{ exp.details }}</p>
@@ -206,7 +206,8 @@ function printPage() {
 <style scoped lang="scss">
 .resume-wrapper {
   padding: 18px;
-  background: #f3f4f6;
+  background: var(--color-bg);
+  color: var(--text-color);
 
   .controls {
     display: flex;
@@ -227,15 +228,15 @@ function printPage() {
 
     .btn-ghost {
       background: transparent;
-      border: 1px solid #ddd;
-      color: var(--muted-2);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
     }
   }
 }
 
 .resume {
   font-family: Arial, Helvetica, sans-serif;
-  background: var(--paper-bg);
+  background: white;
   padding: var(--page-padding);
   border-radius: 8px;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
