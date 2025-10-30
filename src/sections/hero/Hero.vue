@@ -35,7 +35,7 @@ const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 const heroTranslations = ref<Record<string, string>>({});
 
 const scrollToAbout = () => {
-  document.getElementById('About')?.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
 };
 
 onMounted(async () => {
