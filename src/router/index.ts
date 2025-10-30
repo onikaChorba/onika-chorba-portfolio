@@ -3,7 +3,7 @@ import { FrontPage, AdminPageMain, AdminPageProjects, Resume, ResumeClient } fro
 
 const routes = [
   { path: '/', name: 'Home', component: FrontPage },
-  { path: '/resume', component: ResumeClient },
+  { path: '/resume', name: 'ResumeClient', component: ResumeClient },
   { path: '/admin', name: 'AdminMain', component: AdminPageMain },
   { path: '/admin/projects', name: 'AdminProjects', component: AdminPageProjects },
   { path: '/admin/resume', name: 'AdminResume', component: Resume },

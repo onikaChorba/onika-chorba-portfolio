@@ -62,7 +62,7 @@
 import { Project } from "../../../types";
 import { ref, reactive, onMounted } from "vue";
 import { db } from "../../../firebase/firebase.config";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
 
 const projects = ref<Project[]>([]);
 const projectsCol = collection(db, "projects");
@@ -94,7 +94,8 @@ const toolsInput = ref("");
 const editingId = ref<string | null>(null);
 
 async function loadProjects() {
-  const snap = await getDocs(projectsCol);
+  const q = query(projectsCol, orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
   projects.value = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Project));
 }
 
@@ -341,6 +342,7 @@ h1 {
 
 .project {
   min-width: 200px;
+  max-width: 50%;
 }
 
 .tools {

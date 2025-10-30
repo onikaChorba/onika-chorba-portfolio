@@ -129,9 +129,9 @@ const loadData = async () => {
   const expSnap = await getDoc(doc(db, 'experience', 'main'));
   if (expSnap.exists()) {
     experience.value = expSnap.data().experience.map((item: any) => ({
-      position: { ua: item.position?.uk || '', en: item.position?.en || '' },
-      period: { ua: item.period?.uk || '', en: item.period?.en || '' },
-      description: { ua: item.description?.uk || '', en: item.description?.en || '' },
+      position: { uk: item.position?.uk || '', en: item.position?.en || '' },
+      period: { uk: item.period?.uk || '', en: item.period?.en || '' },
+      description: { uk: item.description?.uk || '', en: item.description?.en || '' },
     }));
   }
 };
