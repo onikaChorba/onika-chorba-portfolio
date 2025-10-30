@@ -60,16 +60,17 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import sunIcon from '../../assets/icons/sun.svg';
 import { doc, getDoc } from 'firebase/firestore';
+import { useRoute, useRouter } from 'vue-router';
 import moonIcon from '../../assets/icons/moon.svg';
 import { loadLocaleMessages } from '../../locales';
 import { db } from '../../firebase/firebase.config';
 
 const props = defineProps<{ isAdmin: boolean }>();
 const route = useRoute();
+const router = useRouter();
 
 const { locale, t, setLocaleMessage } = useI18n({ useScope: 'global' });
 const currentLocale = ref(locale.value);
@@ -105,7 +106,15 @@ const toggleTheme = () => {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
 };
 
-const scrollToSection = (id: string) => {
+const scrollToSection = async (id: string) => {
+  // Якщо ми НЕ на головній — спочатку переходимо на головну
+  if (route.path !== '/') {
+    await router.push('/');
+    // Трішки зачекати, щоб DOM намалювався
+    setTimeout(() => scrollToSection(id), 100);
+    return;
+  }
+
   const section = document.querySelector(id);
   if (section) {
     const offset = 64;

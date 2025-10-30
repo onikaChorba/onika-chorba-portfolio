@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { FrontPage, AdminPageMain, AdminPageProjects, Resume, ResumeClient } from '../pages'
+import { FrontPage, AdminPageMain, AdminPageProjects, Resume } from '../pages'
 
 const routes = [
   { path: '/', name: 'Home', component: FrontPage },
-  { path: '/resume', component: ResumeClient },
+  { path: '/resume', name: 'Resume', component: Resume },
   { path: '/admin', name: 'AdminMain', component: AdminPageMain },
   { path: '/admin/projects', name: 'AdminProjects', component: AdminPageProjects },
   { path: '/admin/resume', name: 'AdminResume', component: Resume },

@@ -3,7 +3,7 @@
     <div class="controls">
       <button @click="downloadPdf" class="btn" :disabled="loading">Download PDF</button>
       <button @click="printPage" class="btn btn-ghost" :disabled="loading">Print</button>
-      <button @click="showModal = true" class="btn btn-ghost">Edit CV</button>
+      <button @click="showModal = true" class="btn btn-ghost" v-if="isAdmin">Edit CV</button>
       <select v-model="currentLang" class="currentLang">
         <option value="en">EN</option>
         <option value="uk">UA</option>
@@ -239,10 +239,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase/firebase.config';
 import { icons } from '@/icons';
+import { useRoute } from 'vue-router'
+import { ref, onMounted, watch } from 'vue';
+import { db } from '@/firebase/firebase.config';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+
+const route = useRoute()
+const isAdmin = ref(false)
 
 const data = ref<any>(null);
 const editData = ref<any>({
@@ -465,12 +469,25 @@ function printPage() {
     printWindow.close();
   }, 300);
 }
+
+
+onMounted(() => {
+  // Перевірка на авторизацію (твоя логіка)
+  const user = localStorage.getItem('isAuthenticated')
+  isAdmin.value = Boolean(user)
+
+  // Додатковий захист, щоб кнопки НЕ показувалися на /resume
+  if (!route.path.startsWith('/admin')) {
+    isAdmin.value = false
+  }
+})
 </script>
 
 <style scoped lang="scss">
 .resume-wrapper {
   padding: 18px;
-  background: #f3f4f6;
+  background: var(--color-bg);
+  color: var(--text-color);
 
   .controls {
     display: flex;
@@ -491,15 +508,15 @@ function printPage() {
 
     .btn-ghost {
       background: transparent;
-      border: 1px solid #ddd;
-      color: var(--muted-2);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
     }
   }
 }
 
 .resume {
   font-family: Arial, Helvetica, sans-serif;
-  background: var(--paper-bg);
+  background: white;
   padding: var(--page-padding);
   border-radius: 8px;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
