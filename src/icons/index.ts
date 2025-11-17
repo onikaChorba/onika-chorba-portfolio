@@ -1,21 +1,21 @@
-import html from '@/assets/icons/html.png'
-import css from '@/assets/icons/css.png'
-import js from '@/assets/icons/js.png'
-import scss from '@/assets/icons/scsslogo.png'
-import gitHub from '@/assets/icons/github.png'
+import html from '@/assets/icons/html.svg'
+import css from '@/assets/icons/css.svg'
+import js from '@/assets/icons/js.svg'
+import scss from '@/assets/icons/scsslogo.svg'
+import gitHub from '@/assets/icons/github.svg'
 import gitHubLink from '@/assets/icons/github-link.svg'
-import wb from '@/assets/icons/wb.png'
-import ts from '@/assets/icons/ts.png'
-import react from '@/assets/icons/react.png'
-import figma from '@/assets/icons/figma.png'
-import vueLogo from '@/assets/icons/vue.png'
-import api from '@/assets/icons/api.png'
-import redux from '@/assets/icons/redux.png'
-import next from '@/assets/icons/nextjs-icon.png'
+import wb from '@/assets/icons/wb.svg'
+import ts from '@/assets/icons/ts.svg'
+import react from '@/assets/icons/react.svg'
+import figma from '@/assets/icons/figma.svg'
+import vueLogo from '@/assets/icons/vue.svg'
+import api from '@/assets/icons/api.svg'
+import redux from '@/assets/icons/redux.svg'
+import next from '@/assets/icons/next.svg'
 import styledComponents from '@/assets/icons/Styled Components.png'
 import mui from '@/assets/icons/mui.png'
-import wing from '@/assets/icons/wing.png'
-import gitLab from '@/assets/icons/gitlab.png'
+import wing from '@/assets/icons/wing.svg'
+import gitLab from '@/assets/icons/gitlab.svg'
 import browser from '@/assets/icons/browser.svg'
 import check from '@/assets/icons/check.svg'
 import linkedIn from '@/assets/icons/linkedin.svg'
@@ -25,6 +25,7 @@ import location from '@/assets/icons/location-cv.svg'
 import telegram from '@/assets/icons/telegram.svg'
 import linkedInCV from '@/assets/icons/linkedin-cv.svg'
 import gitHubCV from '@/assets/icons/github-cv.svg'
+import git from '@/assets/icons/git.svg'
 
 export const icons = [
   { src: ts, alt: 'ts' },
@@ -43,6 +44,7 @@ export const icons = [
   { src: gitHub, alt: 'gitHub' },
   { src: gitHubLink, alt: 'gitHubLink' },
   { src: gitLab, alt: 'gitLab' },
+  { src: git, alt: 'git' },
   { src: wb, alt: 'wb' },
   { src: figma, alt: 'figma' },
   { src: browser, alt: 'browser' },
