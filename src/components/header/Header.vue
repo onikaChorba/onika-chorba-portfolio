@@ -33,7 +33,7 @@
           {{ headerTranslations.exitBtn || t('header.exitBtn') }}
         </button>
         <button class="btn-switch-theme" @click="toggleTheme" aria-label="toggle theme">
-          <img :src="isDark ? sunIcon : moonIcon" />
+          <img :src="isDark ? sunIcon : moonIcon" :alt="isDark ? sunIcon : moonIcon" />
         </button>
         <button @click="switchLanguage" class="btn-switch-lang" aria-label="toggle lang">
           {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
@@ -49,7 +49,7 @@
         {{ headerTranslations.exitBtn || t('header.exitBtn') }}
       </button>
       <button class="btn-switch-theme" @click="toggleTheme" aria-label="toggle theme">
-        <img :src="isDark ? sunIcon : moonIcon" />
+        <img :src="isDark ? sunIcon : moonIcon" :alt="isDark ? sunIcon : moonIcon" />
       </button>
       <button @click="switchLanguage" class="btn-switch-lang" aria-label="toggle lang">
         {{ currentLocale === 'uk' ? 'EN' : 'UA' }}

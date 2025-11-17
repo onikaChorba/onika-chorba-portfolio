@@ -7,9 +7,9 @@
         <span className="hero__span">{{ heroTranslations.name || t('hero.name') }}</span> {{ heroTranslations.surname ||
           t('hero.surname') }}
       </h1>
-      <h3 className="hero__title2 title2 appear">
+      <h2 className="hero__title2 title2 appear">
         {{ heroTranslations.title2 || t('hero.title2') }}
-      </h3>
+      </h2>
     </div>
 
     <p className="hero__text text appear">

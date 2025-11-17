@@ -42,7 +42,6 @@ const { locale } = useI18n();
 
 const props = defineProps<{ project: Project }>();
 
-console.log('PROJECT MODAL DATA:', props.project);
 </script>
 
 

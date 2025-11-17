@@ -19,32 +19,32 @@
         <p class="role">{{ data.title }}</p>
 
         <div class="contacts">
-          <p class="contact-cv" v-if="data.telegram">
+          <div class="contact-cv" v-if="data.telegram">
             <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
             <a :href="`https://t.me/${data.telegram.replace(/^@/, '')}`" target="_blank" class="link">
               {{ data.telegram }}
             </a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.location">
+          <div class="contact-cv" v-if="data.location">
             <img :src="icons.find(i => i.alt === 'location')?.src" class="icon" />
-          <p>{{ data.location }}</p>
-          </p>
+            <p>{{ data.location }}</p>
+          </div>
 
-          <p class="contact-cv" v-if="data.email">
+          <div class="contact-cv" v-if="data.email">
             <img :src="icons.find(i => i.alt === 'email')?.src" class="icon" />
             <a :href="`mailto:${data.email}`" class="link">{{ data.email }}</a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.linkedin">
+          <div class="contact-cv" v-if="data.linkedin">
             <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
             <a :href="data.linkedin" target="_blank" class="link">{{ data.linkedin }}</a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.github">
+          <div class="contact-cv" v-if="data.github">
             <img :src="icons.find(i => i.alt === 'gitHubCV')?.src" class="icon" />
             <a :href="data.github" target="_blank" class="link">{{ data.github }}</a>
-          </p>
+          </div>
         </div>
       </aside>
 
