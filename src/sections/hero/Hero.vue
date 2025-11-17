@@ -16,7 +16,7 @@
       {{ heroTranslations.text || t('hero.text') }}
     </p>
 
-    <button @click="scrollToAbout" class="arrow appear">
+    <button @click="scrollToAbout" class="arrow appear" aria-label="scroll to about">
       <span></span>
       <span></span>
       <span></span>

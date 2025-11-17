@@ -1,6 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal"> <button class="modal-close" @click="$emit('close')">×</button>
+    <div class="modal"> <button class="modal-close" @click="$emit('close')" aria-label="close">×</button>
       <div class="img-wrapper">
         <img v-if="project.imgs?.length" :src="project.imgs[project.imgs.length - 1]" :alt="project.name" />
       </div>

@@ -25,7 +25,7 @@
     </div>
 
     <div class="buttonForm">
-      <button type="submit" class="buttonForm__button" @click="sendEmail">
+      <button type="submit" class="buttonForm__button" @click="sendEmail" aria-label="submit button">
         <span class="buttonForm__text text">{{ contactTranslations.submit || t('contact.submit') }}</span>
       </button>
     </div>
