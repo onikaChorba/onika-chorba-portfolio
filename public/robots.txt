@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://onika-chorba-portfolio.vercel.app/sitemap.xml
+
