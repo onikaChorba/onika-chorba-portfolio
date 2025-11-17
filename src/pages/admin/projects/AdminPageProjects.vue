@@ -1,6 +1,6 @@
 <template>
   <div class="admin">
-    <button class="open-popup-btn" @click="openPopup">+ Add Project</button>
+    <button class="open-popup-btn" @click="openPopup" aria-label="add project">+ Add Project</button>
     <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
       <div class="popup-content">
         <form @submit.prevent="saveProject" class="form">
@@ -16,8 +16,8 @@
           <textarea v-model="toolsUkInput" placeholder="Tools (Ukrainian, one per line)"></textarea>
 
           <div class="form-buttons">
-            <button type="submit">{{ editingId ? "Update" : "Add" }}</button>
-            <button type="button" @click="closePopup">Cancel</button>
+            <button type="submit" aria-label="submit">{{ editingId ? "Update" : "Add" }}</button>
+            <button type="button" @click="closePopup" aria-label="cancel">Cancel</button>
           </div>
         </form>
       </div>
@@ -50,8 +50,8 @@
           </div>
         </div>
         <div class="actions">
-          <button @click="editProject(project)">Edit</button>
-          <button @click="deleteProject(project.id)">Delete</button>
+          <button @click="editProject(project)" aria-label="edit">Edit</button>
+          <button @click="deleteProject(project.id)" aria-label="delete">Delete</button>
         </div>
       </li>
     </ul>

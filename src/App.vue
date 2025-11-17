@@ -14,7 +14,7 @@
           @keydown.enter.prevent="focusPassword" autofocus />
         <input v-model="password" type="password" placeholder="Пароль" ref="passwordInput"
           @keydown.enter.prevent="login" />
-        <button type="submit">Увійти</button>
+        <button type="submit" aria-label="submit">Увійти</button>
       </form>
     </div>
 

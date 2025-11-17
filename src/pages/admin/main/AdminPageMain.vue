@@ -80,11 +80,11 @@
         </div>
       </div>
 
-      <button @click="addExperience">Додати досвід</button>
+      <button @click="addExperience" aria-label="add experience">Додати досвід</button>
     </section>
 
     <hr />
-    <button @click="saveAll">Зберегти всі зміни</button>
+    <button @click="saveAll" aria-label="save all">Зберегти всі зміни</button>
   </div>
 </template>
 

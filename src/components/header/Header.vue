@@ -4,7 +4,7 @@
       <p class="logo__text"><span class="logo__text2">Onika</span> Chorba</p>
     </div>
 
-    <button class="burger" @click="toggleMenu">
+    <button class="burger" @click="toggleMenu" aria-label="scroll down">
       <span :class="{ open: isMenuOpen }"></span>
       <span :class="{ open: isMenuOpen }"></span>
       <span :class="{ open: isMenuOpen }"></span>
@@ -26,32 +26,32 @@
       </ul>
 
       <div class="btn-wrapper-mobile">
-        <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
+        <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin" aria-label="contact">
           {{ headerTranslations['header.contactBtn'] || t('header.contactBtn') }}
         </button>
-        <button class="btn" @click.prevent="logout" v-else>
+        <button class="btn" @click.prevent="logout" v-else aria-label="logout">
           {{ headerTranslations.exitBtn || t('header.exitBtn') }}
         </button>
-        <button class="btn-switch-theme" @click="toggleTheme">
-          <img :src="isDark ? sunIcon : moonIcon" />
+        <button class="btn-switch-theme" @click="toggleTheme" aria-label="toggle theme">
+          <img :src="isDark ? sunIcon : moonIcon" :alt="isDark ? sunIcon : moonIcon" />
         </button>
-        <button @click="switchLanguage" class="btn-switch-lang">
+        <button @click="switchLanguage" class="btn-switch-lang" aria-label="toggle lang">
           {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
         </button>
       </div>
     </nav>
 
     <div class="btn-wrapper" v-if="!isMobile">
-      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin">
+      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin" aria-label="contacy">
         {{ headerTranslations['header.contactBtn'] || t('header.contactBtn') }}
       </button>
-      <button class="btn" @click.prevent="logout" v-else>
+      <button class="btn" @click.prevent="logout" v-else aria-label="exit">
         {{ headerTranslations.exitBtn || t('header.exitBtn') }}
       </button>
-      <button class="btn-switch-theme" @click="toggleTheme">
-        <img :src="isDark ? sunIcon : moonIcon" />
+      <button class="btn-switch-theme" @click="toggleTheme" aria-label="toggle theme">
+        <img :src="isDark ? sunIcon : moonIcon" :alt="isDark ? sunIcon : moonIcon" />
       </button>
-      <button @click="switchLanguage" class="btn-switch-lang">
+      <button @click="switchLanguage" class="btn-switch-lang" aria-label="toggle lang">
         {{ currentLocale === 'uk' ? 'EN' : 'UA' }}
       </button>
     </div>

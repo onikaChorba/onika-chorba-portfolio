@@ -1,9 +1,9 @@
 <template>
   <div class="resume-wrapper">
     <div class="controls">
-      <button @click="downloadPdf" class="btn" :disabled="loading">Download PDF</button>
-      <button @click="printPage" class="btn btn-ghost" :disabled="loading">Print</button>
-      <button @click="showModal = true" class="btn btn-ghost" v-if="isAdmin">Edit CV</button>
+      <button @click="downloadPdf" class="btn" :disabled="loading" aria-label="download pdf">Download PDF</button>
+      <button @click="printPage" class="btn btn-ghost" :disabled="loading" aria-label="print">Print</button>
+      <button @click="showModal = true" class="btn btn-ghost" v-if="isAdmin" aria-label="edit cv">Edit CV</button>
       <select v-model="currentLang" class="currentLang">
         <option value="en">EN</option>
         <option value="uk">UA</option>
@@ -19,32 +19,32 @@
         <p class="role">{{ data.title }}</p>
 
         <div class="contacts">
-          <p class="contact-cv" v-if="data.telegram">
+          <div class="contact-cv" v-if="data.telegram">
             <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
             <a :href="`https://t.me/${data.telegram.replace(/^@/, '')}`" target="_blank" class="link">
               {{ data.telegram }}
             </a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.location">
+          <div class="contact-cv" v-if="data.location">
             <img :src="icons.find(i => i.alt === 'location')?.src" class="icon" />
-          <p>{{ data.location }}</p>
-          </p>
+            <p>{{ data.location }}</p>
+          </div>
 
-          <p class="contact-cv" v-if="data.email">
+          <div class="contact-cv" v-if="data.email">
             <img :src="icons.find(i => i.alt === 'email')?.src" class="icon" />
             <a :href="`mailto:${data.email}`" class="link">{{ data.email }}</a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.linkedin">
+          <div class="contact-cv" v-if="data.linkedin">
             <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
             <a :href="data.linkedin" target="_blank" class="link">{{ data.linkedin }}</a>
-          </p>
+          </div>
 
-          <p class="contact-cv" v-if="data.github">
+          <div class="contact-cv" v-if="data.github">
             <img :src="icons.find(i => i.alt === 'gitHubCV')?.src" class="icon" />
             <a :href="data.github" target="_blank" class="link">{{ data.github }}</a>
-          </p>
+          </div>
         </div>
       </aside>
 
@@ -166,9 +166,9 @@
       <h3>Skills</h3>
       <div v-for="(s, i) in editData.skills" :key="`skill-${i}`" class="chip-row">
         <input v-model="editData.skills[i]" />
-        <button type="button" class="small-btn" @click="removeSkill(i)">Remove</button>
+        <button type="button" class="small-btn" @click="removeSkill(i)" aria-label="remove">Remove</button>
       </div>
-      <button type="button" class="add-btn" @click="addSkill">Add Skill</button>
+      <button type="button" class="add-btn" aria-label="add" @click="addSkill">Add Skill</button>
 
       <h3>Experience</h3>
       <div v-for="(exp, i) in editData.experience" :key="`exp-${i}`" class="exp-edit">
@@ -201,14 +201,16 @@
           <button type="button" class="small-btn danger" @click="removeExp(i)">Remove Experience</button>
         </div>
       </div>
-      <button type="button" class="add-btn" @click="addExp">Add Experience (top)</button>
+      <button type="button" class="add-btn" @click="addExp" aria-label="add exp">Add Experience (top)</button>
 
       <h3>Languages</h3>
       <div v-for="(l, i) in editData.languages" :key="`lang-${i}`" class="language-row">
         <input v-model="editData.languages[i]" placeholder="e.g. English (B2)" />
-        <button type="button" class="small-btn" @click="editData.languages.splice(i, 1)">Remove</button>
+        <button type="button" class="small-btn" aria-label="remove"
+          @click="editData.languages.splice(i, 1)">Remove</button>
       </div>
-      <button type="button" class="add-btn" @click="editData.languages.push('')">Add Language</button>
+      <button type="button" class="add-btn" @click="editData.languages.push('')" aria-label="add language">Add
+        Language</button>
 
       <h3>Education</h3>
       <label>Degree:
@@ -222,17 +224,17 @@
       <h3>Hobbies</h3>
       <div v-for="(h, i) in editData.hobbies" :key="`h-${i}`" class="hobby-row">
         <input v-model="editData.hobbies[i]" />
-        <button type="button" class="small-btn" @click="removeHobby(i)">Remove</button>
+        <button type="button" class="small-btn" @click="removeHobby(i)" aria-label="remove hobby">Remove</button>
       </div>
 
       <div class="hobby-add">
         <input v-model="newHobby" placeholder="Add new hobby..." @keyup.enter="addHobbyFromInput" />
-        <button type="button" class="add-btn" @click="addHobbyFromInput">Add Hobby</button>
+        <button type="button" class="add-btn" @click="addHobbyFromInput" aria-label="add hobby">Add Hobby</button>
       </div>
 
       <div class="modal-actions">
-        <button class="btn-primary" @click="saveCV">Save</button>
-        <button class="btn-secondary" @click="cancelEdit">Cancel</button>
+        <button class="btn-primary" @click="saveCV" aria-label="save cv">Save</button>
+        <button class="btn-secondary" @click="cancelEdit" aria-label="cancel">Cancel</button>
       </div>
     </div>
   </div>

@@ -4,10 +4,11 @@
     <p class="text">{{ projectsTranslations.about || t('projects.about') }}</p>
 
     <div class="filters">
-      <button @click="setFilter(null)" :class="{ active: activeFilter === null }">
+      <button @click="setFilter(null)" :class="{ active: activeFilter === null }" aria-label="all">
         {{ projectsTranslations.all || t('projects.all') }}
       </button>
-      <button v-for="tag in allTags" :key="tag" @click="setFilter(tag)" :class="{ active: activeFilter === tag }">
+      <button v-for="tag in allTags" :key="tag" @click="setFilter(tag)" :class="{ active: activeFilter === tag }"
+        aria-label="tag">
         {{ tag }}
       </button>
     </div>
