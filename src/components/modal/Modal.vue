@@ -35,15 +35,16 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { icons } from '../../icons';
+import { icons } from '@/icons';
 import { Project } from '../../types';
-
-
-defineProps<{ project: Project }>();
 
 const { locale } = useI18n();
 
+const props = defineProps<{ project: Project }>();
+
+console.log('PROJECT MODAL DATA:', props.project);
 </script>
+
 
 <style scoped lang="scss">
 .modal-overlay {
@@ -108,13 +109,12 @@ const { locale } = useI18n();
 
 .img-wrapper {
   width: 100%;
-  max-height: 400px;
+  height: 400px;
   overflow: auto;
   border-radius: 12px;
-  margin: 12px 0;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -137,9 +137,9 @@ const { locale } = useI18n();
 
   img {
     width: 100%;
-    height: auto;
     display: block;
     border-radius: 12px;
+    object-fit: contain;
   }
 }
 
