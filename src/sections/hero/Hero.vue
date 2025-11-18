@@ -1,6 +1,7 @@
 <template>
   <div className="hero" id="home">
-    <img className="hero__img appear" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg" />
+    <img className="hero__img appear" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg"
+      fetchpriority="high" />
 
     <div class="title">
       <h1 className="hero__title1 appear">

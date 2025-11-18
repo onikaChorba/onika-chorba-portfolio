@@ -27,6 +27,7 @@ interface Circle {
 
 export function useCanvas(themeClassRef?: Ref<string>) {
   const canvasRef = ref<HTMLCanvasElement | null>(null);
+
   const properties = ref<Properties>({
     bg: "#fff",
     colors: ["#000"],
@@ -41,8 +42,10 @@ export function useCanvas(themeClassRef?: Ref<string>) {
 
   const updateProperties = async () => {
     await nextTick();
-    const rootStyles = getComputedStyle(document.body);
-    const isLight = document.body.classList.contains("light");
+
+    const body = document.body;
+    const isLight = body.classList.contains("light");
+    const rootStyles = getComputedStyle(body);
     const width = window.innerWidth;
 
     properties.value = {
@@ -72,13 +75,14 @@ export function useCanvas(themeClassRef?: Ref<string>) {
 
   onMounted(() => {
     const canvas = canvasRef.value!;
-    if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
-    if (!ctx) return;
-
     let circles: Circle[] = [];
-    let animationFrameId: number;
+    let animationFrameId = 0;
 
+    // ❗️ Кешована тема — щоб не читати DOM у циклі
+    let isLightTheme = document.body.classList.contains("light");
+
+    // ❗️ Кешування розміру екрана
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -91,26 +95,25 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     const drawLines = () => {
+      const lineLength = properties.value.lineLength;
+      ctx.lineWidth = 2.5;
+
       for (let i = 0; i < circles.length; i++) {
         for (let j = i + 1; j < circles.length; j++) {
-          const x1 = circles[i].x;
-          const y1 = circles[i].y;
-          const x2 = circles[j].x;
-          const y2 = circles[j].y;
+          const dx = circles[j].x - circles[i].x;
+          const dy = circles[j].y - circles[i].y;
+          const length = Math.sqrt(dx * dx + dy * dy);
 
-          const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-          const isLight = document.body.classList.contains("light");
+          if (length < lineLength) {
+            const opacity = 1 - length / lineLength;
 
-          if (length < properties.value.lineLength) {
-            const opacity = 1 - length / properties.value.lineLength;
-            ctx.lineWidth = 2.5;
-            ctx.strokeStyle = isLight
+            ctx.strokeStyle = isLightTheme
               ? `rgba(255,255,255,${opacity})`
               : `rgba(139,71,98,${opacity})`;
+
             ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.closePath();
+            ctx.moveTo(circles[i].x, circles[i].y);
+            ctx.lineTo(circles[j].x, circles[j].y);
             ctx.stroke();
           }
         }
@@ -118,45 +121,32 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     class Circles implements Circle {
-      x: number;
-      y: number;
-      vX: number;
-      vY: number;
-      circlesLife: number;
-      randomColor: string;
-      radius: number;
-
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vX =
-          Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
-        this.vY =
-          Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
-        this.circlesLife = Math.random() * properties.value.circlesLife * 60;
-        this.randomColor =
-          properties.value.colors[
-          Math.floor(Math.random() * properties.value.colors.length)
-          ];
-        this.radius =
-          Math.random() *
-          (properties.value.maxRadius - properties.value.minRadius) +
-          properties.value.minRadius;
-      }
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
+      vX =
+        Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
+      vY =
+        Math.random() * (properties.value.maxV * 2) - properties.value.maxV;
+      circlesLife =
+        Math.random() * properties.value.circlesLife * 60;
+      randomColor =
+        properties.value.colors[
+        Math.floor(Math.random() * properties.value.colors.length)
+        ];
+      radius =
+        Math.random() *
+        (properties.value.maxRadius - properties.value.minRadius) +
+        properties.value.minRadius;
 
       position() {
-        if (
-          (this.x + this.vX > canvas.width && this.vX > 0) ||
-          (this.x + this.vX < 0 && this.vX < 0)
-        ) {
+        const w = canvas.width;
+        const h = canvas.height;
+
+        if ((this.x + this.vX > w && this.vX > 0) || (this.x + this.vX < 0 && this.vX < 0))
           this.vX *= -1;
-        }
-        if (
-          (this.y + this.vY > canvas.height && this.vY > 0) ||
-          (this.y + this.vY < 0 && this.vY < 0)
-        ) {
+        if ((this.y + this.vY > h && this.vY > 0) || (this.y + this.vY < 0 && this.vY < 0))
           this.vY *= -1;
-        }
+
         this.x += this.vX;
         this.y += this.vY;
       }
@@ -164,41 +154,33 @@ export function useCanvas(themeClassRef?: Ref<string>) {
       reDraw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.closePath();
         ctx.fillStyle = this.randomColor;
         ctx.fill();
       }
 
       reLiveCircle() {
         if (this.circlesLife < 1) {
+          const p = properties.value;
+
           this.x = Math.random() * canvas.width;
           this.y = Math.random() * canvas.height;
-          this.vX =
-            Math.random() * (properties.value.maxV * 2) -
-            properties.value.maxV;
-          this.vY =
-            Math.random() * (properties.value.maxV * 2) -
-            properties.value.maxV;
-          this.circlesLife =
-            Math.random() * properties.value.circlesLife * 60;
+          this.vX = Math.random() * (p.maxV * 2) - p.maxV;
+          this.vY = Math.random() * (p.maxV * 2) - p.maxV;
+          this.circlesLife = Math.random() * p.circlesLife * 60;
           this.randomColor =
-            properties.value.colors[
-            Math.floor(Math.random() * properties.value.colors.length)
-            ];
+            p.colors[Math.floor(Math.random() * p.colors.length)];
           this.radius =
-            Math.random() *
-            (properties.value.maxRadius - properties.value.minRadius) +
-            properties.value.minRadius;
+            Math.random() * (p.maxRadius - p.minRadius) + p.minRadius;
         }
         this.circlesLife--;
       }
     }
 
     const reDrawCircles = () => {
-      for (let i = 0; i < circles.length; i++) {
-        circles[i].reLiveCircle();
-        circles[i].reDraw();
-        circles[i].position();
+      for (const c of circles) {
+        c.reLiveCircle();
+        c.reDraw();
+        c.position();
       }
     };
 
@@ -209,7 +191,7 @@ export function useCanvas(themeClassRef?: Ref<string>) {
       animationFrameId = requestAnimationFrame(loop);
     };
 
-    const animate = () => {
+    const start = () => {
       circles = [];
       for (let i = 0; i < properties.value.maxCircle; i++) {
         circles.push(new Circles());
@@ -218,17 +200,19 @@ export function useCanvas(themeClassRef?: Ref<string>) {
     };
 
     resizeCanvas();
-    updateProperties().then(animate);
+    updateProperties().then(start);
 
     window.addEventListener("resize", resizeCanvas);
 
-    const observer = new MutationObserver(() => updateProperties());
+    const observer = new MutationObserver(() => {
+      isLightTheme = document.body.classList.contains("light");
+      updateProperties();
+    });
+
     observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
     if (themeClassRef) {
-      watch(themeClassRef, () => {
-        updateProperties();
-      });
+      watch(themeClassRef, () => updateProperties());
     }
 
     onBeforeUnmount(() => {
