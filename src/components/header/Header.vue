@@ -42,8 +42,8 @@
     </nav>
 
     <div class="btn-wrapper" v-if="!isMobile">
-      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin" aria-label="contacy">
-        {{ headerTranslations['header.contactBtn'] || t('header.contactBtn') }}
+      <button class="btn" @click.prevent="scrollToSection('#contact')" v-if="!props.isAdmin" aria-label="contact">
+        {{ headerTranslations['header.contactBtn'] || 'Contact' }}
       </button>
       <button class="btn" @click.prevent="logout" v-else aria-label="exit">
         {{ headerTranslations.exitBtn || t('header.exitBtn') }}

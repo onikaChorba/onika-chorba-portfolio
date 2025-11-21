@@ -1,21 +1,20 @@
 <template>
-  <div className="hero" id="home">
-    <div style="width:100%;height:0;padding-bottom:80%;position:relative;" class="gifImg"><iframe
-        src="https://giphy.com/embed/3kPDmoWdBpQPNhCnUG" width="100%" height="100%" style="position:absolute"
-        frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
-    <p><a href="https://giphy.com/stickers/siwaOnlineGmbH-siwa-siwi-hagenberg-3kPDmoWdBpQPNhCnUG">via GIPHY</a></p>
+  <div class="hero" id="home">
+    <div>
+      <img :src="gif" alt="Hero preview" class="gifImg" />
+    </div>
 
     <div class="title">
-      <h1 className="hero__title1 appear">
-        <span className="hero__span">{{ heroTranslations.name || t('hero.name') }}</span> {{ heroTranslations.surname ||
-          t('hero.surname') }}
+      <h1 class="hero__title1 appear">
+        <span class="hero__span">{{ heroTranslations.name || t('hero.name') }}</span>
+        {{ heroTranslations.surname || t('hero.surname') }}
       </h1>
-      <h2 className="hero__title2 title2 appear">
+      <h2 class="hero__title2 title2 appear">
         {{ heroTranslations.title2 || t('hero.title2') }}
       </h2>
     </div>
 
-    <p className="hero__text text appear">
+    <p class="hero__text text appear">
       {{ heroTranslations.text || t('hero.text') }}
     </p>
 
@@ -33,6 +32,7 @@ import { useI18n } from 'vue-i18n';
 import { ref, onMounted } from 'vue';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase.config';
+import gif from './../../assets/icons/dev.gif';
 
 const { locale, t, setLocaleMessage } = useI18n<{ locale: string; t: any }>();
 const heroTranslations = ref<Record<string, string>>({});
@@ -76,35 +76,39 @@ watch(locale, async (newLocale) => {
 .hero {
   width: 100%;
   min-height: calc(100vh - 64px);
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: clamp(16px, 4vw, 32px);
   color: var(--color-text);
+  text-align: center;
 
-  &__img {
-    width: 300px;
+  .gifImg {
+    width: clamp(180px, 40vw, 300px);
+    height: auto;
   }
 
   &__title1 {
     font-family: "Oleo Script", system-ui;
-    text-align: center;
     font-weight: 700;
-    font-size: 44px;
-    line-height: 50px;
+    font-size: clamp(28px, 6vw, 48px);
+    line-height: 1.1;
   }
 
   &__title2 {
-    font-size: 24px;
-    text-align: center;
+    font-size: clamp(18px, 4vw, 28px);
     color: var(--color-primary);
+    margin-top: -6px;
   }
 
   &__text {
-    text-align: center;
-    width: 70%;
+    max-width: 600px;
+    width: 100%;
+    font-size: clamp(14px, 2.8vw, 18px);
     padding-bottom: 2%;
+    opacity: 0.9;
   }
 }
 
@@ -120,20 +124,20 @@ watch(locale, async (newLocale) => {
 }
 
 .arrow {
-  transform: translate(-50%, -50%) rotate(-360deg);
-  cursor: pointer;
   background: transparent;
   border: none;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 .arrow span {
   display: block;
-  width: 1.5vw;
-  height: 1.5vw;
-  border-bottom: 5px solid var(--color-primary);
-  border-right: 5px solid var(--color-primary);
+  width: clamp(12px, 2vw, 24px);
+  height: clamp(12px, 2vw, 24px);
+  border-bottom: 4px solid var(--color-primary);
+  border-right: 4px solid var(--color-primary);
   transform: rotate(45deg);
-  margin: -10px;
+  margin: -6px;
   animation: animate 2s infinite;
 }
 
@@ -161,35 +165,9 @@ watch(locale, async (newLocale) => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .hero {
-    gap: 15px;
-  }
-
-  .hero__img {
-    width: 200px;
-  }
-
-  .arrow span {
-    width: 3vw;
-    height: 3vw;
-    border-bottom-width: 4px;
-    border-right-width: 4px;
-    margin: -6px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1200px) {
-  .hero__img {
-    width: 250px;
-  }
-
-  .arrow span {
-    width: 2vw;
-    height: 2vw;
-    border-bottom-width: 5px;
-    border-right-width: 5px;
-    margin: -8px;
+    padding-top: 60px;
   }
 }
 </style>
