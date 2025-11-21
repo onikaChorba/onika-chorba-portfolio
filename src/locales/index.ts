@@ -14,8 +14,6 @@ export const loadLocaleMessages = async (locale: string) => {
     } else {
       alert(`⚠️ No translations found for "${locale}"`);
     }
-  } catch (e) {
-    alert("Error loading locale messages:", e);
   }
   return messages[locale];
 };
