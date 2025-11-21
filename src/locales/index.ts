@@ -8,16 +8,21 @@ export const loadLocaleMessages = async (locale: string) => {
   if (!messages[locale]) {
     const ref = doc(db, 'locales', locale);
     const snap = await getDoc(ref);
-    messages[locale] = snap.exists() ? snap.data() : {};
+
+    if (snap.exists()) {
+      messages[locale] = snap.data() as Record<string, string>;
+    } else {
+      alert(`⚠️ No translations found for "${locale}"`);
+    }
+  } catch (e) {
+    alert("Error loading locale messages:", e);
   }
   return messages[locale];
 };
 
 export const setupI18n = async (initialLocale = "uk") => {
-  // ✅ 1. Спочатку чекаємо на переклади
   const loadedMessages = await loadLocaleMessages(initialLocale);
 
-  // ✅ 2. Тільки тепер створюємо i18n
   const i18n = createI18n({
     legacy: false,
     locale: initialLocale,
