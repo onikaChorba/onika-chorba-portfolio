@@ -45,7 +45,7 @@ const focusPassword = () => {
 };
 
 const login = () => {
-  if (username.value === "admin" && password.value === "1234") {
+  if (username.value === import.meta.env.VITE_ADMIN_LOGIN && password.value === import.meta.env.VITE_ADMIN_PASSWORD) {
     isAuthenticated.value = true;
     showLoginForm.value = false;
     localStorage.setItem('isAuthenticated', 'true');
