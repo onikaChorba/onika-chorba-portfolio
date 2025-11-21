@@ -1,7 +1,7 @@
 <template>
   <div class="hero" id="home">
     <div>
-      <img :src="gif" alt="Hero preview" class="gifImg" />
+      <img :src="gif" alt="Hero preview" class="gifImg" loading="lazy" width="180" />
     </div>
 
     <div class="title">
@@ -57,7 +57,7 @@ onMounted(async () => {
     heroTranslations.value = messages.hero || {};
     setLocaleMessage(locale.value, messages);
   } else {
-    console.warn("❌ Немає перекладів для about у Firestore");
+    alert("❌ Немає перекладів для about у Firestore");
   }
 });
 
@@ -87,7 +87,8 @@ watch(locale, async (newLocale) => {
 
   .gifImg {
     width: clamp(180px, 40vw, 300px);
-    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
   }
 
   &__title1 {

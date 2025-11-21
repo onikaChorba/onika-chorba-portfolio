@@ -317,7 +317,7 @@ async function fetchCV() {
     editData.value = JSON.parse(JSON.stringify(data.value));
     ensureArrays(editData.value);
   } catch (e: any) {
-    console.error(e);
+    alert(e);
     error.value = e.message || 'Error fetching CV';
   } finally {
     loading.value = false;
@@ -409,7 +409,7 @@ async function saveCV() {
     showModal.value = false;
 
   } catch (e: any) {
-    console.error('Save failed', e);
+    alert('Save failed');
     alert('Save failed: ' + (e.message || e));
   }
 }
@@ -429,7 +429,7 @@ async function downloadPdf() {
       })
       .save();
   } catch (err) {
-    console.error('PDF generation failed', err);
+    alert('PDF generation failed');
     alert('PDF generation failed — check console.');
   }
 }

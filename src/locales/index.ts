@@ -15,10 +15,10 @@ export const loadLocaleMessages = async (locale: string) => {
     if (snap.exists()) {
       messages[locale] = snap.data() as Record<string, string>;
     } else {
-      console.warn(`⚠️ No translations found for "${locale}"`);
+      alert(`⚠️ No translations found for "${locale}"`);
     }
   } catch (e) {
-    console.error("Error loading locale messages:", e);
+    alert("Error loading locale messages:", e);
   }
 
   return messages[locale];

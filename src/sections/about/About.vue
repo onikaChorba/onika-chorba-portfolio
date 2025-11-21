@@ -18,10 +18,10 @@
     <div class="about__icon">
       <img
         src="https://github-readme-stats.vercel.app/api/top-langs/?username=onikaChorba&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact"
-        alt="status" class="statusSkill" />
+        alt="status" class="statusSkill" width="350" />
       <div class="iconsSkills">
         <img v-for="(el, index) in filteredExperience" :key="index" :src="el.src" :alt="el.alt" class="iconSkills"
-          :title="el.alt" />
+          width="40" :title="el.alt" />
       </div>
     </div>
 
@@ -59,7 +59,7 @@ onMounted(async () => {
   if (snap.exists()) {
     experience.value = snap.data().experience;
   } else {
-    console.warn("❌ Немає досвіду у Firestore");
+    alert("❌ Немає досвіду у Firestore");
   }
 
   if (aboutSnap.exists()) {
@@ -67,7 +67,7 @@ onMounted(async () => {
     aboutTranslations.value = messages.about || {};
     setLocaleMessage(locale.value, messages);
   } else {
-    console.warn("❌ Немає перекладів для about у Firestore");
+    alert("❌ Немає перекладів для about у Firestore");
   }
 });
 

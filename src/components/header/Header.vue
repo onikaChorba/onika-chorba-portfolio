@@ -179,7 +179,7 @@ onMounted(async () => {
     headerTranslations.value = transformHeaderKeys(messages);
     setLocaleMessage(locale.value, messages || {});
   } else {
-    console.warn("❌ Немає перекладів для header у Firestore");
+    alert("❌ Немає перекладів для header у Firestore");
   }
 });
 

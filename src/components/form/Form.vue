@@ -79,8 +79,7 @@ const sendEmail = async (e: any) => {
     //@ts-ignore
     form.value.reset();
   } catch (error) {
-    console.error(error);
-    alert("Failed to send message.");
+    alert("Failed to send message");
   }
 };
 </script>

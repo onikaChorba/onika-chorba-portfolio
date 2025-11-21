@@ -26,7 +26,7 @@ onMounted(async () => {
     contactTranslations.value = messages.contact || {};
     setLocaleMessage(locale.value, messages);
   } else {
-    console.warn("❌ Немає перекладів для about у Firestore");
+    alert("❌ Немає перекладів для about у Firestore");
   }
 });
 
