@@ -1,7 +1,9 @@
 <template>
   <div className="hero" id="home">
-    <img className="hero__img appear" src="https://media.giphy.com/media/3kPDmoWdBpQPNhCnUG/giphy.gif" alt="gifImg"
-      fetchpriority="high" />
+    <div style="width:100%;height:0;padding-bottom:80%;position:relative;" class="gifImg"><iframe
+        src="https://giphy.com/embed/3kPDmoWdBpQPNhCnUG" width="100%" height="100%" style="position:absolute"
+        frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
+    <p><a href="https://giphy.com/stickers/siwaOnlineGmbH-siwa-siwi-hagenberg-3kPDmoWdBpQPNhCnUG">via GIPHY</a></p>
 
     <div class="title">
       <h1 className="hero__title1 appear">
