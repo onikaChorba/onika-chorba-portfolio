@@ -107,10 +107,8 @@ const toggleTheme = () => {
 };
 
 const scrollToSection = async (id: string) => {
-  // Якщо ми НЕ на головній — спочатку переходимо на головну
   if (route.path !== '/') {
     await router.push('/');
-    // Трішки зачекати, щоб DOM намалювався
     setTimeout(() => scrollToSection(id), 100);
     return;
   }

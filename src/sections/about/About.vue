@@ -29,11 +29,11 @@
       {{ aboutTranslations.statsTitle || t('about.statsTitle') }} <span>GitHub</span>
     </h2>
 
-    <a href="https://git.io/streak-stats">
+    <p align="center">
       <img
-        src="http://github-readme-streak-stats.herokuapp.com?user=onikaChorba&theme=dark&hide_border=true&border_radius=4.8"
-        alt="status" class="status" />
-    </a>
+        src="https://github-readme-streak-stats.herokuapp.com?user=onikaChorba&theme=dark&hide_border=true&border_radius=4.8"
+        alt="GitHub Streak Stats" class="status" />
+    </p>
   </section>
 </template>
 
