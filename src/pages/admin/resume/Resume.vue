@@ -22,7 +22,7 @@
           <div class="contact-cv" v-if="data.telegram">
             <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
             <a :href="`https://t.me/${data.telegram.replace(/^@/, '')}`" target="_blank" class="link">
-              {{ data.telegram }}
+              {{ data.telegram.startsWith('@') ? data.telegram : '@' + data.telegram }}
             </a>
           </div>
 
@@ -33,17 +33,35 @@
 
           <div class="contact-cv" v-if="data.email">
             <img :src="icons.find(i => i.alt === 'email')?.src" class="icon" />
-            <a :href="`mailto:${data.email}`" class="link">{{ data.email }}</a>
+            <a :href="`mailto:${data.email}`" class="link">
+              {{ data.email }}
+            </a>
           </div>
 
           <div class="contact-cv" v-if="data.linkedin">
             <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
-            <a :href="data.linkedin" target="_blank" class="link">{{ data.linkedin }}</a>
+            <a :href="data.linkedin" target="_blank" class="link">
+              {{ data.linkedin.split('/').filter(Boolean).pop() }}
+            </a>
           </div>
 
           <div class="contact-cv" v-if="data.github">
             <img :src="icons.find(i => i.alt === 'gitHubCV')?.src" class="icon" />
-            <a :href="data.github" target="_blank" class="link">{{ data.github }}</a>
+            <a :href="data.github" target="_blank" class="link">
+              {{ data.github.split('/').filter(Boolean).pop() }}
+            </a>
+          </div>
+
+          <div class="contact-cv" v-if="data.portfolio">
+            <img :src="icons.find(i => i.alt === 'portfolio')?.src" class="icon" />
+            <a :href="data.portfolio" target="_blank" class="link">
+              {{
+                data.portfolio
+                  .replace(/^https?:\/\//, '')
+                  .replace('.vercel.app', '')
+                  .replace(/\/$/, '')
+              }}
+            </a>
           </div>
         </div>
       </aside>
@@ -157,6 +175,9 @@
         <label>GitHub:
           <input v-model="editData.github" placeholder="https://github.com/..." />
         </label>
+        <label>Portfolio:
+          <input v-model="editData.portfolio" placeholder="https://github.com/..." />
+        </label>
       </div>
 
       <label>Summary:
@@ -259,6 +280,7 @@ const editData = ref<any>({
   email: '',
   linkedin: '',
   github: '',
+  portfolion: '',
   summary: '',
   skills: [],
   languages: [],
@@ -303,6 +325,7 @@ async function fetchCV() {
         email: '',
         linkedin: '',
         github: '',
+        portfolio: "",
         summary: '',
         skills: [],
         languages: [],
@@ -474,11 +497,9 @@ function printPage() {
 
 
 onMounted(() => {
-  // Перевірка на авторизацію (твоя логіка)
   const user = localStorage.getItem('isAuthenticated')
   isAdmin.value = Boolean(user)
 
-  // Додатковий захист, щоб кнопки НЕ показувалися на /resume
   if (!route.path.startsWith('/admin')) {
     isAdmin.value = false
   }
@@ -556,10 +577,10 @@ onMounted(() => {
   }
 
   .contacts {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
-    max-width: 700px;
+    max-width: 600px;
     align-items: center;
     justify-content: center;
     gap: 10px;

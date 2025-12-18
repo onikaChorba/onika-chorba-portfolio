@@ -26,6 +26,7 @@ import telegram from '@/assets/icons/telegram.svg'
 import linkedInCV from '@/assets/icons/linkedin-cv.svg'
 import gitHubCV from '@/assets/icons/github-cv.svg'
 import git from '@/assets/icons/git.svg'
+import portfolio from '@/assets/icons/portfolio.svg'
 
 export const icons = [
   { src: ts, alt: 'ts' },
@@ -56,4 +57,5 @@ export const icons = [
   { src: gitHubCV, alt: 'gitHubCV' },
   { src: telegram, alt: 'telegram' },
   { src: location, alt: 'location' },
+  { src: portfolio, alt: 'portfolio' },
 ]
