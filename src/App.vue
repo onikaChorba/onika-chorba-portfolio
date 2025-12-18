@@ -1,13 +1,8 @@
 <template>
-  <Header v-if="!route.path.startsWith('/admin') && !isAuthenticated"
-    :isAdmin="isAuthenticated && route.path.startsWith('/admin')" />
-  <Header v-else-if="isAuthenticated" :isAdmin="isAuthenticated && route.path.startsWith('/admin')" />
-  <div class="container">
-    <div class="bg-login" v-if="showLoginForm && !isAuthenticated">
-      <Canvas />
-    </div>
+  <Header :isAdmin="route.path.startsWith('/admin') && isAuthenticated" />
 
-    <div v-if="showLoginForm && !isAuthenticated && route.path.startsWith('/admin')" class="login-form">
+  <div class="container">
+    <div v-if="route.path.startsWith('/admin') && !isAuthenticated" class="login-form">
       <h2>Вхід в адмінку</h2>
       <form @submit.prevent="login">
         <input v-model="username" type="text" placeholder="Логін" ref="usernameInput"
@@ -18,18 +13,16 @@
       </form>
     </div>
 
-    <router-view v-else-if="isAuthenticated" />
-
-    <FrontPage v-else />
+    <router-view v-if="!route.path.startsWith('/admin') || isAuthenticated" />
   </div>
+
   <Footer />
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Header, Canvas, Footer } from "./components";
-import { FrontPage } from './pages';
+import { Header, Footer } from "./components";
 
 const route = useRoute();
 const router = useRouter();
@@ -62,11 +55,7 @@ if (route.path.startsWith("/admin")) {
 }
 
 watch(() => route.path, (newPath) => {
-  if (newPath.startsWith("/admin") && !isAuthenticated.value) {
-    showLoginForm.value = true;
-  } else {
-    showLoginForm.value = false;
-  }
+  showLoginForm.value = newPath.startsWith("/admin") && !isAuthenticated.value;
 });
 
 const updateTitle = () => {
@@ -84,13 +73,12 @@ const updateTitle = () => {
 onMounted(() => {
   if (localStorage.getItem('isAuthenticated') === 'true') {
     isAuthenticated.value = true;
-    showLoginForm.value = false;
   } else {
     isAuthenticated.value = false;
-    showLoginForm.value = true;
   }
+
   updateTitle();
-})
+});
 </script>
 
 <style scoped>
