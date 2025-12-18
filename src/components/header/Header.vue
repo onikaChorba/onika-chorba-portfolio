@@ -81,19 +81,23 @@ const isMobile = ref(window.innerWidth <= 768);
 const isHidden = ref(false);
 let lastScroll = 0;
 
-const headerNav = computed(() =>
-  props.isAdmin && route.path.startsWith('/admin')
-    ? [
+const headerNav = computed(() => {
+  if (props.isAdmin && route.path.startsWith('/admin')) {
+    return [
       { textKey: 'header.mainInfo', to: '/admin' },
       { textKey: 'header.adminProjects', to: '/admin/projects' },
       { textKey: 'header.adminResume', to: '/admin/resume' },
-    ]
-    : [
+    ];
+  } else if (!route.path.startsWith('/admin')) {
+    return [
       { textKey: 'header.home', to: '#home' },
       { textKey: 'header.about', to: '#about' },
       { textKey: 'header.projects', to: '#projects' },
-    ]
-);
+    ];
+  } else {
+    return [];
+  }
+});
 
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value);
 const applyTheme = (dark: boolean) => {
