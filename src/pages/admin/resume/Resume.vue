@@ -280,7 +280,7 @@ const editData = ref<any>({
   email: '',
   linkedin: '',
   github: '',
-  portfolion: '',
+  portfolio: '',
   summary: '',
   skills: [],
   languages: [],
@@ -444,7 +444,6 @@ async function downloadPdf() {
     html2pdf()
       .from(printRef.value)
       .set({
-        margin: [10, 10, 10, 10],
         filename: `${(data.value.name || 'CV').replace(/\s+/g, '_')}_CV.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -473,11 +472,11 @@ function printPage() {
   printWindow.document.write(`
     <html>
       <head>
-        <title>${(data.value.name || 'CV')}_CV</title>
+        <title>${(data.value.name || 'CV')}_Frontend_CV</title>
         ${styles}
         <style>
           /* ensure printed page margins / page-break behaviour */
-          @page { size: A4; margin: 12mm; }
+          @page { size: A4;}
           body { margin: 0; -webkit-print-color-adjust: exact; }
         </style>
       </head>

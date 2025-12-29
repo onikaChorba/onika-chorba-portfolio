@@ -1,12 +1,21 @@
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
     <div class="modal"> <button class="modal-close" @click="$emit('close')" aria-label="close">×</button>
-      <div class="img-wrapper">
-        <img v-if="project.imgs?.length" :src="project.imgs[project.imgs.length - 1]" :alt="project.name" />
-      </div>
       <h2>{{ project.name }}</h2>
       <p>{{ project.text?.[locale as 'en' | 'uk'] }}</p>
-      <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">{{ tag }}</span> </div>
+      <div class="tags"> <span v-for="(tag, idx) in project.tags" :key="idx">#{{ tag }}</span> </div>
+      <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
+          class="btn browser">
+          <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
+          Live Demo </a> <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank"
+          class="btn github"> <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
+          View on GitHub </a> </div>
+
+      <div class="desktop-preview">
+        <iframe :src="project.links.browser" loading="lazy" sandbox="allow-scripts allow-same-origin"
+          referrerpolicy="no-referrer" />
+      </div>
+
       <ul class="tools">
         <li v-for="(tool, index) in project.tools?.[locale as 'en' | 'uk'] || []" :key="index"
           :class="tool.includes(':') ? 'column' : 'flex'">
@@ -23,12 +32,6 @@
           </template>
         </li>
       </ul>
-      <div class="links"> <a v-if="project.links?.browser" :href="project.links.browser" target="_blank"
-          class="btn browser">
-          <img :src="icons.find(i => i.alt === 'browser')?.src" alt="browser" class="btn-icon" />
-          Live Demo </a> <a v-if="project.links?.gitHub" :href="project.links.gitHub" target="_blank"
-          class="btn github"> <img :src="icons.find(i => i.alt === 'gitHubLink')?.src" alt="GitHub" class="btn-icon" />
-          View on GitHub </a> </div>
     </div>
   </div>
 </template>
@@ -43,7 +46,6 @@ const { locale } = useI18n();
 const props = defineProps<{ project: Project }>();
 
 </script>
-
 
 <style scoped lang="scss">
 .modal-overlay {
@@ -67,8 +69,7 @@ const props = defineProps<{ project: Project }>();
   border-radius: 16px;
   padding: 24px;
   max-height: 90vh;
-  width: 90%;
-  max-width: 600px;
+  max-width: 830px;
   overflow-y: auto;
   position: relative;
   box-shadow: var(--box-shadow);
@@ -103,42 +104,6 @@ const props = defineProps<{ project: Project }>();
   p {
     margin-bottom: 12px;
     line-height: 1.5;
-  }
-}
-
-.img-wrapper {
-  width: 100%;
-  height: 400px;
-  overflow: auto;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-bg);
-    border-radius: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-primary);
-    border-radius: 8px;
-    border: 2px solid var(--color-bg);
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-btn-hover-bg);
-  }
-
-  img {
-    width: 100%;
-    display: block;
-    border-radius: 12px;
-    object-fit: contain;
   }
 }
 
@@ -267,6 +232,32 @@ const props = defineProps<{ project: Project }>();
   .btn-icon {
     width: 30px;
   }
+}
+
+.desktop-preview {
+  position: relative;
+  width: 770px;
+  height: 420px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--box-shadow);
+  margin: 30px 0px;
+
+  iframe {
+    width: 1540px;
+    height: 900px;
+    border: 0;
+
+    transform: scale(0.5);
+    transform-origin: top left;
+
+    pointer-events: none;
+  }
+}
+
+.desktop-preview:hover iframe {
+  pointer-events: auto;
 }
 
 @keyframes scaleIn {
