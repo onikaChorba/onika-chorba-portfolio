@@ -21,8 +21,8 @@
         <div class="contacts">
           <div class="contact-cv" v-if="data.telegram">
             <img :src="icons.find(i => i.alt === 'telegram')?.src" class="icon" />
-            <a :href="`https://t.me/${data.telegram.replace(/^@/, '')}`" target="_blank" class="link">
-              {{ data.telegram.startsWith('@') ? data.telegram : '@' + data.telegram }}
+            <a :href="`tel:${data.telegram}`" class="link">
+              {{ data.telegram }}
             </a>
           </div>
 
@@ -41,7 +41,7 @@
           <div class="contact-cv" v-if="data.linkedin">
             <img :src="icons.find(i => i.alt === 'linkedInCV')?.src" class="icon" />
             <a :href="data.linkedin" target="_blank" class="link">
-              {{ data.linkedin.split('/').filter(Boolean).pop() }}
+              {{ data.linkedin }}
             </a>
           </div>
 
@@ -75,7 +75,8 @@
             </div>
             <p class="section-text">{{ data.summary }}</p>
           </div>
-
+        </div>
+        <div class="content-flex-wrapper">
           <div class="content-flex">
             <div class="section-title">
               <h2 class="title">Skills</h2>
@@ -614,7 +615,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 0px 40px 40px 40px;
   gap: 20px;
 }
 
@@ -640,7 +641,7 @@ onMounted(() => {
 
 .content-flex {
   box-sizing: border-box;
-  width: 45%;
+  width: 100%;
 }
 
 .section-title {
