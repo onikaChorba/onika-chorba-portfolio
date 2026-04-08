@@ -1,67 +1,120 @@
 <template>
-  <form ref="form" class="form" id="form">
-    <div class="name">
+  <form ref="form" class="form" @submit.prevent="sendEmail">
+    <div class="form-group">
       <label class="text1" for="name">
         <p class="form__label">{{ contactTranslations.name || t('contact.name') }}</p>
       </label>
-      <input type="text" id="name" name="user_name" class="form__input"
-        :placeholder="contactTranslations.enterYourName || t('contact.enterYourName')" required />
+      <input v-model.trim="formData.user_name" type="text" id="name" class="form__input"
+        :class="{ 'input-error': errors.user_name }"
+        :placeholder="contactTranslations.enterYourName || t('contact.enterYourName')" @input="errors.user_name = ''" />
+      <span v-if="errors.user_name" class="error-text">{{ errors.user_name }}</span>
     </div>
 
-    <div class="email">
-      <label class="text1" for="email">
-        <p class="form__label">{{ contactTranslations.email || t('contact.email') }}</p>
-      </label>
-      <input type="email" id="email" name="user_email" class="form__input"
-        :placeholder="contactTranslations.enterYourEmail || t('contact.enterYourEmail')" required />
+    <div class="form-group">
+      <label class="form__label text1" for="email">{{ contactTranslations.email || t('contact.email') }}</label>
+      <input v-model.trim="formData.user_email" type="email" id="email" class="form__input"
+        :class="{ 'input-error': errors.user_email }"
+        :placeholder="contactTranslations.enterYourEmail || t('contact.enterYourEmail')" @input="validateEmailField" />
+      <span v-if="errors.user_email" class="error-text">{{ errors.user_email }}</span>
     </div>
 
-    <div class="message">
+    <div class="form-group">
       <label class="text1" for="message">
         <p class="form__label">{{ contactTranslations.message || t('contact.message') }}</p>
       </label>
-      <textarea class="form__input textarea text1" id="message" name="message"
-        :placeholder="contactTranslations.enterYourMessage || t('contact.enterYourMessage')" required></textarea>
+      <textarea v-model.trim="formData.message" class="form__input textarea text1" id="message"
+        :class="{ 'input-error': errors.message }"
+        :placeholder="contactTranslations.enterYourMessage || t('contact.enterYourMessage')"
+        @input="errors.message = ''"></textarea>
+      <span v-if="errors.message" class="error-text">{{ errors.message }}</span>
     </div>
 
     <div class="buttonForm">
-      <button type="submit" class="buttonForm__button" @click="sendEmail" aria-label="submit button">
-        <span class="buttonForm__text text">{{ contactTranslations.submit || t('contact.submit') }}</span>
+      <button type="submit" class="buttonForm__button" :disabled="isSubmitting">
+        <span class="buttonForm__text text">
+          {{ isSubmitting ? '...' : (contactTranslations.submit || t('contact.submit')) }}
+        </span>
       </button>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, reactive } from "vue";
 import { useI18n } from 'vue-i18n';
 
-const form = ref(null);
 const props = defineProps<{ contactTranslations: Record<string, string> }>();
 const { t } = useI18n();
 
-const localTranslations = ref({});
-watch(
-  () => props.contactTranslations,
-  (newVal) => {
-    localTranslations.value = newVal;
-  },
-  { deep: true, immediate: true }
-);
+const isSubmitting = ref(false);
 
-const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+const formData = reactive({
+  user_name: '',
+  user_email: '',
+  message: ''
+});
 
-const sendEmail = async (e: any) => {
-  e.preventDefault();
-  if (!form.value) return;
+const errors = reactive({
+  user_name: '',
+  user_email: '',
+  message: ''
+});
 
-  const formData = new FormData(form.value);
-  const name = formData.get("user_name");
-  const email = formData.get("user_email");
-  const message = formData.get("message");
+const validateEmailField = () => {
+  const email = formData.user_email;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const text = `New message from contact form:\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+  if (!email) {
+    errors.user_email = "Email є обов'язковим";
+  } else if (!emailRegex.test(email)) {
+    errors.user_email = "Введіть коректну адресу (наприклад: example@mail.com)";
+  } else {
+    errors.user_email = "";
+  }
+};
+
+const validateForm = () => {
+  let isValid = true;
+
+  errors.user_name = '';
+  errors.user_email = '';
+  errors.message = '';
+
+  if (!formData.user_name) {
+    errors.user_name = "Ім'я обов'язкове";
+    isValid = false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.user_email) {
+    errors.user_email = "Email обов'язковий";
+    isValid = false;
+  } else if (!emailRegex.test(formData.user_email)) {
+    errors.user_email = "Невірний формат (наприклад: name@mail.com)";
+    isValid = false;
+  }
+
+  if (!formData.message) {
+    errors.message = "Повідомлення не може бути порожнім";
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+const handleInput = (field: keyof typeof errors) => {
+  errors[field] = '';
+};
+
+const sendEmail = async () => {
+  if (!validateForm()) return;
+
+  isSubmitting.value = true;
+
+  const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+  const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+
+  const text = `Нове повідомлення:\nІм'я: ${formData.user_name}\nEmail: ${formData.user_email}\nПовідомлення: ${formData.message}`;
 
   try {
     const response = await fetch(
@@ -75,16 +128,42 @@ const sendEmail = async (e: any) => {
 
     if (!response.ok) throw new Error("Telegram API error");
 
-    alert("Message sent successfully!");
-    //@ts-ignore
-    form.value.reset();
+    alert("Повідомлення надіслано!");
+
+    formData.user_name = '';
+    formData.user_email = '';
+    formData.message = '';
   } catch (error) {
-    alert("Failed to send message");
+    alert("Помилка при відправці");
+  } finally {
+    isSubmitting.value = false;
   }
 };
 </script>
 
 <style scoped lang="scss">
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-error {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 2px #ff4d4f !important;
+}
+
+.error-text {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.buttonForm__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .form {
   max-width: 700px;
   margin: 0 auto;
